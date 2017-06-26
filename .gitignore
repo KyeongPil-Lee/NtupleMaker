@@ -1,5 +1,6 @@
 # Plots, Big files...
 Local/
+crab_*/
 
 # output from batch jobs
 *.o*
