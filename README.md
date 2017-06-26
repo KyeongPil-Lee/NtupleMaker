@@ -9,4 +9,6 @@
 	source $VO_CMS_SW_DIR/cmsset_default.sh
 	cmsrel CMSSW_7_6_3_patch2
 	cd CMSSW_7_6_3_patch2/src
+	cmsenv
 	git clone https://github.com/KyeongPil-Lee/NtupleMaker.git Phys -b 76X
+	scram b -j 20 >&log&

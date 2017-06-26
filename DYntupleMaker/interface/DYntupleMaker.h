@@ -46,10 +46,10 @@
 ////////////////////////////
 // -- For GenParticles -- //
 ////////////////////////////
-#include "SimDataFormats/GeneratorProducts/interface/LHEEventProduct.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
+#include "SimDataFormats/GeneratorProducts/interface/LHEEventProduct.h"
 
 //#include "SimDataFormats/HepMCProduct/interface/HepMCProduct.h"
 
@@ -111,13 +111,12 @@ private:
 	virtual void fillPrimaryVertex(const edm::Event &iEvent);  // fill primary vertex information
 	virtual void fillMET(const edm::Event &iEvent);            // fill MET information
 	virtual void fillPhotons(const edm::Event &iEvent);
-	virtual void fillMuons(const edm::Event &iEvent, const edm::EventSetup& iSetup);
 	virtual void fillElectrons(const edm::Event &iEvent);
 	virtual void fillJet(const edm::Event &iEvent);            // fill jet and b-tagging information
 	virtual void hltReport(const edm::Event &iEvent);          // fill list of triggers fired in an event
-	virtual void fillLHEInfo(const edm::Event &iEvent);
 	virtual void fillGENInfo(const edm::Event &iEvent);            // fill MET information
 	virtual void fillGenOthersInfo(const edm::Event &iEvent);
+	virtual void fillLHEInfo(const edm::Event &iEvent);  
 	virtual void fillTT(const edm::Event&);
 
 	bool reorder(double &a, double &b)
@@ -137,7 +136,6 @@ private:
 	edm::EDGetTokenT< edm::View<reco::Photon> > 					PhotonToken;
 	edm::EDGetTokenT< std::vector<pat::Jet> > 						JetToken;
 	edm::EDGetTokenT< std::vector<pat::MET> > 						MetToken;
-	edm::EDGetTokenT< LHEEventProduct > 							LHEEventProductToken;
 	edm::EDGetTokenT< std::vector<reco::GenParticle> > 				GenParticleToken;
 
 	edm::EDGetTokenT< double > 										RhoToken;
@@ -145,9 +143,6 @@ private:
 	edm::EDGetTokenT< edm::ValueMap<bool> > 						eleLooseIdMapToken;
 	edm::EDGetTokenT< edm::ValueMap<bool> > 						eleMediumIdMapToken;
 	edm::EDGetTokenT< edm::ValueMap<bool> > 						eleTightIdMapToken;
-	edm::EDGetTokenT< edm::ValueMap<bool> > 						eleMVAIdWP80MapToken;
-	edm::EDGetTokenT< edm::ValueMap<bool> > 						eleMVAIdWP90MapToken;
-	edm::EDGetTokenT< edm::ValueMap<bool> > 						eleHEEPIdMapToken;
 	edm::EDGetTokenT< std::vector<reco::Conversion> > 				ConversionsToken;
 	edm::EDGetTokenT< std::vector< reco::GsfTrack > > 				GsfTrackToken;
 
@@ -157,7 +152,6 @@ private:
 	edm::EDGetTokenT< edm::ValueMap<float> > 						phoPhotonIsolationToken;
 
 	edm::EDGetTokenT< edm::TriggerResults > 						TriggerToken;
-	edm::EDGetTokenT< edm::TriggerResults > 						TriggerTokenPAT;
 	edm::EDGetTokenT< std::vector<pat::TriggerObjectStandAlone> > 	TriggerObjectToken;
 
 	edm::EDGetTokenT< GenEventInfoProduct > 						GenEventInfoToken;
@@ -165,6 +159,7 @@ private:
 	edm::EDGetTokenT< reco::VertexCollection > 						PrimaryVertexToken;
 	edm::EDGetTokenT< edm::View<reco::Track> > 						TrackToken;
 	edm::EDGetTokenT< std::vector< PileupSummaryInfo > > 			PileUpInfoToken;
+	edm::EDGetTokenT< LHEEventProduct >								LHEEventProductToken;
 
 	// edm::EDGetTokenT< trigger::TriggerEvent > 						TriggerSummaryToken;
 
@@ -205,13 +200,12 @@ private:
 	bool theStoreJetFlag;                // Yes or No to store Jet
 	bool theStoreMETFlag;                // Yes or No to store MET 
 	bool theStoreHLTReportFlag;             // Yes or No to store HLT reuslts (list of triggers fired)
-	bool theStoreMuonFlag;
 	bool theStoreElectronFlag;
-	bool theStoreLHEFlag;
 	bool theStoreGENFlag;
 	bool theStoreGenOthersFlag;
 	bool theStorePhotonFlag;
 	bool theStoreTTFlag;
+	bool theStoreLHEFlag;
 	bool isMC;  //turn gen on and off
 	bool theApplyFilter;
 	int theFilterType;
@@ -266,7 +260,7 @@ private:
 	// Invariant Mass distribution of SS(OS) di-muon events GG (2 global)
 	// GlbTree
 	int runNum;
-	unsigned long long evtNum;
+	int evtNum;
 	int lumiBlock;
 	int nMuon;
 	double PUweight;
@@ -289,11 +283,6 @@ private:
 	int Nmuons;
 	int Nbtagged;
 	int NbtaggedCloseMuon;
-	
-	// -- Flags in re-miniAOD -- //
-	bool Flag_duplicateMuons;
-	bool Flag_badMuons;
-	bool Flag_noBadMuons;
 
 	// PV
 	int nVertices;
@@ -457,13 +446,10 @@ private:
 	double Electron_RelPFIso_dBeta[MPSIZE];
 	double Electron_RelPFIso_Rho[MPSIZE];
 	bool Electron_passConvVeto[MPSIZE];
-	bool Electron_passVetoID[MPSIZE];
-	bool Electron_passLooseID[MPSIZE];
-	bool Electron_passMediumID[MPSIZE];
-	bool Electron_passTightID[MPSIZE];
-	bool Electron_passMVAID_WP80[MPSIZE];
-	bool Electron_passMVAID_WP90[MPSIZE];
-	bool Electron_passHEEPID[MPSIZE];
+	double Electron_passVetoID[MPSIZE];
+	double Electron_passLooseID[MPSIZE];
+	double Electron_passMediumID[MPSIZE];
+	double Electron_passTightID[MPSIZE];
 
 	// Pat Muon
 	//pf isolations
@@ -488,7 +474,6 @@ private:
 	int Muon_nTrig[MPSIZE];
 	int Muon_triggerObjectType[MPSIZE];
 	int Muon_filterName[MPSIZE];
-	double Muon_dB[MPSIZE];
 	double Muon_phi[MPSIZE];
 	double Muon_eta[MPSIZE];
 	double Muon_pT[MPSIZE];
@@ -510,7 +495,6 @@ private:
 	int Muon_charge[MPSIZE];
 	int Muon_nChambers[MPSIZE];
 	int Muon_nMatches[MPSIZE];
-	int Muon_nMatchesRPCLayers[MPSIZE];
 	int Muon_stationMask[MPSIZE];
 	int Muon_nSegments[MPSIZE];
 	double Muon_chi2dof[MPSIZE];
@@ -519,9 +503,6 @@ private:
 	int Muon_pixelHits[MPSIZE];
 	int Muon_muonHits[MPSIZE];
 	int Muon_trackerLayers[MPSIZE];
-	int Muon_trackerHitsGLB[MPSIZE];
-	int Muon_trackerLayersGLB[MPSIZE];
-	int Muon_pixelHitsGLB[MPSIZE];
 	double Muon_qoverp[MPSIZE];
 	double Muon_theta[MPSIZE];
 	double Muon_lambda[MPSIZE];
@@ -557,13 +538,6 @@ private:
 	std::vector<double> vtxTrkEMuNdof;
 	std::vector<double> vtxTrkEMu1Pt;
 	std::vector<double> vtxTrkEMu2Pt;
-
-	std::vector<double> CosAngle_TuneP;
-	std::vector<double> vtxTrk1Pt_TuneP;
-	std::vector<double> vtxTrk2Pt_TuneP;
-	std::vector<double> vtxTrkChi2_TuneP;
-	std::vector<double> vtxTrkNdof_TuneP;
-	std::vector<double> vtxTrkProb_TuneP;
 
 	//Various track informations
 	//MuonBestTrack
@@ -607,15 +581,6 @@ private:
 	double Muon_TuneP_Pz[MPSIZE];
 	double Muon_TuneP_eta[MPSIZE];
 	double Muon_TuneP_phi[MPSIZE];
-
-	// LHE
-	int nLHEParticle;
-	double LHELepton_Px[MPSIZE];
-	double LHELepton_Py[MPSIZE];
-	double LHELepton_Pz[MPSIZE];
-	double LHELepton_E[MPSIZE];
-	int LHELepton_ID[MPSIZE];
-	int LHELepton_status[MPSIZE];
 
 	// GEN
 	int GENnPair;
@@ -724,5 +689,8 @@ private:
 	double pfMET_Type1_Px; 
 	double pfMET_Type1_Py; 
 	double pfMET_Type1_SumEt;
+
+	// -- PDf weights -- //
+	std::vector< double > PDFWeights;
 };
 #endif
