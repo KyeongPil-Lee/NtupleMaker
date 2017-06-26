@@ -11,7 +11,6 @@ DYntupleMaker = cms.EDAnalyzer("DYntupleMaker",
 	Photon = cms.untracked.InputTag("gedPhotons"),
 	Jet = cms.untracked.InputTag("selectedPatJets"),
 	MET = cms.untracked.InputTag("patMETs"),
-	LHEEventProduct = cms.untracked.InputTag("externalLHEProducer"),
 	GenParticle = cms.untracked.InputTag("genParticles"),
 
 	# -- electron information -- #
@@ -20,9 +19,6 @@ DYntupleMaker = cms.EDAnalyzer("DYntupleMaker",
 	eleLooseIdMap = cms.untracked.InputTag("egmGsfElectronIDs:cutBasedElectronID-Spring15-25ns-V1-standalone-loose"),
 	eleMediumIdMap = cms.untracked.InputTag("egmGsfElectronIDs:cutBasedElectronID-Spring15-25ns-V1-standalone-medium"),
 	eleTightIdMap = cms.untracked.InputTag("egmGsfElectronIDs:cutBasedElectronID-Spring15-25ns-V1-standalone-tight"),
-	eleMVAIdWP80Map = cms.untracked.InputTag( "egmGsfElectronIDs:mvaEleID-Spring16-GeneralPurpose-V1-wp80" ),
-	eleMVAIdWP90Map = cms.untracked.InputTag( "egmGsfElectronIDs:mvaEleID-Spring16-GeneralPurpose-V1-wp90" ),
-	eleHEEPIdMap = cms.untracked.InputTag("egmGsfElectronIDs:heepElectronID-HEEPV70"),
 	conversionsInputTag = cms.untracked.InputTag("allConversions"),
 	GsfTrack = cms.untracked.InputTag("electronGsfTracks"),
 
@@ -45,7 +41,6 @@ DYntupleMaker = cms.EDAnalyzer("DYntupleMaker",
 
 	# -- Trigger -- #
 	TriggerResults = cms.untracked.InputTag("TriggerResults", "", "HLT"),
-	TriggerResultsPAT = cms.untracked.InputTag("TriggerResults", "", "PAT"),
 	TriggerObject = cms.untracked.InputTag("selectedPatTrigger"),
 
 	# -- Else -- #
@@ -56,19 +51,21 @@ DYntupleMaker = cms.EDAnalyzer("DYntupleMaker",
 	PileUpInfo = cms.untracked.InputTag("addPileupInfo"),
 
 	# -- Store Flags -- #
-	StoreMuonFlag = cms.untracked.bool(True),
 	StoreElectronFlag = cms.untracked.bool(True),
 	StorePhotonFlag = cms.untracked.bool(False),
 	StoreJetFlag = cms.untracked.bool(False),
 	StoreMETFlag = cms.untracked.bool(False),
-	StoreLHEFlag = cms.untracked.bool(False),
 	StoreGENFlag = cms.untracked.bool(False),
 	StoreGenOthersFlag = cms.untracked.bool(False),
 	StorePriVtxFlag = cms.untracked.bool(True),
 	StoreTTFlag = cms.untracked.bool(False),
 	StoreHLTReportFlag = cms.untracked.bool(True),
+	StoreLHEFlag = cms.untracked.bool(True),
 
 	# -- Filters -- #
 	ApplyFilter = cms.untracked.bool(False),
 	FilterType = cms.untracked.int32(0),
+
+	# -- LHE info -- #
+	LHEEventProduct = cms.untracked.InputTag("externalLHEProducer"),
 )
