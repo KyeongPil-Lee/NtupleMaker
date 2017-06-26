@@ -17,7 +17,7 @@ config.Data.publication = False
 
 config.Site.storageSite = 'T2_KR_KNU'
 
-version = '_v20160516_76X_MINIAODv2_'
+version = '_v20160626_76X_MINIAODv2_'
 # 'MultiCRAB' part
 if __name__ == '__main__':
     
