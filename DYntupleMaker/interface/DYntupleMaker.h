@@ -386,8 +386,10 @@ private:
 	double Electron_etaWidth[MPSIZE];
 	double Electron_phiWidth[MPSIZE];
 	double Electron_dEtaIn[MPSIZE];
+	double Electron_dEtaInSeed[MPSIZE];
 	double Electron_dPhiIn[MPSIZE];
 	double Electron_sigmaIEtaIEta[MPSIZE];
+	double Electron_Full5x5_SigmaIEtaIEta[MPSIZE];
 	double Electron_HoverE[MPSIZE];
 	double Electron_fbrem[MPSIZE];
 	double Electron_eOverP[MPSIZE];

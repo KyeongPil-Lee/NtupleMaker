@@ -399,8 +399,10 @@ void DYntupleMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 		Electron_etaWidth[i] = -9999;
 		Electron_phiWidth[i] = -9999;
 		Electron_dEtaIn[i] = -9999;
+		Electron_dEtaInSeed[i] = -9999;
 		Electron_dPhiIn[i] = -9999;
 		Electron_sigmaIEtaIEta[i] = -9999;
+		Electron_Full5x5_SigmaIEtaIEta[i] = -9999;
 		Electron_HoverE[i] = -9999;
 		Electron_fbrem[i] = -9999;
 		Electron_eOverP[i] = -9999;
@@ -873,8 +875,10 @@ void DYntupleMaker::beginJob()
 		DYTree->Branch("Electron_etaWidth", &Electron_etaWidth, "Electron_etaWidth[Nelectrons]/D");
 		DYTree->Branch("Electron_phiWidth", &Electron_phiWidth, "Electron_phiWidth[Nelectrons]/D");
 		DYTree->Branch("Electron_dEtaIn", &Electron_dEtaIn, "Electron_dEtaIn[Nelectrons]/D");
+		DYTree->Branch("Electron_dEtaInSeed", &Electron_dEtaInSeed, "Electron_dEtaInSeed[Nelectrons]/D");
 		DYTree->Branch("Electron_dPhiIn", &Electron_dPhiIn, "Electron_dPhiIn[Nelectrons]/D");
 		DYTree->Branch("Electron_sigmaIEtaIEta", &Electron_sigmaIEtaIEta, "Electron_sigmaIEtaIEta[Nelectrons]/D");
+		DYTree->Branch("Electron_Full5x5_SigmaIEtaIEta", &Electron_Full5x5_SigmaIEtaIEta, "Electron_Full5x5_SigmaIEtaIEta[Nelectrons]/D");
 		DYTree->Branch("Electron_HoverE", &Electron_HoverE, "Electron_HoverE[Nelectrons]/D");
 		DYTree->Branch("Electron_fbrem", &Electron_fbrem, "Electron_fbrem[Nelectrons]/D");
 		DYTree->Branch("Electron_eOverP", &Electron_eOverP, "Electron_eOverP[Nelectrons]/D");
@@ -2233,10 +2237,12 @@ void DYntupleMaker::fillElectrons(const edm::Event &iEvent)
 
 		// -- Information from ECAL  -- //
 		Electron_sigmaIEtaIEta[_nElectron] = el->full5x5_sigmaIetaIeta();
+		Electron_Full5x5_SigmaIEtaIEta[_nElectron] = el->full5x5_sigmaIetaIeta();
 		Electron_E15[_nElectron] = el->e1x5();
 		Electron_E25[_nElectron] = el->e2x5Max();
 		Electron_E55[_nElectron] = el->e5x5();
-		Electron_HoverE[_nElectron] = el->hcalOverEcal();
+		// Electron_HoverE[_nElectron] = el->hcalOverEcal();
+		Electron_HoverE[_nElectron] = el->hadronicOverEm(); // -- https://github.com/ikrav/cmssw/blob/egm_id_80X_v1/RecoEgamma/ElectronIdentification/plugins/cuts/GsfEleHadronicOverEMCut.cc#L40 -- //
 		Electron_etaWidth[_nElectron] = el->superCluster()->etaWidth();
 		Electron_phiWidth[_nElectron] = el->superCluster()->phiWidth();
 		Electron_r9[_nElectron] = el->r9();
@@ -2244,6 +2250,10 @@ void DYntupleMaker::fillElectrons(const edm::Event &iEvent)
 		// -- Information from ECAL & Track -- //
 		Electron_dEtaIn[_nElectron] = el->deltaEtaSuperClusterTrackAtVtx();
 		Electron_dPhiIn[_nElectron] = el->deltaPhiSuperClusterTrackAtVtx();
+
+		// -- https://github.com/ikrav/cmssw/blob/egm_id_80X_v1/RecoEgamma/ElectronIdentification/plugins/cuts/GsfEleDEtaInSeedCut.cc#L30-L33 -- //
+		Electron_dEtaInSeed[_nElectron] = el->superCluster().isNonnull() && el->superCluster()->seed().isNonnull() ?
+		el->deltaEtaSuperClusterTrackAtVtx() - el->superCluster()->eta() + el->superCluster()->seed()->eta() : std::numeric_limits<float>::max();
 
 		// -- |1/E-1/p| = |1/E - EoverPinner/E| is computed below. The if protects against ecalEnergy == inf or zero -- //
 		if( el->ecalEnergy() == 0 ) 
@@ -2265,8 +2275,8 @@ void DYntupleMaker::fillElectrons(const edm::Event &iEvent)
 		Electron_ChIso03FromPU[_nElectron] = pfChargedFromPU;
 		Electron_RelPFIso_dBeta[_nElectron] = (pfCharged + max<float>( 0.0, pfNeutral + pfPhoton - 0.5 * pfChargedFromPU))/(el->pt());
 		
-		// The effective areas constants file in the local release or default CMSSW, whichever is found
-		edm::FileInPath eaConstantsFile("RecoEgamma/ElectronIdentification/data/PHYS14/effAreaElectrons_cone03_pfNeuHadronsAndPhotons.txt");
+		// -- https://github.com/ikrav/cmssw/blob/egm_id_80X_v1/RecoEgamma/ElectronIdentification/data/Summer16/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_80X.txt -- //
+		edm::FileInPath eaConstantsFile("RecoEgamma/ElectronIdentification/data/Summer16/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_80X.txt");
 		EffectiveAreas effectiveAreas(eaConstantsFile.fullPath());
 		float abseta = fabs(el->superCluster()->eta());
 		float eA = effectiveAreas.getEffectiveArea(abseta);
@@ -2277,7 +2287,11 @@ void DYntupleMaker::fillElectrons(const edm::Event &iEvent)
 		// -- Track - Impact Parameter, Conversion rejection, Converted -- //
 		reco::GsfTrackRef elecTrk = el->gsfTrack();
 
-		Electron_mHits[_nElectron] = elecTrk->numberOfLostHits();
+		// Electron_mHits[_nElectron] = elecTrk->numberOfLostHits();
+		// -- https://github.com/ikrav/cmssw/blob/egm_id_80X_v1/RecoEgamma/ElectronIdentification/plugins/cuts/GsfEleMissingHitsCut.cc#L34-L41 -- //
+		constexpr reco::HitPattern::HitCategory missingHitType = reco::HitPattern::MISSING_INNER_HITS;
+		Electron_mHits[_nElectron] = elecTrk->hitPattern().numberOfHits(missingHitType);
+		
 		Electron_dxy[_nElectron] = elecTrk->dxy();
 		Electron_dz[_nElectron] = elecTrk->dz();
 		Electron_dxyBS[_nElectron] = elecTrk->dxy(beamSpot.position());
