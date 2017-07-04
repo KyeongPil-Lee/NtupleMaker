@@ -21,7 +21,7 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 #   FileName = "file:/cms/home/kplee/scratch/ROOTFiles_Test/80X/SingleMuon_Run2016B_v2_Run273450.root"
 
 import os
-DirPath = "/pnfs/knu.ac.kr/data/cms/store/user/joon/HAA4Mu_Modified/HAA4Mu_Modified_H2000A1_MINIAOD/170514_095007/0000"
+DirPath = "/pnfs/knu.ac.kr/data/cms/store/user/joon/HAA4Mu_Modified/HAA4Mu_Modified_H800A50_MINIAOD/170514_095129/0000"
 ROOTFileList = os.listdir( DirPath )
 
 List_Files = []
@@ -35,7 +35,7 @@ process.source = cms.Source("PoolSource",
 	fileNames = cms.untracked.vstring( List_Files )
 )
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(3000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 # -- Geometry and Detector Conditions (needed for a few patTuple production steps) -- #
 process.load("TrackingTools/TransientTrack/TransientTrackBuilder_cfi")
