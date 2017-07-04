@@ -1503,25 +1503,29 @@ void DYntupleMaker::hltReport(const edm::Event &iEvent)
 		
 	} // -- end of if( !trigResult.failedToGet() ) -- //
 
-	Handle<TriggerResults> trigResultPAT;
-	iEvent.getByToken(TriggerTokenPAT, trigResultPAT);
-
-	if( !trigResultPAT.failedToGet() )
+	const bool isRD = iEvent.isRealData();
+	if( isRD )
 	{
-		const edm::TriggerNames trigName = iEvent.triggerNames(*trigResultPAT);
+		Handle<TriggerResults> trigResultPAT;
+		iEvent.getByToken(TriggerTokenPAT, trigResultPAT);
 
-		// cout << "trigger names in trigger result (PAT)" << endl;
-		// for(int itrig=0; itrig<(int)trigName.size(); itrig++)
-		// 	cout << "trigName = " << trigName.triggerName(itrig) << " " << itrig << endl;
+		if( !trigResultPAT.failedToGet() )
+		{
+			const edm::TriggerNames trigName = iEvent.triggerNames(*trigResultPAT);
 
-		if( trigResultPAT->accept(trigName.triggerIndex("Flag_badMuons")) ) Flag_badMuons = true;
-		if( trigResultPAT->accept(trigName.triggerIndex("Flag_duplicateMuons")) ) Flag_duplicateMuons = true;
-		if( trigResultPAT->accept(trigName.triggerIndex("Flag_noBadMuons")) ) Flag_noBadMuons = true;
+			// cout << "trigger names in trigger result (PAT)" << endl;
+			// for(int itrig=0; itrig<(int)trigName.size(); itrig++)
+			// 	cout << "trigName = " << trigName.triggerName(itrig) << " " << itrig << endl;
 
-		cout << "Flag_badMuons: " << Flag_badMuons << endl;
-		cout << "Flag_duplicateMuons: " << Flag_duplicateMuons << endl;
-		cout << "Flag_noBadMuons: " << Flag_noBadMuons << endl;
-		cout << endl;
+			if( trigResultPAT->accept(trigName.triggerIndex("Flag_badMuons")) ) Flag_badMuons = true;
+			if( trigResultPAT->accept(trigName.triggerIndex("Flag_duplicateMuons")) ) Flag_duplicateMuons = true;
+			if( trigResultPAT->accept(trigName.triggerIndex("Flag_noBadMuons")) ) Flag_noBadMuons = true;
+
+			cout << "Flag_badMuons: " << Flag_badMuons << endl;
+			cout << "Flag_duplicateMuons: " << Flag_duplicateMuons << endl;
+			cout << "Flag_noBadMuons: " << Flag_noBadMuons << endl;
+			cout << endl;
+		}
 	}
 
 	
