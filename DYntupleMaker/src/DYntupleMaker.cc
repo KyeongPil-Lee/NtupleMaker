@@ -2227,6 +2227,7 @@ void DYntupleMaker::fillElectrons(const edm::Event &iEvent)
 		Electron_Energy[_nElectron] = el->energy();
 		Electron_charge[_nElectron] = el->charge();
 		Electron_fbrem[_nElectron] = el->fbrem();
+		Electron_eOverP[_nElectron] = el->eSuperClusterOverP();
 		Electron_ecalDriven[_nElectron] = el->ecalDrivenSeed();
 
 		// -- Information from SuperCluster -- //
@@ -2389,55 +2390,55 @@ void DYntupleMaker::fillElectrons(const edm::Event &iEvent)
 		} // -- end of for(int j=0; j<(int)ElecHandle->size(); j++): 2nd electron iteration -- //
 
 
-		// cout << "##### fillElectrons: Start gsf track associated electron collector #####" << endl;
+		cout << "##### fillElectrons: Start gsf track associated electron collector #####" << endl;
 
-		// // -- check gsf track associated electron collector -- //
-		// for( GsfTrackRefVector::const_iterator igsf = el->ambiguousGsfTracksBegin(); igsf != el->ambiguousGsfTracksEnd(); ++igsf )
-		// {
-		// 	if( (*igsf)->pt() > 30. )
-		// 		_ambGsfTrkPt.push_back((*igsf)->pt());
-		// }
+		// -- check gsf track associated electron collector -- //
+		for( GsfTrackRefVector::const_iterator igsf = el->ambiguousGsfTracksBegin(); igsf != el->ambiguousGsfTracksEnd(); ++igsf )
+		{
+			if( (*igsf)->pt() > 30. )
+				_ambGsfTrkPt.push_back((*igsf)->pt());
+		}
 
-		// std::sort(_ambGsfTrkPt.begin(), _ambGsfTrkPt.end(), std::greater<double>());
-		// for( GsfTrackRefVector::const_iterator igsf = el->ambiguousGsfTracksBegin(); igsf != el->ambiguousGsfTracksEnd(); ++igsf )
-		// {
-		// 	if( (*igsf)->pt() > 30. )
-		// 	{
-		// 		if( fabs(_ambGsfTrkPt[0]-(*igsf)->pt()) < 0.00001 )
-		// 		{
-		// 			Electron_ambGsf0Pt[_nElectron] = (*igsf)->pt();
-		// 			Electron_ambGsf0Eta[_nElectron] = (*igsf)->eta();
-		// 			Electron_ambGsf0Phi[_nElectron] = (*igsf)->phi();
-		// 			Electron_ambGsf0Charge[_nElectron] = (*igsf)->charge();
-		// 		}
+		std::sort(_ambGsfTrkPt.begin(), _ambGsfTrkPt.end(), std::greater<double>());
+		for( GsfTrackRefVector::const_iterator igsf = el->ambiguousGsfTracksBegin(); igsf != el->ambiguousGsfTracksEnd(); ++igsf )
+		{
+			if( (*igsf)->pt() > 30. )
+			{
+				if( fabs(_ambGsfTrkPt[0]-(*igsf)->pt()) < 0.00001 )
+				{
+					Electron_ambGsf0Pt[_nElectron] = (*igsf)->pt();
+					Electron_ambGsf0Eta[_nElectron] = (*igsf)->eta();
+					Electron_ambGsf0Phi[_nElectron] = (*igsf)->phi();
+					Electron_ambGsf0Charge[_nElectron] = (*igsf)->charge();
+				}
 
-		// 		if( fabs(_ambGsfTrkPt[1]-(*igsf)->pt()) < 0.00001 )
-		// 		{
-		// 			Electron_ambGsf1Pt[_nElectron] = (*igsf)->pt();
-		// 			Electron_ambGsf1Eta[_nElectron] = (*igsf)->eta();
-		// 			Electron_ambGsf1Phi[_nElectron] = (*igsf)->phi();
-		// 			Electron_ambGsf1Charge[_nElectron] = (*igsf)->charge();
-		// 		}
+				if( fabs(_ambGsfTrkPt[1]-(*igsf)->pt()) < 0.00001 )
+				{
+					Electron_ambGsf1Pt[_nElectron] = (*igsf)->pt();
+					Electron_ambGsf1Eta[_nElectron] = (*igsf)->eta();
+					Electron_ambGsf1Phi[_nElectron] = (*igsf)->phi();
+					Electron_ambGsf1Charge[_nElectron] = (*igsf)->charge();
+				}
 
-		// 		if( fabs(_ambGsfTrkPt[2]-(*igsf)->pt()) < 0.00001 ) 
-		// 		{
-		// 			Electron_ambGsf2Pt[_nElectron] = (*igsf)->pt();
-		// 			Electron_ambGsf2Eta[_nElectron] = (*igsf)->eta();
-		// 			Electron_ambGsf2Phi[_nElectron] = (*igsf)->phi();
-		// 			Electron_ambGsf2Charge[_nElectron] = (*igsf)->charge();
-		// 		}
+				if( fabs(_ambGsfTrkPt[2]-(*igsf)->pt()) < 0.00001 ) 
+				{
+					Electron_ambGsf2Pt[_nElectron] = (*igsf)->pt();
+					Electron_ambGsf2Eta[_nElectron] = (*igsf)->eta();
+					Electron_ambGsf2Phi[_nElectron] = (*igsf)->phi();
+					Electron_ambGsf2Charge[_nElectron] = (*igsf)->charge();
+				}
 
-		// 		if( fabs(_ambGsfTrkPt[3]-(*igsf)->pt()) < 0.00001 ) 
-		// 		{
-		// 			Electron_ambGsf3Pt[_nElectron] = (*igsf)->pt();
-		// 			Electron_ambGsf3Eta[_nElectron] = (*igsf)->eta();
-		// 			Electron_ambGsf3Phi[_nElectron] = (*igsf)->phi();
-		// 			Electron_ambGsf3Charge[_nElectron] = (*igsf)->charge();
-		// 		}
+				if( fabs(_ambGsfTrkPt[3]-(*igsf)->pt()) < 0.00001 ) 
+				{
+					Electron_ambGsf3Pt[_nElectron] = (*igsf)->pt();
+					Electron_ambGsf3Eta[_nElectron] = (*igsf)->eta();
+					Electron_ambGsf3Phi[_nElectron] = (*igsf)->phi();
+					Electron_ambGsf3Charge[_nElectron] = (*igsf)->charge();
+				}
 
-		// 	} // -- end of if( (*igsf)->pt() > 30. ) -- // 
+			} // -- end of if( (*igsf)->pt() > 30. ) -- // 
 
-		// } // -- end of for( GsfTrackRefVector::const_iterator igsf = el->ambiguousGsfTracksBegin(); igsf != el->ambiguousGsfTracksEnd(); ++igsf ) -- //
+		} // -- end of for( GsfTrackRefVector::const_iterator igsf = el->ambiguousGsfTracksBegin(); igsf != el->ambiguousGsfTracksEnd(); ++igsf ) -- //
 
 		_nElectron++;
 
