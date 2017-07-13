@@ -2393,52 +2393,61 @@ void DYntupleMaker::fillElectrons(const edm::Event &iEvent)
 		cout << "##### fillElectrons: Start gsf track associated electron collector #####" << endl;
 
 		// -- check gsf track associated electron collector -- //
-		for( GsfTrackRefVector::const_iterator igsf = el->ambiguousGsfTracksBegin(); igsf != el->ambiguousGsfTracksEnd(); ++igsf )
+		if( el->ambiguousGsfTracksBegin() != el->ambiguousGsfTracksEnd() ) // -- if it is not empty vector -- //
 		{
-			if( (*igsf)->pt() > 30. )
-				_ambGsfTrkPt.push_back((*igsf)->pt());
-		}
-
-		std::sort(_ambGsfTrkPt.begin(), _ambGsfTrkPt.end(), std::greater<double>());
-		for( GsfTrackRefVector::const_iterator igsf = el->ambiguousGsfTracksBegin(); igsf != el->ambiguousGsfTracksEnd(); ++igsf )
-		{
-			if( (*igsf)->pt() > 30. )
+			for( GsfTrackRefVector::const_iterator igsf = el->ambiguousGsfTracksBegin(); igsf != el->ambiguousGsfTracksEnd(); ++igsf )
 			{
-				if( fabs(_ambGsfTrkPt[0]-(*igsf)->pt()) < 0.00001 )
+				if( (*igsf)->pt() > 30. )
+					_ambGsfTrkPt.push_back((*igsf)->pt());
+			}
+
+			int nAmbGsfTrk = (int)_ambGsfTrkPt.size();
+			if( nAmbGsfTrk >= 4 )
+			{
+				std::sort(_ambGsfTrkPt.begin(), _ambGsfTrkPt.end(), std::greater<double>());
+				for( GsfTrackRefVector::const_iterator igsf = el->ambiguousGsfTracksBegin(); igsf != el->ambiguousGsfTracksEnd(); ++igsf )
 				{
-					Electron_ambGsf0Pt[_nElectron] = (*igsf)->pt();
-					Electron_ambGsf0Eta[_nElectron] = (*igsf)->eta();
-					Electron_ambGsf0Phi[_nElectron] = (*igsf)->phi();
-					Electron_ambGsf0Charge[_nElectron] = (*igsf)->charge();
-				}
+					if( (*igsf)->pt() > 30. )
+					{
+						if( fabs(_ambGsfTrkPt[0]-(*igsf)->pt()) < 0.00001 )
+						{
+							Electron_ambGsf0Pt[_nElectron] = (*igsf)->pt();
+							Electron_ambGsf0Eta[_nElectron] = (*igsf)->eta();
+							Electron_ambGsf0Phi[_nElectron] = (*igsf)->phi();
+							Electron_ambGsf0Charge[_nElectron] = (*igsf)->charge();
+						}
 
-				if( fabs(_ambGsfTrkPt[1]-(*igsf)->pt()) < 0.00001 )
-				{
-					Electron_ambGsf1Pt[_nElectron] = (*igsf)->pt();
-					Electron_ambGsf1Eta[_nElectron] = (*igsf)->eta();
-					Electron_ambGsf1Phi[_nElectron] = (*igsf)->phi();
-					Electron_ambGsf1Charge[_nElectron] = (*igsf)->charge();
-				}
+						if( fabs(_ambGsfTrkPt[1]-(*igsf)->pt()) < 0.00001 )
+						{
+							Electron_ambGsf1Pt[_nElectron] = (*igsf)->pt();
+							Electron_ambGsf1Eta[_nElectron] = (*igsf)->eta();
+							Electron_ambGsf1Phi[_nElectron] = (*igsf)->phi();
+							Electron_ambGsf1Charge[_nElectron] = (*igsf)->charge();
+						}
 
-				if( fabs(_ambGsfTrkPt[2]-(*igsf)->pt()) < 0.00001 ) 
-				{
-					Electron_ambGsf2Pt[_nElectron] = (*igsf)->pt();
-					Electron_ambGsf2Eta[_nElectron] = (*igsf)->eta();
-					Electron_ambGsf2Phi[_nElectron] = (*igsf)->phi();
-					Electron_ambGsf2Charge[_nElectron] = (*igsf)->charge();
-				}
+						if( fabs(_ambGsfTrkPt[2]-(*igsf)->pt()) < 0.00001 ) 
+						{
+							Electron_ambGsf2Pt[_nElectron] = (*igsf)->pt();
+							Electron_ambGsf2Eta[_nElectron] = (*igsf)->eta();
+							Electron_ambGsf2Phi[_nElectron] = (*igsf)->phi();
+							Electron_ambGsf2Charge[_nElectron] = (*igsf)->charge();
+						}
 
-				if( fabs(_ambGsfTrkPt[3]-(*igsf)->pt()) < 0.00001 ) 
-				{
-					Electron_ambGsf3Pt[_nElectron] = (*igsf)->pt();
-					Electron_ambGsf3Eta[_nElectron] = (*igsf)->eta();
-					Electron_ambGsf3Phi[_nElectron] = (*igsf)->phi();
-					Electron_ambGsf3Charge[_nElectron] = (*igsf)->charge();
-				}
+						if( fabs(_ambGsfTrkPt[3]-(*igsf)->pt()) < 0.00001 ) 
+						{
+							Electron_ambGsf3Pt[_nElectron] = (*igsf)->pt();
+							Electron_ambGsf3Eta[_nElectron] = (*igsf)->eta();
+							Electron_ambGsf3Phi[_nElectron] = (*igsf)->phi();
+							Electron_ambGsf3Charge[_nElectron] = (*igsf)->charge();
+						}
 
-			} // -- end of if( (*igsf)->pt() > 30. ) -- // 
+					} // -- end of if( (*igsf)->pt() > 30. ) -- // 
 
-		} // -- end of for( GsfTrackRefVector::const_iterator igsf = el->ambiguousGsfTracksBegin(); igsf != el->ambiguousGsfTracksEnd(); ++igsf ) -- //
+				} // -- end of for( GsfTrackRefVector::const_iterator igsf = el->ambiguousGsfTracksBegin(); igsf != el->ambiguousGsfTracksEnd(); ++igsf ) -- //
+
+			} // -- end of if( nAmbGsfTrk >= 4 ) -- //
+
+		} // -- end of if( el->ambiguousGsfTracksBegin() != el->ambiguousGsfTracksEnd() ) -- //
 
 		_nElectron++;
 
