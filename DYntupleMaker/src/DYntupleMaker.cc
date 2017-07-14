@@ -2390,7 +2390,7 @@ void DYntupleMaker::fillElectrons(const edm::Event &iEvent)
 		} // -- end of for(int j=0; j<(int)ElecHandle->size(); j++): 2nd electron iteration -- //
 
 
-		cout << "##### fillElectrons: Start gsf track associated electron collector #####" << endl;
+		// cout << "##### fillElectrons: Start gsf track associated electron collector #####" << endl;
 
 		// // -- check gsf track associated electron collector -- //
 		// if( el->ambiguousGsfTracksBegin() != el->ambiguousGsfTracksEnd() ) // -- if it is not empty vector -- //
