@@ -18,7 +18,7 @@ config.Data.publication = False
 
 config.Site.storageSite = 'T2_KR_KNU'
 
-version = '_v20170704_UpdateElecVar_'
+version = '_v20170714_UpdateElecVar_v2_'
 # 'MultiCRAB' part
 if __name__ == '__main__':
     
