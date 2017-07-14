@@ -399,8 +399,10 @@ void DYntupleMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 		Electron_etaWidth[i] = -9999;
 		Electron_phiWidth[i] = -9999;
 		Electron_dEtaIn[i] = -9999;
+		Electron_dEtaInSeed[i] = -9999;
 		Electron_dPhiIn[i] = -9999;
 		Electron_sigmaIEtaIEta[i] = -9999;
+		Electron_Full5x5_SigmaIEtaIEta[i] = -9999;
 		Electron_HoverE[i] = -9999;
 		Electron_fbrem[i] = -9999;
 		Electron_eOverP[i] = -9999;
@@ -873,8 +875,10 @@ void DYntupleMaker::beginJob()
 		DYTree->Branch("Electron_etaWidth", &Electron_etaWidth, "Electron_etaWidth[Nelectrons]/D");
 		DYTree->Branch("Electron_phiWidth", &Electron_phiWidth, "Electron_phiWidth[Nelectrons]/D");
 		DYTree->Branch("Electron_dEtaIn", &Electron_dEtaIn, "Electron_dEtaIn[Nelectrons]/D");
+		DYTree->Branch("Electron_dEtaInSeed", &Electron_dEtaInSeed, "Electron_dEtaInSeed[Nelectrons]/D");
 		DYTree->Branch("Electron_dPhiIn", &Electron_dPhiIn, "Electron_dPhiIn[Nelectrons]/D");
 		DYTree->Branch("Electron_sigmaIEtaIEta", &Electron_sigmaIEtaIEta, "Electron_sigmaIEtaIEta[Nelectrons]/D");
+		DYTree->Branch("Electron_Full5x5_SigmaIEtaIEta", &Electron_Full5x5_SigmaIEtaIEta, "Electron_Full5x5_SigmaIEtaIEta[Nelectrons]/D");
 		DYTree->Branch("Electron_HoverE", &Electron_HoverE, "Electron_HoverE[Nelectrons]/D");
 		DYTree->Branch("Electron_fbrem", &Electron_fbrem, "Electron_fbrem[Nelectrons]/D");
 		DYTree->Branch("Electron_eOverP", &Electron_eOverP, "Electron_eOverP[Nelectrons]/D");
@@ -1499,25 +1503,29 @@ void DYntupleMaker::hltReport(const edm::Event &iEvent)
 		
 	} // -- end of if( !trigResult.failedToGet() ) -- //
 
-	Handle<TriggerResults> trigResultPAT;
-	iEvent.getByToken(TriggerTokenPAT, trigResultPAT);
-
-	if( !trigResultPAT.failedToGet() )
+	const bool isRD = iEvent.isRealData();
+	if( isRD )
 	{
-		const edm::TriggerNames trigName = iEvent.triggerNames(*trigResultPAT);
+		Handle<TriggerResults> trigResultPAT;
+		iEvent.getByToken(TriggerTokenPAT, trigResultPAT);
 
-		// cout << "trigger names in trigger result (PAT)" << endl;
-		// for(int itrig=0; itrig<(int)trigName.size(); itrig++)
-		// 	cout << "trigName = " << trigName.triggerName(itrig) << " " << itrig << endl;
+		if( !trigResultPAT.failedToGet() )
+		{
+			const edm::TriggerNames trigName = iEvent.triggerNames(*trigResultPAT);
 
-		if( trigResultPAT->accept(trigName.triggerIndex("Flag_badMuons")) ) Flag_badMuons = true;
-		if( trigResultPAT->accept(trigName.triggerIndex("Flag_duplicateMuons")) ) Flag_duplicateMuons = true;
-		if( trigResultPAT->accept(trigName.triggerIndex("Flag_noBadMuons")) ) Flag_noBadMuons = true;
+			// cout << "trigger names in trigger result (PAT)" << endl;
+			// for(int itrig=0; itrig<(int)trigName.size(); itrig++)
+			// 	cout << "trigName = " << trigName.triggerName(itrig) << " " << itrig << endl;
 
-		cout << "Flag_badMuons: " << Flag_badMuons << endl;
-		cout << "Flag_duplicateMuons: " << Flag_duplicateMuons << endl;
-		cout << "Flag_noBadMuons: " << Flag_noBadMuons << endl;
-		cout << endl;
+			if( trigResultPAT->accept(trigName.triggerIndex("Flag_badMuons")) ) Flag_badMuons = true;
+			if( trigResultPAT->accept(trigName.triggerIndex("Flag_duplicateMuons")) ) Flag_duplicateMuons = true;
+			if( trigResultPAT->accept(trigName.triggerIndex("Flag_noBadMuons")) ) Flag_noBadMuons = true;
+
+			cout << "Flag_badMuons: " << Flag_badMuons << endl;
+			cout << "Flag_duplicateMuons: " << Flag_duplicateMuons << endl;
+			cout << "Flag_noBadMuons: " << Flag_noBadMuons << endl;
+			cout << endl;
+		}
 	}
 
 	
@@ -2219,6 +2227,7 @@ void DYntupleMaker::fillElectrons(const edm::Event &iEvent)
 		Electron_Energy[_nElectron] = el->energy();
 		Electron_charge[_nElectron] = el->charge();
 		Electron_fbrem[_nElectron] = el->fbrem();
+		Electron_eOverP[_nElectron] = el->eSuperClusterOverP();
 		Electron_ecalDriven[_nElectron] = el->ecalDrivenSeed();
 
 		// -- Information from SuperCluster -- //
@@ -2233,10 +2242,12 @@ void DYntupleMaker::fillElectrons(const edm::Event &iEvent)
 
 		// -- Information from ECAL  -- //
 		Electron_sigmaIEtaIEta[_nElectron] = el->full5x5_sigmaIetaIeta();
+		Electron_Full5x5_SigmaIEtaIEta[_nElectron] = el->full5x5_sigmaIetaIeta();
 		Electron_E15[_nElectron] = el->e1x5();
 		Electron_E25[_nElectron] = el->e2x5Max();
 		Electron_E55[_nElectron] = el->e5x5();
-		Electron_HoverE[_nElectron] = el->hcalOverEcal();
+		// Electron_HoverE[_nElectron] = el->hcalOverEcal();
+		Electron_HoverE[_nElectron] = el->hadronicOverEm(); // -- https://github.com/ikrav/cmssw/blob/egm_id_80X_v1/RecoEgamma/ElectronIdentification/plugins/cuts/GsfEleHadronicOverEMCut.cc#L40 -- //
 		Electron_etaWidth[_nElectron] = el->superCluster()->etaWidth();
 		Electron_phiWidth[_nElectron] = el->superCluster()->phiWidth();
 		Electron_r9[_nElectron] = el->r9();
@@ -2244,6 +2255,10 @@ void DYntupleMaker::fillElectrons(const edm::Event &iEvent)
 		// -- Information from ECAL & Track -- //
 		Electron_dEtaIn[_nElectron] = el->deltaEtaSuperClusterTrackAtVtx();
 		Electron_dPhiIn[_nElectron] = el->deltaPhiSuperClusterTrackAtVtx();
+
+		// -- https://github.com/ikrav/cmssw/blob/egm_id_80X_v1/RecoEgamma/ElectronIdentification/plugins/cuts/GsfEleDEtaInSeedCut.cc#L30-L33 -- //
+		Electron_dEtaInSeed[_nElectron] = el->superCluster().isNonnull() && el->superCluster()->seed().isNonnull() ?
+		el->deltaEtaSuperClusterTrackAtVtx() - el->superCluster()->eta() + el->superCluster()->seed()->eta() : std::numeric_limits<float>::max();
 
 		// -- |1/E-1/p| = |1/E - EoverPinner/E| is computed below. The if protects against ecalEnergy == inf or zero -- //
 		if( el->ecalEnergy() == 0 ) 
@@ -2265,8 +2280,8 @@ void DYntupleMaker::fillElectrons(const edm::Event &iEvent)
 		Electron_ChIso03FromPU[_nElectron] = pfChargedFromPU;
 		Electron_RelPFIso_dBeta[_nElectron] = (pfCharged + max<float>( 0.0, pfNeutral + pfPhoton - 0.5 * pfChargedFromPU))/(el->pt());
 		
-		// The effective areas constants file in the local release or default CMSSW, whichever is found
-		edm::FileInPath eaConstantsFile("RecoEgamma/ElectronIdentification/data/PHYS14/effAreaElectrons_cone03_pfNeuHadronsAndPhotons.txt");
+		// -- https://github.com/ikrav/cmssw/blob/egm_id_80X_v1/RecoEgamma/ElectronIdentification/data/Summer16/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_80X.txt -- //
+		edm::FileInPath eaConstantsFile("RecoEgamma/ElectronIdentification/data/Summer16/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_80X.txt");
 		EffectiveAreas effectiveAreas(eaConstantsFile.fullPath());
 		float abseta = fabs(el->superCluster()->eta());
 		float eA = effectiveAreas.getEffectiveArea(abseta);
@@ -2277,7 +2292,11 @@ void DYntupleMaker::fillElectrons(const edm::Event &iEvent)
 		// -- Track - Impact Parameter, Conversion rejection, Converted -- //
 		reco::GsfTrackRef elecTrk = el->gsfTrack();
 
-		Electron_mHits[_nElectron] = elecTrk->numberOfLostHits();
+		// Electron_mHits[_nElectron] = elecTrk->numberOfLostHits();
+		// -- https://github.com/ikrav/cmssw/blob/egm_id_80X_v1/RecoEgamma/ElectronIdentification/plugins/cuts/GsfEleMissingHitsCut.cc#L34-L41 -- //
+		constexpr reco::HitPattern::HitCategory missingHitType = reco::HitPattern::MISSING_INNER_HITS;
+		Electron_mHits[_nElectron] = elecTrk->hitPattern().numberOfHits(missingHitType);
+		
 		Electron_dxy[_nElectron] = elecTrk->dxy();
 		Electron_dz[_nElectron] = elecTrk->dz();
 		Electron_dxyBS[_nElectron] = elecTrk->dxy(beamSpot.position());
@@ -2374,52 +2393,61 @@ void DYntupleMaker::fillElectrons(const edm::Event &iEvent)
 		// cout << "##### fillElectrons: Start gsf track associated electron collector #####" << endl;
 
 		// // -- check gsf track associated electron collector -- //
-		// for( GsfTrackRefVector::const_iterator igsf = el->ambiguousGsfTracksBegin(); igsf != el->ambiguousGsfTracksEnd(); ++igsf )
+		// if( el->ambiguousGsfTracksBegin() != el->ambiguousGsfTracksEnd() ) // -- if it is not empty vector -- //
 		// {
-		// 	if( (*igsf)->pt() > 30. )
-		// 		_ambGsfTrkPt.push_back((*igsf)->pt());
-		// }
-
-		// std::sort(_ambGsfTrkPt.begin(), _ambGsfTrkPt.end(), std::greater<double>());
-		// for( GsfTrackRefVector::const_iterator igsf = el->ambiguousGsfTracksBegin(); igsf != el->ambiguousGsfTracksEnd(); ++igsf )
-		// {
-		// 	if( (*igsf)->pt() > 30. )
+		// 	for( GsfTrackRefVector::const_iterator igsf = el->ambiguousGsfTracksBegin(); igsf != el->ambiguousGsfTracksEnd(); ++igsf )
 		// 	{
-		// 		if( fabs(_ambGsfTrkPt[0]-(*igsf)->pt()) < 0.00001 )
+		// 		if( (*igsf)->pt() > 30. )
+		// 			_ambGsfTrkPt.push_back((*igsf)->pt());
+		// 	}
+
+		// 	int nAmbGsfTrk = (int)_ambGsfTrkPt.size();
+		// 	if( nAmbGsfTrk >= 4 )
+		// 	{
+		// 		std::sort(_ambGsfTrkPt.begin(), _ambGsfTrkPt.end(), std::greater<double>());
+		// 		for( GsfTrackRefVector::const_iterator igsf = el->ambiguousGsfTracksBegin(); igsf != el->ambiguousGsfTracksEnd(); ++igsf )
 		// 		{
-		// 			Electron_ambGsf0Pt[_nElectron] = (*igsf)->pt();
-		// 			Electron_ambGsf0Eta[_nElectron] = (*igsf)->eta();
-		// 			Electron_ambGsf0Phi[_nElectron] = (*igsf)->phi();
-		// 			Electron_ambGsf0Charge[_nElectron] = (*igsf)->charge();
-		// 		}
+		// 			if( (*igsf)->pt() > 30. )
+		// 			{
+		// 				if( fabs(_ambGsfTrkPt[0]-(*igsf)->pt()) < 0.00001 )
+		// 				{
+		// 					Electron_ambGsf0Pt[_nElectron] = (*igsf)->pt();
+		// 					Electron_ambGsf0Eta[_nElectron] = (*igsf)->eta();
+		// 					Electron_ambGsf0Phi[_nElectron] = (*igsf)->phi();
+		// 					Electron_ambGsf0Charge[_nElectron] = (*igsf)->charge();
+		// 				}
 
-		// 		if( fabs(_ambGsfTrkPt[1]-(*igsf)->pt()) < 0.00001 )
-		// 		{
-		// 			Electron_ambGsf1Pt[_nElectron] = (*igsf)->pt();
-		// 			Electron_ambGsf1Eta[_nElectron] = (*igsf)->eta();
-		// 			Electron_ambGsf1Phi[_nElectron] = (*igsf)->phi();
-		// 			Electron_ambGsf1Charge[_nElectron] = (*igsf)->charge();
-		// 		}
+		// 				if( fabs(_ambGsfTrkPt[1]-(*igsf)->pt()) < 0.00001 )
+		// 				{
+		// 					Electron_ambGsf1Pt[_nElectron] = (*igsf)->pt();
+		// 					Electron_ambGsf1Eta[_nElectron] = (*igsf)->eta();
+		// 					Electron_ambGsf1Phi[_nElectron] = (*igsf)->phi();
+		// 					Electron_ambGsf1Charge[_nElectron] = (*igsf)->charge();
+		// 				}
 
-		// 		if( fabs(_ambGsfTrkPt[2]-(*igsf)->pt()) < 0.00001 ) 
-		// 		{
-		// 			Electron_ambGsf2Pt[_nElectron] = (*igsf)->pt();
-		// 			Electron_ambGsf2Eta[_nElectron] = (*igsf)->eta();
-		// 			Electron_ambGsf2Phi[_nElectron] = (*igsf)->phi();
-		// 			Electron_ambGsf2Charge[_nElectron] = (*igsf)->charge();
-		// 		}
+		// 				if( fabs(_ambGsfTrkPt[2]-(*igsf)->pt()) < 0.00001 ) 
+		// 				{
+		// 					Electron_ambGsf2Pt[_nElectron] = (*igsf)->pt();
+		// 					Electron_ambGsf2Eta[_nElectron] = (*igsf)->eta();
+		// 					Electron_ambGsf2Phi[_nElectron] = (*igsf)->phi();
+		// 					Electron_ambGsf2Charge[_nElectron] = (*igsf)->charge();
+		// 				}
 
-		// 		if( fabs(_ambGsfTrkPt[3]-(*igsf)->pt()) < 0.00001 ) 
-		// 		{
-		// 			Electron_ambGsf3Pt[_nElectron] = (*igsf)->pt();
-		// 			Electron_ambGsf3Eta[_nElectron] = (*igsf)->eta();
-		// 			Electron_ambGsf3Phi[_nElectron] = (*igsf)->phi();
-		// 			Electron_ambGsf3Charge[_nElectron] = (*igsf)->charge();
-		// 		}
+		// 				if( fabs(_ambGsfTrkPt[3]-(*igsf)->pt()) < 0.00001 ) 
+		// 				{
+		// 					Electron_ambGsf3Pt[_nElectron] = (*igsf)->pt();
+		// 					Electron_ambGsf3Eta[_nElectron] = (*igsf)->eta();
+		// 					Electron_ambGsf3Phi[_nElectron] = (*igsf)->phi();
+		// 					Electron_ambGsf3Charge[_nElectron] = (*igsf)->charge();
+		// 				}
 
-		// 	} // -- end of if( (*igsf)->pt() > 30. ) -- // 
+		// 			} // -- end of if( (*igsf)->pt() > 30. ) -- // 
 
-		// } // -- end of for( GsfTrackRefVector::const_iterator igsf = el->ambiguousGsfTracksBegin(); igsf != el->ambiguousGsfTracksEnd(); ++igsf ) -- //
+		// 		} // -- end of for( GsfTrackRefVector::const_iterator igsf = el->ambiguousGsfTracksBegin(); igsf != el->ambiguousGsfTracksEnd(); ++igsf ) -- //
+
+		// 	} // -- end of if( nAmbGsfTrk >= 4 ) -- //
+
+		// } // -- end of if( el->ambiguousGsfTracksBegin() != el->ambiguousGsfTracksEnd() ) -- //
 
 		_nElectron++;
 
