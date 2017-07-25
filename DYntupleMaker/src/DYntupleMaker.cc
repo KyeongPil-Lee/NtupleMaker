@@ -567,7 +567,7 @@ void DYntupleMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 		LHELepton_status[i] = 0;
 		
 		// GEN
-		GENLepton_phi[i] = GENLepton_eta[i] = GENLepton_pT[i] = GENLepton_mother[i] = -100;
+		GENLepton_phi[i] = GENLepton_eta[i] = GENLepton_pT[i] = GENLepton_mother[i] = GENLepton_mother_pT[i] = -100;
 		GENLepton_Px[i] = GENLepton_Py[i] = GENLepton_Pz[i] = -100;
 		GENLepton_charge[i] = GENLepton_status[i] = GENLepton_ID[i] = -100;
 		GENLepton_isPrompt[i] = 0;
@@ -1124,6 +1124,7 @@ void DYntupleMaker::beginJob()
 		DYTree->Branch("GENLepton_Py", &GENLepton_Py,"GENLepton_Py[GENnPair]/D");
 		DYTree->Branch("GENLepton_Pz", &GENLepton_Pz,"GENLepton_Pz[GENnPair]/D");
 		DYTree->Branch("GENLepton_mother", &GENLepton_mother,"GENLepton_mother[GENnPair]/D");
+		DYTree->Branch("GENLepton_mother_pT", &GENLepton_mother_pT,"GENLepton_mother_pT[GENnPair]/D");
 		DYTree->Branch("GENLepton_charge", &GENLepton_charge,"GENLepton_charge[GENnPair]/I");
 		DYTree->Branch("GENLepton_status", &GENLepton_status,"GENLepton_status[GENnPair]/I");
 		DYTree->Branch("GENLepton_ID", &GENLepton_ID,"GENLepton_ID[GENnPair]/I");
@@ -2522,6 +2523,7 @@ void DYntupleMaker::fillGENInfo(const edm::Event &iEvent)
 			GENLepton_charge[_GennPair] = parCand.charge();
 			GENLepton_status[_GennPair] = parCand.status();
 			GENLepton_mother[_GennPair] = parCand.mother(0)->pdgId();
+			GENLepton_mother_pT[_GennPair] = parCand.mother(0)->pt();
 
 			//Flags (Ref: https://indico.cern.ch/event/402279/contribution/5/attachments/805964/1104514/mcaod-Jun17-2015.pdf)
 			GENLepton_isPrompt[_GennPair] = parCand.statusFlags().isPrompt(); //not from hadron, muon or tau decay

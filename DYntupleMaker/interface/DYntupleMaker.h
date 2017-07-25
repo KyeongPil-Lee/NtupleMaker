@@ -628,6 +628,7 @@ private:
 	double GENLepton_Py[MPSIZE];
 	double GENLepton_Pz[MPSIZE];
 	double GENLepton_mother[MPSIZE];
+	double GENLepton_mother_pT[MPSIZE];
 	int GENLepton_charge[MPSIZE];
 	int GENLepton_status[MPSIZE];
 	int GENLepton_ID[MPSIZE];
