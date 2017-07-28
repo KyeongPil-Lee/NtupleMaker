@@ -12,5 +12,5 @@
 	cmsrel CMSSW_8_0_26_patch1
 	cd CMSSW_8_0_26_patch1/src
 	cmsenv
-	git clone https://github.com/KyeongPil-Lee/NtupleMaker.git Phys -b 80X
+	git clone https://github.com/KyeongPil-Lee/NtupleMaker.git Phys -b 80X_AOD
 	scram b -j 20 >&log&
