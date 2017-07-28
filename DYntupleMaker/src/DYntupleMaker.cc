@@ -101,6 +101,7 @@
 #include "DataFormats/Common/interface/TriggerResults.h"
 #include "FWCore/Common/interface/TriggerNames.h"
 #include "DataFormats/HLTReco/interface/TriggerEvent.h"
+#include "DataFormats/HLTReco/interface/TriggerObject.h"
 #include "DataFormats/PatCandidates/interface/TriggerObjectStandAlone.h"
 //#include "DataFormats/PatCandidates/interface/TriggerPrimitive.h"
 
@@ -158,7 +159,7 @@ using namespace isodeposit;
 // -- Constructor -- //
 DYntupleMaker::DYntupleMaker(const edm::ParameterSet& iConfig):
 // -- object tokens -- //
-MuonToken						( consumes< std::vector<pat::Muon> > 				(iConfig.getUntrackedParameter<edm::InputTag>("Muon")) ),
+MuonToken						( consumes< std::vector<reco::Muon> > 				(iConfig.getUntrackedParameter<edm::InputTag>("Muon")) ),
 ElectronToken					( consumes< edm::View<reco::GsfElectron> >			(iConfig.getUntrackedParameter<edm::InputTag>("Electron")) ),
 PhotonToken 					( consumes< edm::View<reco::Photon> >				(iConfig.getUntrackedParameter<edm::InputTag>("Photon")) ),
 JetToken 						( consumes< std::vector<pat::Jet> >					(iConfig.getUntrackedParameter<edm::InputTag>("Jet")) ),
@@ -185,6 +186,7 @@ phoPhotonIsolationToken 		( consumes< edm::ValueMap<float> > 					(iConfig.getUn
 TriggerToken 					( consumes< edm::TriggerResults >  					(iConfig.getUntrackedParameter<edm::InputTag>("TriggerResults")) ),
 TriggerTokenPAT 				( consumes< edm::TriggerResults >  					(iConfig.getUntrackedParameter<edm::InputTag>("TriggerResultsPAT")) ),
 TriggerObjectToken 				( consumes< std::vector<pat::TriggerObjectStandAlone> >  	(iConfig.getUntrackedParameter<edm::InputTag>("TriggerObject")) ),
+TriggerEventToken				( consumes< trigger::TriggerEvent >  				(iConfig.getUntrackedParameter<edm::InputTag>("TriggerEvent")) ), // -- only for AOD -- //
 // -- Else -- //
 GenEventInfoToken 				( consumes< GenEventInfoProduct >  					(iConfig.getUntrackedParameter<edm::InputTag>("GenEventInfo")) ),
 BeamSpotToken					( consumes< reco::BeamSpot > 						(iConfig.getUntrackedParameter<edm::InputTag>("BeamSpot")) ),
@@ -254,6 +256,7 @@ PileUpInfoToken 				( consumes< std::vector< PileupSummaryInfo > >  	(iConfig.ge
 	theStoreGENFlag                   = iConfig.getUntrackedParameter<bool>("StoreGENFlag", true);
 	theStoreGenOthersFlag             = iConfig.getUntrackedParameter<bool>("StoreGenOthersFlag", false);
 	theStoreTTFlag                    = iConfig.getUntrackedParameter<bool>("StoreTTFlag", false);
+	theStoreGTrackFlag                = iConfig.getUntrackedParameter<bool>("StoreGTrackFlag", false);
 	theStorePhotonFlag                = iConfig.getUntrackedParameter<bool>("StorePhotonFlag", false);
 
 	// -- Filters -- //
@@ -635,6 +638,47 @@ void DYntupleMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 		pfMET_Type1_Py = -100; 
 		pfMET_Type1_SumEt = -100;
 
+
+		TTrack_dxy[i] = -9999;
+		TTrack_dxyErr[i] = -9999;
+		TTrack_d0[i] = -9999;
+		TTrack_d0Err[i] = -9999; 
+		TTrack_dsz[i] = -9999;
+		TTrack_dszErr[i] = -9999;
+		TTrack_dz[i] = -9999;
+		TTrack_dzErr[i] = -9999;
+		TTrack_dxyBS[i] = -9999;
+		TTrack_dszBS[i] = -9999;
+		TTrack_dzBS[i] = -9999;
+		TTrack_pT[i] = -9999;
+		TTrack_Px[i] = -9999;
+		TTrack_Py[i] = -9999;
+		TTrack_Pz[i] = -9999;
+		TTrack_eta[i] = -9999;
+		TTrack_phi[i] = -9999;
+		TTrack_charge[i] = -9999;
+
+		GTrack_dxy[i] = -9999;
+		GTrack_dxyErr[i] = -9999;
+		GTrack_d0[i] = -9999;
+		GTrack_d0Err[i] = -9999; 
+		GTrack_dsz[i] = -9999;
+		GTrack_dszErr[i] = -9999;
+		GTrack_dz[i] = -9999;
+		GTrack_dzErr[i] = -9999;
+		GTrack_dxyBS[i] = -9999;
+		GTrack_dszBS[i] = -9999;
+		GTrack_dzBS[i] = -9999;
+		GTrack_pT[i] = -9999;
+		GTrack_Px[i] = -9999;
+		GTrack_Py[i] = -9999;
+		GTrack_Pz[i] = -9999;
+		GTrack_eta[i] = -9999;
+		GTrack_phi[i] = -9999;
+		GTrack_charge[i] = -9999;
+		GTrack_HighPurity[i] = -9999;
+		GTrack_Tight[i] = -9999;
+		GTrack_Loose[i] = -9999;
 	} // -- End of "i" iteration -- //
 
 	// cout << "##### Analyze:Initialization #####" << endl;
@@ -710,6 +754,7 @@ void DYntupleMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 	if( theStoreMuonFlag ) fillMuons(iEvent, iSetup);
 	if( theStoreElectronFlag ) fillElectrons(iEvent);
 	if( theStoreTTFlag ) fillTT(iEvent);
+	if( theStoreGTrackFlag ) fillGTrack( iEvent );
 	DYTree->Fill();
 }
 
@@ -1230,6 +1275,32 @@ void DYntupleMaker::beginJob()
 		DYTree->Branch("TTrack_charge", &TTrack_charge,"TTrack_charge[NTT]/D");
 	}
 
+	if( theStoreGTrackFlag )
+	{
+		DYTree->Branch("nGTrack", &nGTrack,"nGTrack/I");
+		DYTree->Branch("GTrack_dxy", &GTrack_dxy,"GTrack_dxy[nGTrack]/D");
+		DYTree->Branch("GTrack_dxyErr", &GTrack_dxyErr,"GTrack_dxyErr[nGTrack]/D");
+		DYTree->Branch("GTrack_d0", &GTrack_d0,"GTrack_d0[nGTrack]/D");
+		DYTree->Branch("GTrack_d0Err", &GTrack_d0Err,"GTrack_d0Err[nGTrack]/D");
+		DYTree->Branch("GTrack_dsz", &GTrack_dsz,"GTrack_dsz[nGTrack]/D");
+		DYTree->Branch("GTrack_dszErr", &GTrack_dszErr,"GTrack_dszErr[nGTrack]/D");
+		DYTree->Branch("GTrack_dz", &GTrack_dz,"GTrack_dz[nGTrack]/D");
+		DYTree->Branch("GTrack_dzErr", &GTrack_dzErr,"GTrack_dzErr[nGTrack]/D");
+		DYTree->Branch("GTrack_dxyBS", &GTrack_dxyBS,"GTrack_dxyBS[nGTrack]/D");
+		DYTree->Branch("GTrack_dszBS", &GTrack_dszBS,"GTrack_dszBS[nGTrack]/D");
+		DYTree->Branch("GTrack_dzBS", &GTrack_dzBS,"GTrack_dzBS[nGTrack]/D");
+		DYTree->Branch("GTrack_pT", &GTrack_pT,"GTrack_pT[nGTrack]/D");
+		DYTree->Branch("GTrack_Px", &GTrack_Px,"GTrack_Px[nGTrack]/D");
+		DYTree->Branch("GTrack_Py", &GTrack_Py,"GTrack_Py[nGTrack]/D");
+		DYTree->Branch("GTrack_Pz", &GTrack_Pz,"GTrack_Pz[nGTrack]/D");
+		DYTree->Branch("GTrack_eta", &GTrack_eta,"GTrack_eta[nGTrack]/D");
+		DYTree->Branch("GTrack_phi", &GTrack_phi,"GTrack_phi[nGTrack]/D");
+		DYTree->Branch("GTrack_charge", &GTrack_charge,"GTrack_charge[nGTrack]/D");
+		DYTree->Branch("GTrack_HighPurity", &GTrack_HighPurity,"GTrack_HighPurity[nGTrack]/I");
+		DYTree->Branch("GTrack_Tight", &GTrack_Tight,"GTrack_Tight[nGTrack]/I");
+		DYTree->Branch("GTrack_Loose", &GTrack_Loose,"GTrack_Loose[nGTrack]/I");
+	}
+
 	if( theStoreMETFlag )
 	{
 		// -- MET -- //
@@ -1535,7 +1606,7 @@ void DYntupleMaker::hltReport(const edm::Event &iEvent)
 	///////////////
 
 	edm::Handle< trigger::TriggerEvent > triggerObject;
-	iEvent.getByLabel(edm::InputTag("hltTriggerSummaryAOD","",processName), triggerObject);
+	iEvent.getByToken(TriggerEventToken, triggerObject);
 
 	const trigger::TriggerObjectCollection & toc(triggerObject->getObjects());
 	int ntrigTot = 0;
@@ -1740,7 +1811,7 @@ void DYntupleMaker::fillMuons(const edm::Event &iEvent, const edm::EventSetup& i
 	iSetup.get<IdealMagneticFieldRecord>().get(B);
 
 	// -- Call PAT muons -- //
-	edm::Handle< std::vector<pat::Muon> > muonHandle;
+	edm::Handle< std::vector<reco::Muon> > muonHandle;
 	iEvent.getByToken(MuonToken, muonHandle);
 	using reco::MuonCollection;
 	MuonCollection::const_iterator imuon;
@@ -1750,7 +1821,7 @@ void DYntupleMaker::fillMuons(const edm::Event &iEvent, const edm::EventSetup& i
 	for( unsigned i = 0; i != muonHandle->size(); i++ )
 	{
 		// cout << "##### Analyze:Start the loop for the muon #####" << endl;
-		const pat::Muon imuon = muonHandle->at(i);
+		const reco::Muon imuon = muonHandle->at(i);
 
 		if( imuon.isStandAloneMuon() ) 	isSTAmuon[_nMuon] = 1;
 		if( imuon.isGlobalMuon() ) 		isGLBmuon[_nMuon] = 1;	   
@@ -1904,7 +1975,7 @@ void DYntupleMaker::fillMuons(const edm::Event &iEvent, const edm::EventSetup& i
 		Muon_eta[_nMuon] = imuon.eta();
 		Muon_phi[_nMuon] = imuon.phi();
 
-		Muon_dB[_nMuon] = imuon.dB();
+		// Muon_dB[_nMuon] = imuon.dB(); // -- no information in reco::Muon. it is only available in pat::Muon -- //
 
 		// -- Various track informations -- //
 		// -- MuonBestTrack -- //
@@ -2038,7 +2109,7 @@ void DYntupleMaker::fillMuons(const edm::Event &iEvent, const edm::EventSetup& i
 		{
 			if( i <= j ) continue; // -- prevent double-counting -- //
 
-			const pat::Muon imuon2 = muonHandle->at(j);
+			const reco::Muon imuon2 = muonHandle->at(j);
 			int index_type = -1;
 
 			if( imuon2.isStandAloneMuon() )
@@ -2733,7 +2804,7 @@ void DYntupleMaker::fillJet(const edm::Event &iEvent)
 	edm::Handle< std::vector<pat::Jet> > jetHandle;
 	iEvent.getByToken(JetToken,jetHandle);
 
-	edm::Handle<std::vector<pat::Muon> > muonHandle;
+	edm::Handle<std::vector<reco::Muon> > muonHandle;
 	iEvent.getByToken(MuonToken,muonHandle);
 
 	if( jetHandle->size() > 0 && theDebugLevel > 0) 
@@ -2783,7 +2854,7 @@ void DYntupleMaker::fillJet(const edm::Event &iEvent)
 	// 	// -- checking close muon -- //
 	// 	if( _isbtagged )
 	// 	{
-	// 		for(edm::View<pat::Muon>::const_iterator iMuon = muonHandle->begin(); iMuon != muonHandle->end(); ++iMuon)
+	// 		for(edm::View<reco::Muon>::const_iterator iMuon = muonHandle->begin(); iMuon != muonHandle->end(); ++iMuon)
 	// 		{
 	// 			double dR_mu_jet = deltaR(iMuon->eta(), iMuon->phi(), iJet->eta(), iJet->phi());
 	// 			if( dR_mu_jet < 0.5 )
@@ -2807,7 +2878,7 @@ void DYntupleMaker::fillJet(const edm::Event &iEvent)
 	// 	// -- checking close muon -- //
 	// 	if( _isbtagged )
 	// 	{
-	// 		for(edm::View<pat::Muon>::const_iterator iMuon = muonHandle->begin(); iMuon != muonHandle->end(); ++iMuon)
+	// 		for(edm::View<reco::Muon>::const_iterator iMuon = muonHandle->begin(); iMuon != muonHandle->end(); ++iMuon)
 	// 		{
 	// 			double dR_mu_jet = deltaR(iMuon->eta(), iMuon->phi(), iJet->eta(), iJet->phi());
 	// 			if( dR_mu_jet < 0.5 )
@@ -2831,7 +2902,7 @@ void DYntupleMaker::fillJet(const edm::Event &iEvent)
 	// 	// -- checking close muon -- //
 	// 	if( _isbtagged )
 	// 	{
-	// 		for(edm::View<pat::Muon>::const_iterator iMuon = muonHandle->begin(); iMuon != muonHandle->end(); ++iMuon)
+	// 		for(edm::View<reco::Muon>::const_iterator iMuon = muonHandle->begin(); iMuon != muonHandle->end(); ++iMuon)
 	// 		{
 	// 			double dR_mu_jet = deltaR(iMuon->eta(), iMuon->phi(), iJet->eta(), iJet->phi());
 	// 			if( dR_mu_jet < 0.5 )
@@ -2857,9 +2928,9 @@ void DYntupleMaker::fillJet(const edm::Event &iEvent)
 	Njets = _njets;
 }
 
-//////////////////////////////////////////////////////
-// -- Get Tracker track info (all single tracks) -- //
-//////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+// -- Get (gsf) Tracker track info (all single tracks) -- //
+///////////////////////////////////////////////////////////
 void DYntupleMaker::fillTT(const edm::Event &iEvent)
 {
 	edm::Handle<edm::View<reco::Track> > trackHandle;
@@ -2916,6 +2987,55 @@ void DYntupleMaker::fillTT(const edm::Event &iEvent)
 	} // -- end of for(unsigned igsf = 0; igsf < gsfTracks->size(); igsf++ ): GSFTrack iteration -- //
 
 	NTT = _nTT;
+}
+
+//////////////////////////////////////////////////////
+// -- Get general track info (all single tracks) -- //
+/////////////////////////////////////////////////////
+void DYntupleMaker::fillGTrack(const edm::Event &iEvent)
+{
+	edm::Handle<edm::View<reco::Track> > trackHandle;
+	iEvent.getByToken(TrackToken, trackHandle);
+
+	edm::Handle<reco::BeamSpot> beamSpotHandle;
+	iEvent.getByToken(BeamSpotToken, beamSpotHandle);
+	reco::BeamSpot beamSpot = (*beamSpotHandle);
+
+	edm::Handle<reco::VertexCollection> _pvHandle;
+	iEvent.getByToken(PrimaryVertexToken, _pvHandle);
+	const reco::Vertex &vtx = _pvHandle->front();
+
+	int _nGTrack = 0;
+	for(View<reco::Track>::const_iterator i_track = trackHandle->begin(); i_track != trackHandle->end(); ++i_track)
+	{
+		if( i_track->pt() > 10 ) // -- to reduce the size -- //
+		{
+			GTrack_dxy[_nGTrack] = i_track->dxy(vtx.position());
+			GTrack_dxyErr[_nGTrack] = i_track->dxyError();
+			GTrack_d0[_nGTrack] = i_track->d0();
+			GTrack_d0Err[_nGTrack] = i_track->d0Error(); 
+			GTrack_dsz[_nGTrack] = i_track->dsz(vtx.position());
+			GTrack_dszErr[_nGTrack] = i_track->dszError();
+			GTrack_dz[_nGTrack] = i_track->dz(vtx.position());
+			GTrack_dzErr[_nGTrack] = i_track->dzError();
+			GTrack_dxyBS[_nGTrack] = i_track->dxy(beamSpot.position());
+			GTrack_dszBS[_nGTrack] = i_track->dsz(beamSpot.position());
+			GTrack_dzBS[_nGTrack] = i_track->dz(beamSpot.position());
+			GTrack_pT[_nGTrack] = i_track->pt();
+			GTrack_Px[_nGTrack] = i_track->px();
+			GTrack_Py[_nGTrack] = i_track->py();
+			GTrack_Pz[_nGTrack] = i_track->pz();
+			GTrack_eta[_nGTrack] = i_track->eta();
+			GTrack_phi[_nGTrack] = i_track->phi();
+			GTrack_charge[_nGTrack] = i_track->charge();
+			GTrack_HighPurity[_nGTrack] = i_track->quality(Track::highPurity);
+			GTrack_Tight[_nGTrack] = i_track->quality(Track::tight);
+			GTrack_Loose[_nGTrack] = i_track->quality(Track::loose);
+			_nGTrack++;
+		}
+	} // -- end of track iteration -- //
+
+	nGTrack = _nGTrack;
 }
 
 //define this as a plug-in

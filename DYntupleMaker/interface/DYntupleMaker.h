@@ -68,6 +68,8 @@
 // -- Triggers -- //
 ////////////////////
 #include "HLTrigger/HLTcore/interface/HLTConfigProvider.h"
+#include "DataFormats/HLTReco/interface/TriggerEvent.h"
+#include "DataFormats/HLTReco/interface/TriggerObject.h"
 
 ////////////////
 // -- Else -- //
@@ -119,6 +121,7 @@ private:
 	virtual void fillGENInfo(const edm::Event &iEvent);            // fill MET information
 	virtual void fillGenOthersInfo(const edm::Event &iEvent);
 	virtual void fillTT(const edm::Event&);
+	virtual void fillGTrack(const edm::Event &iEvent);
 
 	bool reorder(double &a, double &b)
 	{
@@ -132,7 +135,7 @@ private:
 	HLTConfigProvider hltConfig_;
 
 	// -- Tokens (for 76X) -- //
-	edm::EDGetTokenT< std::vector<pat::Muon> > 						MuonToken;
+	edm::EDGetTokenT< std::vector<reco::Muon> > 						MuonToken;
 	edm::EDGetTokenT< edm::View<reco::GsfElectron> > 				ElectronToken;
 	edm::EDGetTokenT< edm::View<reco::Photon> > 					PhotonToken;
 	edm::EDGetTokenT< std::vector<pat::Jet> > 						JetToken;
@@ -159,6 +162,7 @@ private:
 	edm::EDGetTokenT< edm::TriggerResults > 						TriggerToken;
 	edm::EDGetTokenT< edm::TriggerResults > 						TriggerTokenPAT;
 	edm::EDGetTokenT< std::vector<pat::TriggerObjectStandAlone> > 	TriggerObjectToken;
+	edm::EDGetTokenT< trigger::TriggerEvent >						TriggerEventToken;
 
 	edm::EDGetTokenT< GenEventInfoProduct > 						GenEventInfoToken;
 	edm::EDGetTokenT< reco::BeamSpot > 								BeamSpotToken;
@@ -212,6 +216,7 @@ private:
 	bool theStoreGenOthersFlag;
 	bool theStorePhotonFlag;
 	bool theStoreTTFlag;
+	bool theStoreGTrackFlag;
 	bool isMC;  //turn gen on and off
 	bool theApplyFilter;
 	int theFilterType;
@@ -714,6 +719,30 @@ private:
 	double TTrack_eta[MPSIZE];
 	double TTrack_phi[MPSIZE];
 	double TTrack_charge[MPSIZE];
+
+	// -- General tracks -- //
+	int nGTrack;
+	double GTrack_dxy[MPSIZE];
+	double GTrack_dxyErr[MPSIZE];
+	double GTrack_d0[MPSIZE];
+	double GTrack_d0Err[MPSIZE];
+	double GTrack_dsz[MPSIZE];
+	double GTrack_dszErr[MPSIZE];
+	double GTrack_dz[MPSIZE];
+	double GTrack_dzErr[MPSIZE];
+	double GTrack_dxyBS[MPSIZE];
+	double GTrack_dszBS[MPSIZE];
+	double GTrack_dzBS[MPSIZE];
+	double GTrack_pT[MPSIZE];
+	double GTrack_Px[MPSIZE];
+	double GTrack_Py[MPSIZE];
+	double GTrack_Pz[MPSIZE];
+	double GTrack_eta[MPSIZE];
+	double GTrack_phi[MPSIZE];
+	double GTrack_charge[MPSIZE];
+	int GTrack_HighPurity[MPSIZE];
+	int GTrack_Tight[MPSIZE];
+	int GTrack_Loose[MPSIZE];
 
 	// -- MET -- //
 	double pfMET_pT;

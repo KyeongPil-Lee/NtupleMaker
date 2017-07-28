@@ -47,6 +47,7 @@ DYntupleMaker = cms.EDAnalyzer("DYntupleMaker",
 	TriggerResults = cms.untracked.InputTag("TriggerResults", "", "HLT"),
 	TriggerResultsPAT = cms.untracked.InputTag("TriggerResults", "", "PAT"),
 	TriggerObject = cms.untracked.InputTag("selectedPatTrigger"),
+	TriggerEvent = cms.untracked.InputTag("hltTriggerSummaryAOD"),
 
 	# -- Else -- #
 	GenEventInfo = cms.untracked.InputTag("generator"),
@@ -67,6 +68,7 @@ DYntupleMaker = cms.EDAnalyzer("DYntupleMaker",
 	StorePriVtxFlag = cms.untracked.bool(True),
 	StoreTTFlag = cms.untracked.bool(False),
 	StoreHLTReportFlag = cms.untracked.bool(True),
+	StoreGTrackFlag = cms.untracked.bool(False),
 
 	# -- Filters -- #
 	ApplyFilter = cms.untracked.bool(False),

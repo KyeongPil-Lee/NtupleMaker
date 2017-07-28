@@ -16,7 +16,7 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 ## Source
 FileName = ""
 if isMC == True:
-	FileName = "file:/cms/home/kplee/scratch/ROOTFiles_Test/80X/DYLL_M50_MadgraphMLM_80X_mcRun2_asymptotic_2016_miniAODv2_v0.root"
+	FileName = "file:/u/user/kplee/scratch/ROOTFiles_Test/80X/ExampleAOD_ZZTo4L_Powheg_AOD.root"
 else:
   FileName = "file:/cms/home/kplee/scratch/ROOTFiles_Test/80X/SingleMuon_Run2016B_v2_Run273450.root"
 
@@ -24,7 +24,7 @@ process.source = cms.Source("PoolSource",
 	fileNames = cms.untracked.vstring( FileName )
 )
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(3000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
 
 # -- Geometry and Detector Conditions (needed for a few patTuple production steps) -- #
 process.load("TrackingTools/TransientTrack/TransientTrackBuilder_cfi")
@@ -116,12 +116,15 @@ process.recoTree = DYntupleMaker.clone()
 process.recoTree.isMC = isMC
 
 # -- Objects -- #
-process.recoTree.Muon = cms.untracked.InputTag("selectedPatMuons") # -- AOD -- #
+process.recoTree.Muon = cms.untracked.InputTag("muons") # -- AOD -- #
 process.recoTree.Electron = cms.untracked.InputTag("gedGsfElectrons") # -- AOD: same with miniAOD? -- #
 process.recoTree.Photon = cms.untracked.InputTag("gedPhotons") # -- AOD -- #
-process.recoTree.Jet = cms.untracked.InputTag("selectedPatJets") # -- AOD -- #
-process.recoTree.MET = cms.untracked.InputTag("patMETs") # -- AOD -- #
+process.recoTree.Jet = cms.untracked.InputTag("ak4PFJets") # -- AOD -- #
+process.recoTree.MET = cms.untracked.InputTag("pfMet") # -- AOD -- #
 process.recoTree.GenParticle = cms.untracked.InputTag("genParticles") # -- AOD -- #
+process.recoTree.TriggerEvent = cms.untracked.InputTag("hltTriggerSummaryAOD", "", "HLT") # -- use only in AOD -- #
+process.recoTree.Track = cms.untracked.InputTag("generalTracks") # -- only for AOD -- #
+process.recoTree.GsfTrack = cms.untracked.InputTag("electronGsfTracks") # -- only for AOD -- #
 
 # -- for electrons -- #
 process.recoTree.rho = cms.untracked.InputTag("fixedGridRhoFastjetAll")
@@ -162,6 +165,8 @@ process.recoTree.StoreGenOthersFlag = True
 # -- Jet & MET part should be updated for AOD format to use -- #
 process.recoTree.StoreJetFlag = False
 process.recoTree.StoreMETFlag = False
+process.recoTree.StoreTTFlag = True
+process.recoTree.StoreGTrackFlag = True
 
 ####################
 # -- Let it run -- #
