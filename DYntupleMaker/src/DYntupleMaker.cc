@@ -1534,73 +1534,73 @@ void DYntupleMaker::hltReport(const edm::Event &iEvent)
 	// -- AOD -- //
 	///////////////
 
-	// edm::Handle< trigger::TriggerEvent > triggerObject;
-	// iEvent.getByLabel(edm::InputTag("hltTriggerSummaryAOD","",processName), triggerObject);
+	edm::Handle< trigger::TriggerEvent > triggerObject;
+	iEvent.getByLabel(edm::InputTag("hltTriggerSummaryAOD","",processName), triggerObject);
 
-	// const trigger::TriggerObjectCollection & toc(triggerObject->getObjects());
-	// int ntrigTot = 0;
-	// //cout << "size filter = " << triggerObject->sizeFilters() << endl;
+	const trigger::TriggerObjectCollection & toc(triggerObject->getObjects());
+	int ntrigTot = 0;
+	//cout << "size filter = " << triggerObject->sizeFilters() << endl;
 
-	// // -- Loop for all filters in TriggerEvent -- //
-	// for( size_t k = 0; k < triggerObject->sizeFilters(); ++ k )
-	// {
-	// 	// -- Get the full name of k-th filter -- //
-	// 	std::string fullname = triggerObject->filterTag(k).encode();
+	// -- Loop for all filters in TriggerEvent -- //
+	for( size_t k = 0; k < triggerObject->sizeFilters(); ++ k )
+	{
+		// -- Get the full name of k-th filter -- //
+		std::string fullname = triggerObject->filterTag(k).encode();
 
-	// 	std::string filterName;
+		std::string filterName;
 
-	// 	// -- Find ":" in the full name -- //
-	// 	size_t m = fullname.find_first_of(':');
+		// -- Find ":" in the full name -- //
+		size_t m = fullname.find_first_of(':');
 
-	// 	// -- if ":" exists in the full name, takes the name before ":" as the filter name -- //
-	// 	if( m != std::string::npos )
-	// 		filterName = fullname.substr(0, m);
-	// 	else
-	// 		filterName = fullname;
+		// -- if ":" exists in the full name, takes the name before ":" as the filter name -- //
+		if( m != std::string::npos )
+			filterName = fullname.substr(0, m);
+		else
+			filterName = fullname;
 
-	// 	if( &toc != 0 )
-	// 	{
-	// 		// -- Get the collection of "key" of the k-th filter -- //
-	// 		const trigger::Keys & it = triggerObject->filterKeys(k);
+		if( &toc != 0 )
+		{
+			// -- Get the collection of "key" of the k-th filter -- //
+			const trigger::Keys & it = triggerObject->filterKeys(k);
 
-	// 		// -- Loop for the keys -- //
-	// 		for( trigger::Keys::const_iterator ky = it.begin(); ky !=it.end(); ++ky )
-	// 		{
-	// 			// -- Get the trigger object corresponding to ky-th key -- //
-	// 			double hlt_pt = toc[*ky].pt();
-	// 			//double hlt_eta = toc[*ky].eta();
-	// 			//cout << "hlt kine = " << hlt_pt << " " << hlt_eta << endl;
+			// -- Loop for the keys -- //
+			for( trigger::Keys::const_iterator ky = it.begin(); ky !=it.end(); ++ky )
+			{
+				// -- Get the trigger object corresponding to ky-th key -- //
+				double hlt_pt = toc[*ky].pt();
+				//double hlt_eta = toc[*ky].eta();
+				//cout << "hlt kine = " << hlt_pt << " " << hlt_eta << endl;
 
-	// 			// -- Loop for the triggers that a user inserted in this code -- //
-	// 			for( int itf = 0; itf < ntrigName; itf++ )
-	// 			{
-	// 				string names = "";
-	// 				//cout << "filterName = " << k << " " << filterName << " " << trigModuleNames[itf] << " " << trigModuleNames_preFil[itf] << " " << _HLT_trigName.size() << endl;
+				// -- Loop for the triggers that a user inserted in this code -- //
+				for( int itf = 0; itf < ntrigName; itf++ )
+				{
+					string names = "";
+					//cout << "filterName = " << k << " " << filterName << " " << trigModuleNames[itf] << " " << trigModuleNames_preFil[itf] << " " << _HLT_trigName.size() << endl;
 
-	// 				// -- Store HLT object information only if trigModuleName is equal to this filter name -- //
-	// 				if( filterName == trigModuleNames[itf] )
-	// 				{
-	// 					names = MuonHLT[itf];
-	// 					int _ps = MuonHLTPS[itf];
-	// 					_HLT_trigType[ntrigTot] = itf;
-	// 					_HLT_trigFired[ntrigTot] = trigFired[itf];
-	// 					_HLT_trigPt[ntrigTot] = hlt_pt;
-	// 					_HLT_trigEta[ntrigTot] = toc[*ky].eta();
-	// 					_HLT_trigPhi[ntrigTot] = toc[*ky].phi();
-	// 					_HLT_trigName.push_back(names);
-	// 					_HLT_trigPS.push_back(_ps);
-	// 					ntrigTot++;
-	// 				}
+					// -- Store HLT object information only if trigModuleName is equal to this filter name -- //
+					if( filterName == trigModuleNames[itf] )
+					{
+						names = MuonHLT[itf];
+						int _ps = MuonHLTPS[itf];
+						_HLT_trigType[ntrigTot] = itf;
+						_HLT_trigFired[ntrigTot] = trigFired[itf];
+						_HLT_trigPt[ntrigTot] = hlt_pt;
+						_HLT_trigEta[ntrigTot] = toc[*ky].eta();
+						_HLT_trigPhi[ntrigTot] = toc[*ky].phi();
+						_HLT_trigName.push_back(names);
+						_HLT_trigPS.push_back(_ps);
+						ntrigTot++;
+					}
 
-	// 			} // -- end of for( int itf = 0; itf < ntrigName; itf++ ) -- //
+				} // -- end of for( int itf = 0; itf < ntrigName; itf++ ) -- //
 
-	// 		} // -- end of for( int itf = 0; itf < ntrigName; itf++ ) -- // 
+			} // -- end of for( int itf = 0; itf < ntrigName; itf++ ) -- // 
 
-	// 	} // -- end of if( &toc != 0 ) -- //
+		} // -- end of if( &toc != 0 ) -- //
 
-	// } // -- end of for( size_t k = 0; k < triggerObject->sizeFilters(); ++ k )-- //
+	} // -- end of for( size_t k = 0; k < triggerObject->sizeFilters(); ++ k )-- //
 
-	// _HLT_ntrig = ntrigTot;
+	_HLT_ntrig = ntrigTot;
 
 	// // for( int i = 0; i < _HLT_ntrig; i++ )
 	// // 	cout << "trig = " << i << " " << _HLT_trigType[i] << " " << _HLT_trigPt[i] << " " << _HLT_trigEta[i] << " " << _HLT_trigPhi[i] << " " << _HLT_trigName[i] << " " << _HLT_trigPS[i] <<  endl;
@@ -1612,74 +1612,74 @@ void DYntupleMaker::hltReport(const edm::Event &iEvent)
 	// cout << "// -- HLT Report for MINIAOD is used -- //" << endl;
 
 
-	edm::Handle< std::vector<pat::TriggerObjectStandAlone> > triggerObject;
-	iEvent.getByToken(TriggerObjectToken, triggerObject);
+	// edm::Handle< std::vector<pat::TriggerObjectStandAlone> > triggerObject;
+	// iEvent.getByToken(TriggerObjectToken, triggerObject);
 
-	int ntrigTot = 0;
+	// int ntrigTot = 0;
 
-	if( !trigResult.failedToGet() )
-	{
-		const edm::TriggerNames names = iEvent.triggerNames(*trigResult);
+	// if( !trigResult.failedToGet() )
+	// {
+	// 	const edm::TriggerNames names = iEvent.triggerNames(*trigResult);
 
-		// cout << "[# of trigger object in this event: " << (*triggerObject).size() << endl;
-		for (pat::TriggerObjectStandAlone obj : *triggerObject)
-		{
-			obj.unpackPathNames(names);
+	// 	// cout << "[# of trigger object in this event: " << (*triggerObject).size() << endl;
+	// 	for (pat::TriggerObjectStandAlone obj : *triggerObject)
+	// 	{
+	// 		obj.unpackPathNames(names);
 
-			// cout << "# Filters: " << obj.filterLabels().size() << endl;
-			for( size_t i_filter = 0; i_filter < obj.filterLabels().size(); ++i_filter )
-			{
-				// -- Get the full name of i-th filter -- //
-				std::string fullname = obj.filterLabels()[i_filter];
+	// 		// cout << "# Filters: " << obj.filterLabels().size() << endl;
+	// 		for( size_t i_filter = 0; i_filter < obj.filterLabels().size(); ++i_filter )
+	// 		{
+	// 			// -- Get the full name of i-th filter -- //
+	// 			std::string fullname = obj.filterLabels()[i_filter];
 
-				std::string filterName;
+	// 			std::string filterName;
 
-				// -- Find ":" in the full name -- //
-				size_t m = fullname.find_first_of(':');
+	// 			// -- Find ":" in the full name -- //
+	// 			size_t m = fullname.find_first_of(':');
 
-				// -- if ":" exists in the full name, takes the name before ":" as the filter name -- //
-				if( m != std::string::npos )
-					filterName = fullname.substr(0, m);
-				else
-					filterName = fullname;
+	// 			// -- if ":" exists in the full name, takes the name before ":" as the filter name -- //
+	// 			if( m != std::string::npos )
+	// 				filterName = fullname.substr(0, m);
+	// 			else
+	// 				filterName = fullname;
 
-				// cout << "\t[" << i_filter << "th Filter] FullName = " << fullname << ", FilterName = " << filterName << endl;
+	// 			// cout << "\t[" << i_filter << "th Filter] FullName = " << fullname << ", FilterName = " << filterName << endl;
 
-				// -- Loop for the triggers that a user inserted in this code -- //
-				for( int itf = 0; itf < ntrigName; itf++ )
-				{
-					// cout << "\t\t[" << itf << "th trigger] Name = " << MuonHLT[itf] << ", trigModuleName = " << trigModuleNames[itf] << endl;
-					string name = "";
+	// 			// -- Loop for the triggers that a user inserted in this code -- //
+	// 			for( int itf = 0; itf < ntrigName; itf++ )
+	// 			{
+	// 				// cout << "\t\t[" << itf << "th trigger] Name = " << MuonHLT[itf] << ", trigModuleName = " << trigModuleNames[itf] << endl;
+	// 				string name = "";
 
-					// -- Store HLT object information only if trigModuleName is equal to this filter name -- //
-					if( filterName == trigModuleNames[itf] )
-					{
-						// cout << "\t\t\t[Matched]: filterName = " << filterName << ", Trigger Name = " << MuonHLT[itf] << endl;
-						name = MuonHLT[itf];
-						int _ps = MuonHLTPS[itf];
-						_HLT_trigType[ntrigTot] = itf;
-						_HLT_trigFired[ntrigTot] = trigFired[itf];
-						_HLT_trigPt[ntrigTot] = obj.pt();
-						_HLT_trigEta[ntrigTot] = obj.eta();
-						_HLT_trigPhi[ntrigTot] = obj.phi();
-						_HLT_trigName.push_back(name);
-						_HLT_trigPS.push_back(_ps);
-						ntrigTot++;
-					}
+	// 				// -- Store HLT object information only if trigModuleName is equal to this filter name -- //
+	// 				if( filterName == trigModuleNames[itf] )
+	// 				{
+	// 					// cout << "\t\t\t[Matched]: filterName = " << filterName << ", Trigger Name = " << MuonHLT[itf] << endl;
+	// 					name = MuonHLT[itf];
+	// 					int _ps = MuonHLTPS[itf];
+	// 					_HLT_trigType[ntrigTot] = itf;
+	// 					_HLT_trigFired[ntrigTot] = trigFired[itf];
+	// 					_HLT_trigPt[ntrigTot] = obj.pt();
+	// 					_HLT_trigEta[ntrigTot] = obj.eta();
+	// 					_HLT_trigPhi[ntrigTot] = obj.phi();
+	// 					_HLT_trigName.push_back(name);
+	// 					_HLT_trigPS.push_back(_ps);
+	// 					ntrigTot++;
+	// 				}
 
-					// cout << endl;
+	// 				// cout << endl;
 
-				} // -- end of for( int itf = 0; itf < ntrigName; itf++ ) -- //
+	// 			} // -- end of for( int itf = 0; itf < ntrigName; itf++ ) -- //
 
-				// cout << endl;
+	// 			// cout << endl;
 
-			} // -- end of filter iteration -- //
+	// 		} // -- end of filter iteration -- //
 			
-		} // -- end of trigger object iteration -- //
+	// 	} // -- end of trigger object iteration -- //
 
-	} // -- end of !trigResult.failedToGet() -- //
+	// } // -- end of !trigResult.failedToGet() -- //
 
-	_HLT_ntrig = ntrigTot;
+	// _HLT_ntrig = ntrigTot;
 
 }
 
