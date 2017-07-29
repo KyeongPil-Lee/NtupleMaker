@@ -24,13 +24,14 @@ for Subdir in List_Subdir:
   List_AllFile = os.listdir( DirPath )
 
   for AllFile in List_AllFile:
-    if ".root" in AllFile and "DQM" not in "AllFile":
-      List_Files.append( AllFile )
+    if ".root" in AllFile and "inDQM" not in AllFile:
+      FullPath = "%s/%s/%s" % (DirPath_Base, Subdir, AllFile)
+      List_Files.append( FullPath )
 
 print "##### List of root files to be read #####"
 for ROOTFile in List_Files:
   print ROOTFile
-print "##### end of root file list #####"
+print "##### end of root file list (# files: %d) #####" % len( List_Files )
 
 process.source = cms.Source("PoolSource",
   fileNames = cms.untracked.vstring( List_Files )
