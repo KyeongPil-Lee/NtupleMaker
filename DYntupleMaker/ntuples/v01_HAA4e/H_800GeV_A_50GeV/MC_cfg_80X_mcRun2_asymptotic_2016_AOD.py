@@ -25,7 +25,7 @@ for Subdir in List_Subdir:
 
   for AllFile in List_AllFile:
     if ".root" in AllFile and "inDQM" not in AllFile:
-      FullPath = "%s/%s/%s" % (DirPath_Base, Subdir, AllFile)
+      FullPath = "file:%s/%s/%s" % (DirPath_Base, Subdir, AllFile)
       List_Files.append( FullPath )
 
 print "##### List of root files to be read #####"
