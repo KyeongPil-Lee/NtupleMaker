@@ -13,26 +13,28 @@ process.options   = cms.untracked.PSet(
 )
 process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
-## Source
-# FileName = ""
-# if isMC == True:
-# 	FileName = "file:/u/user/kplee/scratch/ROOTFiles_Test/80X/ExampleMiniAODv2_ZMuMuPowheg_M120to200_Moriond17.root"
-# else:
-#   FileName = "file:/cms/home/kplee/scratch/ROOTFiles_Test/80X/SingleMuon_Run2016B_v2_Run273450.root"
-
-import os
-DirPath = "/pnfs/knu.ac.kr/data/cms/store/user/joon/HAA4E_Modified/HAA4E_Modified_H200A1_MINIAOD/170707_105428/0000"
-ROOTFileList = os.listdir( DirPath )
-
+# -- collect root file list -- #
 List_Files = []
-for rootfile in ROOTFileList:
-  if ".root" in rootfile:
-    List_Files += ["file:" + DirPath + "/" + rootfile]
+import os
+DirPath_Base = "/pnfs/knu.ac.kr/data/cms/store/user/joon/HAA4E_Modified/HAA4E_Modified_H2000A50_AOD/170706_180353"
+List_Subdir = ["0000", "0001", "0002"]
 
-print List_Files
+for Subdir in List_Subdir:
+  DirPath = "%s/%s" % (DirPath_Base, Subdir)
+  List_AllFile = os.listdir( DirPath )
+
+  for AllFile in List_AllFile:
+    if ".root" in AllFile and "inDQM" not in AllFile:
+      FullPath = "%s/%s/%s" % (DirPath_Base, Subdir, AllFile)
+      List_Files.append( FullPath )
+
+print "##### List of root files to be read #####"
+for ROOTFile in List_Files:
+  print ROOTFile
+print "##### end of root file list (# files: %d) #####" % len( List_Files )
 
 process.source = cms.Source("PoolSource",
-	fileNames = cms.untracked.vstring( List_Files )
+  fileNames = cms.untracked.vstring( List_Files )
 )
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
@@ -51,11 +53,11 @@ else:
 
 
 # -- HLT Filters -- #
-# import HLTrigger.HLTfilters.hltHighLevel_cfi
-# process.dimuonsHLTFilter = HLTrigger.HLTfilters.hltHighLevel_cfi.hltHighLevel.clone()
+import HLTrigger.HLTfilters.hltHighLevel_cfi
+process.dimuonsHLTFilter = HLTrigger.HLTfilters.hltHighLevel_cfi.hltHighLevel.clone()
 
-# process.dimuonsHLTFilter.TriggerResultsTag = cms.InputTag("TriggerResults","","HLT")
-# process.dimuonsHLTFilter.HLTPaths = ["HLT_Mu*","HLT_DoubleMu*","HLT_IsoMu*"]
+process.dimuonsHLTFilter.TriggerResultsTag = cms.InputTag("TriggerResults","","HLT")
+process.dimuonsHLTFilter.HLTPaths = ["HLT_Mu*","HLT_DoubleMu*","HLT_IsoMu*"]
 
 process.TFileService = cms.Service("TFileService",
   fileName = cms.string('ntuple_skim.root')
@@ -64,7 +66,7 @@ process.TFileService = cms.Service("TFileService",
 # -- FastFilters -- //
 process.goodOfflinePrimaryVertices = cms.EDFilter("VertexSelector",
    # src = cms.InputTag("offlinePrimaryVertices"),
-   src = cms.InputTag("offlineSlimmedPrimaryVertices"), # -- miniAOD -- #
+   src = cms.InputTag("offlinePrimaryVertices"), # -- AOD -- #
    cut = cms.string("!isFake && ndof > 4 && abs(z) < 24 && position.Rho < 2"), # tracksSize() > 3 for the older cut
    filter = cms.bool(True),   # otherwise it won't filter the events, just produce an empty vertex collection.
 )
@@ -85,7 +87,8 @@ process.FastFilters = cms.Sequence( process.goodOfflinePrimaryVertices )
 from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
 # turn on VID producer, indicate data format  to be
 # DataFormat.AOD or DataFormat.MiniAOD, as appropriate 
-dataFormat = DataFormat.MiniAOD
+# dataFormat = DataFormat.MiniAOD
+dataFormat = DataFormat.AOD
 switchOnVIDElectronIdProducer(process, dataFormat)
 
 # define which IDs we want to produce
@@ -126,16 +129,19 @@ process.recoTree = DYntupleMaker.clone()
 process.recoTree.isMC = isMC
 
 # -- Objects -- #
-process.recoTree.Muon = cms.untracked.InputTag("slimmedMuons") # -- miniAOD -- #
-process.recoTree.Electron = cms.untracked.InputTag("slimmedElectrons") # -- miniAOD -- #
-process.recoTree.Photon = cms.untracked.InputTag("slimmedPhotons") # -- miniAOD -- #
-process.recoTree.Jet = cms.untracked.InputTag("slimmedJets") # -- miniAOD -- #
-process.recoTree.MET = cms.untracked.InputTag("slimmedMETs") # -- miniAOD -- #
-process.recoTree.GenParticle = cms.untracked.InputTag("prunedGenParticles") # -- miniAOD -- #
+process.recoTree.Muon = cms.untracked.InputTag("muons") # -- AOD -- #
+process.recoTree.Electron = cms.untracked.InputTag("gedGsfElectrons") # -- AOD: same with miniAOD? -- #
+process.recoTree.Photon = cms.untracked.InputTag("gedPhotons") # -- AOD -- #
+process.recoTree.Jet = cms.untracked.InputTag("ak4PFJets") # -- AOD -- #
+process.recoTree.MET = cms.untracked.InputTag("pfMet") # -- AOD -- #
+process.recoTree.GenParticle = cms.untracked.InputTag("genParticles") # -- AOD -- #
+process.recoTree.TriggerEvent = cms.untracked.InputTag("hltTriggerSummaryAOD", "", "HLT") # -- use only in AOD -- #
+process.recoTree.Track = cms.untracked.InputTag("generalTracks") # -- only for AOD -- #
+process.recoTree.GsfTrack = cms.untracked.InputTag("electronGsfTracks") # -- only for AOD -- #
 
 # -- for electrons -- #
 process.recoTree.rho = cms.untracked.InputTag("fixedGridRhoFastjetAll")
-process.recoTree.conversionsInputTag = cms.untracked.InputTag("reducedEgamma:reducedConversions") # -- miniAOD -- #
+process.recoTree.conversionsInputTag = cms.untracked.InputTag("allConversions") # -- AOD -- #
 process.recoTree.eleVetoIdMap = cms.untracked.InputTag("egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-veto")
 process.recoTree.eleLooseIdMap = cms.untracked.InputTag("egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-loose")
 process.recoTree.eleMediumIdMap = cms.untracked.InputTag("egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-medium")
@@ -154,10 +160,10 @@ process.recoTree.effAreaNeuHadFile= cms.untracked.FileInPath("RecoEgamma/PhotonI
 process.recoTree.effAreaPhoFile   = cms.untracked.FileInPath("RecoEgamma/PhotonIdentification/data/PHYS14/effAreaPhotons_cone03_pfPhotons_V2.txt")
 
 # -- for Track & Vertex -- #
-process.recoTree.PrimaryVertex = cms.untracked.InputTag("offlineSlimmedPrimaryVertices") # -- miniAOD -- #
+process.recoTree.PrimaryVertex = cms.untracked.InputTag("offlinePrimaryVertices") # -- AOD -- #
 
 # -- Else -- #
-process.recoTree.PileUpInfo = cms.untracked.InputTag("slimmedAddPileupInfo")
+process.recoTree.PileUpInfo = cms.untracked.InputTag("addPileupInfo") # -- AOD -- #
 
 # -- Filters -- #
 process.recoTree.ApplyFilter = False
@@ -169,8 +175,11 @@ process.recoTree.StorePhotonFlag = True
 process.recoTree.StoreLHEFlag = False
 process.recoTree.StoreGENFlag = isMC
 process.recoTree.StoreGenOthersFlag = True
-process.recoTree.StoreJetFlag = True
-process.recoTree.StoreMETFlag = True
+# -- Jet & MET part should be updated for AOD format to use -- #
+process.recoTree.StoreJetFlag = False
+process.recoTree.StoreMETFlag = False
+process.recoTree.StoreTTFlag = True
+process.recoTree.StoreGTrackFlag = True
 
 ####################
 # -- Let it run -- #
@@ -191,5 +200,5 @@ process.p = cms.Path(
 # process.p.remove(process.patCandidateSummary)
 
 # if isMC == False:
-# 	process.p.remove(process.electronMatch)
-# 	process.p.remove(process.muonMatch)
+#   process.p.remove(process.electronMatch)
+#   process.p.remove(process.muonMatch)

@@ -47,7 +47,7 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 # -- Global Tags -- #
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff")
 if isMC == True:
-  process.GlobalTag.globaltag = cms.string('80X_mcRun2_asymptotic_2016_miniAODv2_v0')
+  process.GlobalTag.globaltag = cms.string('80X_mcRun2_asymptotic_2016_TrancheIV_v6')
 else:
   process.GlobalTag.globaltag = cms.string('80X_dataRun2_Prompt_v8') #prompt-reco global tag
 
