@@ -50,6 +50,7 @@
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
 #include "SimDataFormats/GeneratorProducts/interface/LHEEventProduct.h"
+#include "SimDataFormats/GeneratorProducts/interface/LHERunInfoProduct.h"
 
 //#include "SimDataFormats/HepMCProduct/interface/HepMCProduct.h"
 
@@ -107,6 +108,7 @@ private:
 	virtual void analyze(const edm::Event&, const edm::EventSetup&);
 	virtual void endJob() ;
 	virtual void beginRun(const edm::Run &, const edm::EventSetup & );
+	virtual void endRun(const edm::Run &, const edm::EventSetup & );
 
 	virtual void fillPrimaryVertex(const edm::Event &iEvent);  // fill primary vertex information
 	virtual void fillMET(const edm::Event &iEvent);            // fill MET information
@@ -160,6 +162,7 @@ private:
 	edm::EDGetTokenT< edm::View<reco::Track> > 						TrackToken;
 	edm::EDGetTokenT< std::vector< PileupSummaryInfo > > 			PileUpInfoToken;
 	edm::EDGetTokenT< LHEEventProduct >								LHEEventProductToken;
+	edm::EDGetTokenT< LHERunInfoProduct >							LHERunInfoProductToken;
 
 	// edm::EDGetTokenT< trigger::TriggerEvent > 						TriggerSummaryToken;
 

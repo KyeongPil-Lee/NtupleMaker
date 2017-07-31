@@ -24,7 +24,7 @@ process.source = cms.Source("PoolSource",
 	fileNames = cms.untracked.vstring( FileName )
 )
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
 
 # -- Geometry and Detector Conditions (needed for a few patTuple production steps) -- #
 process.load("TrackingTools/TransientTrack/TransientTrackBuilder_cfi")

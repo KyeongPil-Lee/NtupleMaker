@@ -68,4 +68,5 @@ DYntupleMaker = cms.EDAnalyzer("DYntupleMaker",
 
 	# -- LHE info -- #
 	LHEEventProduct = cms.untracked.InputTag("externalLHEProducer"),
+	LHERunInfoProduct = cms.untracked.InputTag("externalLHEProducer"),
 )
