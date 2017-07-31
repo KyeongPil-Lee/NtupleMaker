@@ -16,7 +16,7 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 ## Source
 FileName = ""
 if isMC == True:
-	FileName = "file:/cms/home/kplee/scratch/ROOTFiles_Test/76X/ExampleMiniAODv2_Fall15_76X_DYLL_M50.root"
+	FileName = "file:/d3/scratch/kplee/ROOTFiles_Test/76X/MiniAOD_DYaMCNLO_M2000to3000.root"
 else:
 	FileName = "file:/cms/home/kplee/ROOTFiles_Test/ExampleAOD_Run2015Dv4_SingleMuon_Run259891.root"
 
