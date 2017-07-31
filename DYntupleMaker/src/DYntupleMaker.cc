@@ -1933,6 +1933,20 @@ void DYntupleMaker::hltReport(const edm::Event &iEvent)
 
 	_HLT_ntrig = ntrigTot;
 
+	// -- LHE information -- //
+	// -- ref: https://twiki.cern.ch/twiki/bin/viewauth/CMS/LHEReaderCMSSW#Retrieving_the_weights -- //
+	edm::Handle<LHERunInfoProduct> run; 
+	typedef std::vector<LHERunInfoProduct::Header>::const_iterator headers_const_iterator;
+	 
+	iRun.getByLabel( "externalLHEProducer", run );
+	LHERunInfoProduct myLHERunInfoProduct = *(run.product());
+	for (headers_const_iterator iter=myLHERunInfoProduct.headers_begin(); iter!=myLHERunInfoProduct.headers_end(); iter++)
+	{
+		std::cout << iter->tag() << std::endl;
+		std::vector<std::string> lines = iter->lines();
+		for (unsigned int iLine = 0; iLine<lines.size(); iLine++)
+			std::cout << lines.at(iLine);
+	}
 }
 
 ///////////////////////////////////
