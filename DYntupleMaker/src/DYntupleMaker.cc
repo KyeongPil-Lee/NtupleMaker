@@ -2669,7 +2669,8 @@ void DYntupleMaker::fillLHEInfo(const edm::Event &iEvent)
 		double weight = LHEInfo->weights()[i].wgt;
 		double ratio = weight / OriginalWeight;
 		PDFWeights.push_back( ratio );
-		// std::cout << i << "th weight = " << weight << ", ratio w.r.t. original: " << ratio << endl;
+
+		std::cout << i << "th weight = " << weight << "(ID=" << LHEInfo->weights()[i].id <<"), ratio w.r.t. original: " << ratio << endl;
 	}
 }
 
