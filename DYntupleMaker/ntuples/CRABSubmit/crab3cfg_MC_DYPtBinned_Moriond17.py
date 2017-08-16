@@ -1,0 +1,93 @@
+from CRABClient.UserUtilities import config, getUsernameFromSiteDB
+config = config()
+
+config.General.requestName = ''
+config.General.workArea = 'DYntuple'
+
+config.JobType.pluginName = 'Analysis'
+config.JobType.psetName = '../MC_cfg_80X_mcRun2_asymptotic_2016_TrancheIV_v6.py'
+
+config.Data.inputDataset = ''
+
+config.Data.inputDBS = 'global'
+config.Data.splitting = 'FileBased'
+config.Data.unitsPerJob = 2
+config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB())
+config.Data.publication = False
+# config.JobType.maxJobRuntimeMin = 2700 # -- 36 hours -- #
+
+config.Site.storageSite = 'T2_KR_KNU'
+
+version = '_v20170816_'
+# 'MultiCRAB' part
+if __name__ == '__main__':
+    
+    from CRABAPI.RawCommand import crabCommand
+
+    config.General.requestName = 'DYntuple'+version+'DYLL_Pt50to100'
+    config.Data.inputDataset = '/DYJetsToLL_Pt-50To100_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v3/MINIAODSIM'
+    crabCommand('submit', config = config)
+
+    config.General.requestName = 'DYntuple'+version+'DYLL_Pt50to100_ext3'
+    config.Data.inputDataset = '/DYJetsToLL_Pt-50To100_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext3-v1/MINIAODSIM'
+    crabCommand('submit', config = config)
+
+    config.General.requestName = 'DYntuple'+version+'DYLL_Pt100to250'
+    config.Data.inputDataset = '/DYJetsToLL_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v2/MINIAODSIM'
+    crabCommand('submit', config = config)
+
+    config.General.requestName = 'DYntuple'+version+'DYLL_Pt100to250_ext1'
+    config.Data.inputDataset = '/DYJetsToLL_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM'
+    crabCommand('submit', config = config)
+
+    config.General.requestName = 'DYntuple'+version+'DYLL_Pt100to250_ext2'
+    config.Data.inputDataset = '/DYJetsToLL_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext2-v1/MINIAODSIM'
+    crabCommand('submit', config = config)
+
+    config.General.requestName = 'DYntuple'+version+'DYLL_Pt100to250_ext5'
+    config.Data.inputDataset = '/DYJetsToLL_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext5-v1/MINIAODSIM'
+    crabCommand('submit', config = config)
+
+    config.General.requestName = 'DYntuple'+version+'DYLL_Pt250to400'
+    config.Data.inputDataset = '/DYJetsToLL_Pt-250To400_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM'
+    crabCommand('submit', config = config)
+
+    config.General.requestName = 'DYntuple'+version+'DYLL_Pt250to400_ext1'
+    config.Data.inputDataset = '/DYJetsToLL_Pt-250To400_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM'
+    crabCommand('submit', config = config)
+
+    config.General.requestName = 'DYntuple'+version+'DYLL_Pt250to400_ext2'
+    config.Data.inputDataset = '/DYJetsToLL_Pt-250To400_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext2-v1/MINIAODSIM'
+    crabCommand('submit', config = config)
+
+    config.General.requestName = 'DYntuple'+version+'DYLL_Pt250to400_ext5'
+    config.Data.inputDataset = '/DYJetsToLL_Pt-250To400_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext5-v1/MINIAODSIM'
+    crabCommand('submit', config = config)
+
+    config.General.requestName = 'DYntuple'+version+'DYLL_Pt400to650'
+    config.Data.inputDataset = '/DYJetsToLL_Pt-400To650_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM'
+    crabCommand('submit', config = config)
+
+    config.General.requestName = 'DYntuple'+version+'DYLL_Pt400to650_ext1'
+    config.Data.inputDataset = '/DYJetsToLL_Pt-400To650_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM'
+    crabCommand('submit', config = config)
+
+    config.General.requestName = 'DYntuple'+version+'DYLL_Pt400to650_ext2'
+    config.Data.inputDataset = '/DYJetsToLL_Pt-400To650_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext2-v1/MINIAODSIM'
+    crabCommand('submit', config = config)
+
+    config.General.requestName = 'DYntuple'+version+'DYLL_Pt650toInf'
+    config.Data.inputDataset = '/DYJetsToLL_Pt-650ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM'
+    crabCommand('submit', config = config)
+
+    config.General.requestName = 'DYntuple'+version+'DYLL_Pt650toInf_ext1'
+    config.Data.inputDataset = '/DYJetsToLL_Pt-650ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM'
+    crabCommand('submit', config = config)
+
+    config.General.requestName = 'DYntuple'+version+'DYLL_Pt650toInf_ext2'
+    config.Data.inputDataset = '/DYJetsToLL_Pt-650ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext2-v1/MINIAODSIM'
+    crabCommand('submit', config = config)
+
+    # config.General.requestName = ''
+    # config.Data.inputDataset = ''
+    # crabCommand('submit', config = config)
