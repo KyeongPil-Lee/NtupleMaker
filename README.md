@@ -20,5 +20,5 @@
 	git clone https://github.com/cms-data/RecoEgamma-ElectronIdentification ../external/slc6_amd64_gcc530/data/RecoEgamma/ElectronIdentification/data #we need this for the mva weights which runs in VID regardless if you need it or not
 
 	# -- ntuple maker -- #
-	git clone https://github.com/KyeongPil-Lee/NtupleMaker.git Phys -b 80X_AOD
+	git clone https://github.com/KyeongPil-Lee/NtupleMaker.git Phys -b 80X
 	scram b -j 20 >&log&
