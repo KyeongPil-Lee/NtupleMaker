@@ -12,6 +12,7 @@ DYntupleMaker = cms.EDAnalyzer("DYntupleMaker",
 	Jet = cms.untracked.InputTag("selectedPatJets"),
 	MET = cms.untracked.InputTag("patMETs"),
 	LHEEventProduct = cms.untracked.InputTag("externalLHEProducer"),
+	LHERunInfoProduct = cms.untracked.InputTag("externalLHEProducer"),
 	GenParticle = cms.untracked.InputTag("genParticles"),
 
 	# -- electron information -- #

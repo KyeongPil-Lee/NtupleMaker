@@ -47,6 +47,7 @@
 // -- For GenParticles -- //
 ////////////////////////////
 #include "SimDataFormats/GeneratorProducts/interface/LHEEventProduct.h"
+#include "SimDataFormats/GeneratorProducts/interface/LHERunInfoProduct.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
@@ -139,6 +140,7 @@ private:
 	edm::EDGetTokenT< std::vector<pat::Jet> > 						JetToken;
 	edm::EDGetTokenT< std::vector<pat::MET> > 						MetToken;
 	edm::EDGetTokenT< LHEEventProduct > 							LHEEventProductToken;
+	edm::EDGetTokenT< LHERunInfoProduct >							LHERunInfoProductToken;
 	edm::EDGetTokenT< std::vector<reco::GenParticle> > 				GenParticleToken;
 
 	edm::EDGetTokenT< double > 										RhoToken;
@@ -632,6 +634,7 @@ private:
 	double GENLepton_Px[MPSIZE];
 	double GENLepton_Py[MPSIZE];
 	double GENLepton_Pz[MPSIZE];
+	double GENLepton_E[MPSIZE];
 	double GENLepton_mother[MPSIZE];
 	double GENLepton_mother_pT[MPSIZE];
 	int GENLepton_charge[MPSIZE];
@@ -660,6 +663,7 @@ private:
 	double GenOthers_Px[MPSIZE];
 	double GenOthers_Py[MPSIZE];
 	double GenOthers_Pz[MPSIZE];
+	double GenOthers_E[MPSIZE];
 	double GenOthers_mother[MPSIZE];
 	int GenOthers_charge[MPSIZE];
 	int GenOthers_status[MPSIZE];

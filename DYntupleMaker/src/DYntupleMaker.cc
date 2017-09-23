@@ -72,6 +72,7 @@
 // -- For GenParticles -- //
 ////////////////////////////
 #include "SimDataFormats/GeneratorProducts/interface/LHEEventProduct.h"
+#include "SimDataFormats/GeneratorProducts/interface/LHERunInfoProduct.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticleFwd.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
@@ -164,6 +165,7 @@ PhotonToken 					( consumes< edm::View<reco::Photon> >				(iConfig.getUntrackedP
 JetToken 						( consumes< std::vector<pat::Jet> >					(iConfig.getUntrackedParameter<edm::InputTag>("Jet")) ),
 MetToken 						( consumes< std::vector<pat::MET> >					(iConfig.getUntrackedParameter<edm::InputTag>("MET")) ),
 LHEEventProductToken			( consumes< LHEEventProduct >  						(iConfig.getUntrackedParameter<edm::InputTag>("LHEEventProduct")) ),
+LHERunInfoProductToken			( consumes< LHERunInfoProduct,edm::InRun > 			(iConfig.getUntrackedParameter<edm::InputTag>("LHERunInfoProduct")) ),
 GenParticleToken 				( consumes< std::vector<reco::GenParticle> >		(iConfig.getUntrackedParameter<edm::InputTag>("GenParticle")) ),
 // -- Electron tokens -- //
 RhoToken 						( consumes< double >								(iConfig.getUntrackedParameter<edm::InputTag>("rho")) ),
@@ -569,7 +571,7 @@ void DYntupleMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 		
 		// GEN
 		GENLepton_phi[i] = GENLepton_eta[i] = GENLepton_pT[i] = GENLepton_mother[i] = GENLepton_mother_pT[i] = -100;
-		GENLepton_Px[i] = GENLepton_Py[i] = GENLepton_Pz[i] = -100;
+		GENLepton_Px[i] = GENLepton_Py[i] = GENLepton_Pz[i] = GENLepton_E[i] = -100;
 		GENLepton_charge[i] = GENLepton_status[i] = GENLepton_ID[i] = -100;
 		GENLepton_isPrompt[i] = 0;
 		GENLepton_isPromptFinalState[i] = 0;
@@ -589,7 +591,7 @@ void DYntupleMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
 		nGenOthers = -1;
 		GenOthers_phi[i] = GenOthers_eta[i] = GenOthers_pT[i] = GenOthers_mother[i] = -100;
-		GenOthers_Px[i] = GenOthers_Py[i] = GenOthers_Pz[i] = -100;
+		GenOthers_Px[i] = GenOthers_Py[i] = GenOthers_Pz[i] = GenOthers_E[i] = -100;
 		GenOthers_charge[i] = GenOthers_status[i] = GenOthers_ID[i] = -100;
 		GenOthers_isPrompt[i] = 0;
 		GenOthers_isPromptFinalState[i] = 0;
@@ -1126,6 +1128,7 @@ void DYntupleMaker::beginJob()
 		DYTree->Branch("GENLepton_Px", &GENLepton_Px,"GENLepton_Px[GENnPair]/D");
 		DYTree->Branch("GENLepton_Py", &GENLepton_Py,"GENLepton_Py[GENnPair]/D");
 		DYTree->Branch("GENLepton_Pz", &GENLepton_Pz,"GENLepton_Pz[GENnPair]/D");
+		DYTree->Branch("GENLepton_E", &GENLepton_E,"GENLepton_E[GENnPair]/D");
 		DYTree->Branch("GENLepton_mother", &GENLepton_mother,"GENLepton_mother[GENnPair]/D");
 		DYTree->Branch("GENLepton_mother_pT", &GENLepton_mother_pT,"GENLepton_mother_pT[GENnPair]/D");
 		DYTree->Branch("GENLepton_charge", &GENLepton_charge,"GENLepton_charge[GENnPair]/I");
@@ -1158,6 +1161,7 @@ void DYntupleMaker::beginJob()
 		DYTree->Branch("GenOthers_Px", &GenOthers_Px,"GenOthers_Px[nGenOthers]/D");
 		DYTree->Branch("GenOthers_Py", &GenOthers_Py,"GenOthers_Py[nGenOthers]/D");
 		DYTree->Branch("GenOthers_Pz", &GenOthers_Pz,"GenOthers_Pz[nGenOthers]/D");
+		DYTree->Branch("GenOthers_E", &GenOthers_E,"GenOthers_E[nGenOthers]/D");
 		DYTree->Branch("GenOthers_mother", &GenOthers_mother,"GenOthers_mother[nGenOthers]/D");
 		DYTree->Branch("GenOthers_charge", &GenOthers_charge,"GenOthers_charge[nGenOthers]/I");
 		DYTree->Branch("GenOthers_status", &GenOthers_status,"GenOthers_status[nGenOthers]/I");
@@ -2537,6 +2541,7 @@ void DYntupleMaker::fillGENInfo(const edm::Event &iEvent)
 			GENLepton_Px[_GennPair] = parCand.px();
 			GENLepton_Py[_GennPair] = parCand.py();
 			GENLepton_Pz[_GennPair] = parCand.pz();
+			GENLepton_E[_GennPair] = parCand.energy();
 			GENLepton_eta[_GennPair] = parCand.eta();
 			GENLepton_phi[_GennPair] = parCand.phi();
 			GENLepton_charge[_GennPair] = parCand.charge();
@@ -2591,6 +2596,7 @@ void DYntupleMaker::fillGenOthersInfo(const edm::Event &iEvent)
 			GenOthers_Px[_nGenOthers] = parCand.px();
 			GenOthers_Py[_nGenOthers] = parCand.py();
 			GenOthers_Pz[_nGenOthers] = parCand.pz();
+			GenOthers_E[_nGenOthers] = parCand.energy();
 			GenOthers_eta[_nGenOthers] = parCand.eta();
 			GenOthers_phi[_nGenOthers] = parCand.phi();
 			GenOthers_charge[_nGenOthers] = parCand.charge();
@@ -2939,22 +2945,26 @@ void DYntupleMaker::fillTT(const edm::Event &iEvent)
 
 void DYntupleMaker::endRun(const Run & iRun, const EventSetup & iSetup)
 {
-	// -- LHE information -- //
-	// -- ref: https://twiki.cern.ch/twiki/bin/viewauth/CMS/LHEReaderCMSSW#Retrieving_the_weights -- //
-	edm::Handle<LHERunInfoProduct> LHERunInfo;
-	iRun.getByToken(LHERunInfoProductToken, LHERunInfo);
 
-	cout << "##### Information about PDF weights #####" << endl;
-	LHERunInfoProduct myLHERunInfoProduct = *(LHERunInfo.product());
-	typedef std::vector<LHERunInfoProduct::Header>::const_iterator headers_const_iterator;
-	for (headers_const_iterator iter=myLHERunInfoProduct.headers_begin(); iter!=myLHERunInfoProduct.headers_end(); iter++)
+	if( isMC ) // -- only MC case -- //
 	{
-		std::cout << iter->tag() << std::endl;
-		std::vector<std::string> lines = iter->lines();
-		for (unsigned int iLine = 0; iLine<lines.size(); iLine++)
-			std::cout << lines.at(iLine);
+		// -- LHE information -- //
+		// -- ref: https://twiki.cern.ch/twiki/bin/viewauth/CMS/LHEReaderCMSSW#Retrieving_the_weights -- //
+		edm::Handle<LHERunInfoProduct> LHERunInfo;
+		iRun.getByToken(LHERunInfoProductToken, LHERunInfo);
+
+		cout << "##### Information about PDF weights #####" << endl;
+		LHERunInfoProduct myLHERunInfoProduct = *(LHERunInfo.product());
+		typedef std::vector<LHERunInfoProduct::Header>::const_iterator headers_const_iterator;
+		for (headers_const_iterator iter=myLHERunInfoProduct.headers_begin(); iter!=myLHERunInfoProduct.headers_end(); iter++)
+		{
+			std::cout << iter->tag() << std::endl;
+			std::vector<std::string> lines = iter->lines();
+			for (unsigned int iLine = 0; iLine<lines.size(); iLine++)
+				std::cout << lines.at(iLine);
+		}
+		cout << "##### End of information about PDF weights #####" << endl;
 	}
-	cout << "##### End of information about PDF weights #####" << endl;
 }
 
 //define this as a plug-in
