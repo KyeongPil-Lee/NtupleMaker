@@ -349,6 +349,7 @@ void DYntupleMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 	vtxTrkEMuProb.clear();
 	vtxTrkEMuNdof.clear();
 	vtxTrkEMuChi2.clear();
+	PDFWeights.clear();
 
 	CosAngle_TuneP.clear();
 	vtxTrk1Pt_TuneP.clear();
@@ -758,6 +759,8 @@ void DYntupleMaker::beginJob()
 	DYTree->Branch("Flag_duplicateMuons",&Flag_duplicateMuons,"Flag_duplicateMuons/O");
 	DYTree->Branch("Flag_noBadMuons",&Flag_noBadMuons,"Flag_noBadMuons/O");
 
+	DYTree->Branch("PDFWeights", &PDFWeights);
+	
 	if(theStorePriVtxFlag)
 	{
 		DYTree->Branch("PVtrackSize", &PVtrackSize,"PVtrackSize/I");
@@ -2465,10 +2468,10 @@ void DYntupleMaker::fillElectrons(const edm::Event &iEvent)
 ////////////////////////
 void DYntupleMaker::fillLHEInfo(const edm::Event &iEvent)
 {
-	Handle<LHEEventProduct> lheEventProduct;
-	iEvent.getByToken(LHEEventProductToken, lheEventProduct);
+	Handle<LHEEventProduct> LHEInfo;
+	iEvent.getByToken(LHEEventProductToken, LHEInfo);
 
-	const lhef::HEPEUP& lheEvent = lheEventProduct->hepeup();
+	const lhef::HEPEUP& lheEvent = LHEInfo->hepeup();
 	std::vector<lhef::HEPEUP::FiveVector> lheParticles = lheEvent.PUP;
 
 	Int_t _nLHEParticle = 0;
@@ -2496,6 +2499,22 @@ void DYntupleMaker::fillLHEInfo(const edm::Event &iEvent)
 		}
 	}
 	nLHEParticle = _nLHEParticle;
+
+	// -- PDf weights for theoretical uncertainties: scale, PDF replica and alphaS variation -- //
+	// -- ref: https://twiki.cern.ch/twiki/bin/viewauth/CMS/LHEReaderCMSSW -- //
+	double OriginalWeight = LHEInfo->originalXWGTUP();
+	// std::cout << "OriginalWeight: " << OriginalWeight << endl;
+	int nWeight = (int)LHEInfo->weights().size();
+	// std::cout << "nWeight: " << nWeight << endl;
+
+	for(int i=0; i<nWeight; i++)
+	{
+		double weight = LHEInfo->weights()[i].wgt;
+		double ratio = weight / OriginalWeight;
+		PDFWeights.push_back( ratio );
+
+		// std::cout << i << "th weight = " << weight << "(ID=" << LHEInfo->weights()[i].id <<"), ratio w.r.t. original: " << ratio << endl;
+	}
 }
 
 ////////////////////////
@@ -2916,6 +2935,26 @@ void DYntupleMaker::fillTT(const edm::Event &iEvent)
 	} // -- end of for(unsigned igsf = 0; igsf < gsfTracks->size(); igsf++ ): GSFTrack iteration -- //
 
 	NTT = _nTT;
+}
+
+void DYntupleMaker::endRun(const Run & iRun, const EventSetup & iSetup)
+{
+	// -- LHE information -- //
+	// -- ref: https://twiki.cern.ch/twiki/bin/viewauth/CMS/LHEReaderCMSSW#Retrieving_the_weights -- //
+	edm::Handle<LHERunInfoProduct> LHERunInfo;
+	iRun.getByToken(LHERunInfoProductToken, LHERunInfo);
+
+	cout << "##### Information about PDF weights #####" << endl;
+	LHERunInfoProduct myLHERunInfoProduct = *(LHERunInfo.product());
+	typedef std::vector<LHERunInfoProduct::Header>::const_iterator headers_const_iterator;
+	for (headers_const_iterator iter=myLHERunInfoProduct.headers_begin(); iter!=myLHERunInfoProduct.headers_end(); iter++)
+	{
+		std::cout << iter->tag() << std::endl;
+		std::vector<std::string> lines = iter->lines();
+		for (unsigned int iLine = 0; iLine<lines.size(); iLine++)
+			std::cout << lines.at(iLine);
+	}
+	cout << "##### End of information about PDF weights #####" << endl;
 }
 
 //define this as a plug-in

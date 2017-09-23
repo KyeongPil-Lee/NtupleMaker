@@ -107,6 +107,7 @@ private:
 	virtual void analyze(const edm::Event&, const edm::EventSetup&);
 	virtual void endJob() ;
 	virtual void beginRun(const edm::Run &, const edm::EventSetup & );
+	virtual void endRun(const edm::Run &, const edm::EventSetup & );
 
 	virtual void fillPrimaryVertex(const edm::Event &iEvent);  // fill primary vertex information
 	virtual void fillMET(const edm::Event &iEvent);            // fill MET information
@@ -274,6 +275,7 @@ private:
 	double photonEt;
 	double chargedHadronEt;
 	double neutralHadronEt;
+
 	// double MET_sumEt;
 	// double MET_pt;
 	// double MET_px;
@@ -289,6 +291,9 @@ private:
 	int Nmuons;
 	int Nbtagged;
 	int NbtaggedCloseMuon;
+
+	// -- PDf weights -- //
+	std::vector< double > PDFWeights;
 	
 	// -- Flags in re-miniAOD -- //
 	bool Flag_duplicateMuons;
