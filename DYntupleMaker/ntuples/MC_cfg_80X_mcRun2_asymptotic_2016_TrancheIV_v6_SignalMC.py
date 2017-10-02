@@ -155,9 +155,9 @@ process.recoTree.ApplyFilter = False
 process.recoTree.StoreMuonFlag = True
 process.recoTree.StoreElectronFlag = True
 process.recoTree.StorePhotonFlag = True
-process.recoTree.StoreLHEFlag = False
+process.recoTree.StoreLHEFlag = True
 process.recoTree.StoreGENFlag = isMC
-process.recoTree.StoreGenOthersFlag = False
+process.recoTree.StoreGenOthersFlag = True
 process.recoTree.StoreJetFlag = True
 process.recoTree.StoreMETFlag = True
 
