@@ -8,6 +8,7 @@
 //   Author:
 //   H.D.Yoo           Purdue University
 //   K.P.Lee           Seoul National University
+//   D.M.Pai           Seoul National University (EGM corrections, emu variables, and Gen-level neutrinos)
 //
 //--------------------------------------------------
 
@@ -161,6 +162,7 @@ DYntupleMaker::DYntupleMaker(const edm::ParameterSet& iConfig):
 // -- object tokens -- //
 MuonToken						( consumes< std::vector<pat::Muon> > 				(iConfig.getUntrackedParameter<edm::InputTag>("Muon")) ),
 ElectronToken					( consumes< edm::View<reco::GsfElectron> >			(iConfig.getUntrackedParameter<edm::InputTag>("Electron")) ),
+CalibElectronToken					( consumes< edm::View<reco::GsfElectron> >			(iConfig.getUntrackedParameter<edm::InputTag>("CalibElectron")) ),
 PhotonToken 					( consumes< edm::View<reco::Photon> >				(iConfig.getUntrackedParameter<edm::InputTag>("Photon")) ),
 JetToken 						( consumes< std::vector<pat::Jet> >					(iConfig.getUntrackedParameter<edm::InputTag>("Jet")) ),
 MetToken 						( consumes< std::vector<pat::MET> >					(iConfig.getUntrackedParameter<edm::InputTag>("MET")) ),
@@ -252,6 +254,7 @@ PileUpInfoToken 				( consumes< std::vector< PileupSummaryInfo > >  	(iConfig.ge
 	
 	theStoreMuonFlag              	  = iConfig.getUntrackedParameter<bool>("StoreMuonFlag", true);
 	theStoreElectronFlag              = iConfig.getUntrackedParameter<bool>("StoreElectronFlag", true);
+	theStoreCalibElectronFlag         = iConfig.getUntrackedParameter<bool>("StoreCalibElectronFlag", true);
 	theStoreLHEFlag                   = iConfig.getUntrackedParameter<bool>("StoreLHEFlag", false);
 	theStoreGENFlag                   = iConfig.getUntrackedParameter<bool>("StoreGENFlag", true);
 	theStoreGenOthersFlag             = iConfig.getUntrackedParameter<bool>("StoreGenOthersFlag", false);
@@ -304,6 +307,7 @@ void DYntupleMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 	nVertices = -1;
 	Nmuons = Njets = Nbtagged = NbtaggedCloseMuon = -1;
 	Nelectrons = -1;
+	NCalibelectrons = -1; // for calibrated electrons
 	PVtrackSize = -1;
 	PVchi2 = -1;
 	PVndof = -1;
@@ -341,24 +345,36 @@ void DYntupleMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 	vtxTrkProb.clear();
 	vtxTrkNdof.clear();
 	vtxTrkChi2.clear();
-	vtxTrkDiE1Pt.clear();
-	vtxTrkDiE2Pt.clear();
-	vtxTrkDiEProb.clear();
-	vtxTrkDiENdof.clear();
-	vtxTrkDiEChi2.clear();
-	vtxTrkEMu1Pt.clear();
-	vtxTrkEMu2Pt.clear();
-	vtxTrkEMuProb.clear();
-	vtxTrkEMuNdof.clear();
-	vtxTrkEMuChi2.clear();
-	PDFWeights.clear();
-
 	CosAngle_TuneP.clear();
 	vtxTrk1Pt_TuneP.clear();
 	vtxTrk2Pt_TuneP.clear();
 	vtxTrkChi2_TuneP.clear();
 	vtxTrkNdof_TuneP.clear();
 	vtxTrkProb_TuneP.clear();
+
+	vtxTrkDiE1Pt.clear();
+	vtxTrkDiE2Pt.clear();
+	vtxTrkDiEProb.clear();
+	vtxTrkDiENdof.clear();
+	vtxTrkDiEChi2.clear();
+
+	vtxTrkDiE1Pt_Calib.clear();
+	vtxTrkDiE2Pt_Calib.clear();
+	vtxTrkDiEProb_Calib.clear();
+	vtxTrkDiENdof_Calib.clear();
+	vtxTrkDiEChi2_Calib.clear();
+	vtxTrkEMu1Pt.clear();
+	vtxTrkEMu2Pt.clear();
+	vtxTrkEMuProb.clear();
+	vtxTrkEMuNdof.clear();
+	vtxTrkEMuChi2.clear();
+	vtxTrkEMu1Pt_TuneP.clear();
+	vtxTrkEMu2Pt_TuneP.clear();
+	vtxTrkEMuProb_TuneP.clear();
+	vtxTrkEMuNdof_TuneP.clear();
+	vtxTrkEMuChi2_TuneP.clear();
+
+	PDFWeights.clear();
 
 	for( int i = 0; i < MPSIZE; i++ )
 	{
@@ -387,6 +403,7 @@ void DYntupleMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
 		// electron
 		Electron_Energy[i] = Electron_et[i] = Electron_pT[i] = Electron_eta[i] = Electron_phi[i] = -100;
+		Electron_etaCalib[i] = Electron_phiCalib[i] = -100; // just for check of EGM corrections
 		Electron_etCorr[i] = Electron_caloEnergy[i] = -100;
 		Electron_Px[i] = Electron_Py[i] = Electron_Pz[i] = -9999;
 		Electron_ECalib[i] = Electron_etCalib[i] = Electron_pTCalib[i] = -100;
@@ -712,6 +729,7 @@ void DYntupleMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 	if( theStorePhotonFlag ) fillPhotons(iEvent);
 	if( theStoreMuonFlag ) fillMuons(iEvent, iSetup);
 	if( theStoreElectronFlag ) fillElectrons(iEvent);
+	if( theStoreCalibElectronFlag ) fillCalibElectrons(iEvent, iSetup);
 	if( theStoreTTFlag ) fillTT(iEvent);
 	DYTree->Fill();
 }
@@ -853,14 +871,6 @@ void DYntupleMaker::beginJob()
 		// DYTree->Branch("Electron_Px", &Electron_Px, "Electron_Px[Nelectrons]/D");
 		// DYTree->Branch("Electron_Py", &Electron_Py, "Electron_Py[Nelectrons]/D");
 		// DYTree->Branch("Electron_Pz", &Electron_Pz, "Electron_Pz[Nelectrons]/D");
-		// DYTree->Branch("Electron_ECalib", &Electron_ECalib, "Electron_ECalib[Nelectrons]/D");
-		// DYTree->Branch("Electron_etCalib", &Electron_etCalib, "Electron_etCalib[Nelectrons]/D");
-		// DYTree->Branch("Electron_etCorrCalib", &Electron_etCorrCalib, "Electron_etCorrCalib[Nelectrons]/D");
-		// DYTree->Branch("Electron_caloEnergyCalib", &Electron_caloEnergyCalib, "Electron_caloEnergyCalib[Nelectrons]/D");
-		// DYTree->Branch("Electron_pTCalib", &Electron_pTCalib, "Electron_pTCalib[Nelectrons]/D");
-		// DYTree->Branch("Electron_PxCalib", &Electron_PxCalib, "Electron_PxCalib[Nelectrons]/D");
-		// DYTree->Branch("Electron_PyCalib", &Electron_PyCalib, "Electron_PyCalib[Nelectrons]/D");
-		// DYTree->Branch("Electron_PzCalib", &Electron_PzCalib, "Electron_PzCalib[Nelectrons]/D");
 		DYTree->Branch("Electron_eta", &Electron_eta, "Electron_eta[Nelectrons]/D");
 		DYTree->Branch("Electron_phi", &Electron_phi, "Electron_phi[Nelectrons]/D");
 		DYTree->Branch("Electron_charge", &Electron_charge, "Electron_charge[Nelectrons]/I");
@@ -868,10 +878,6 @@ void DYntupleMaker::beginJob()
 		DYTree->Branch("Electron_gsfPx", &Electron_gsfPx, "Electron_gsfPx[Nelectrons]/D");
 		DYTree->Branch("Electron_gsfPy", &Electron_gsfPy, "Electron_gsfPy[Nelectrons]/D");
 		DYTree->Branch("Electron_gsfPz", &Electron_gsfPz, "Electron_gsfPz[Nelectrons]/D");
-		// DYTree->Branch("Electron_gsfpTCalib", &Electron_gsfpTCalib, "Electron_gsfpTCalib[Nelectrons]/D");
-		// DYTree->Branch("Electron_gsfPxCalib", &Electron_gsfPxCalib, "Electron_gsfPxCalib[Nelectrons]/D");
-		// DYTree->Branch("Electron_gsfPyCalib", &Electron_gsfPyCalib, "Electron_gsfPyCalib[Nelectrons]/D");
-		// DYTree->Branch("Electron_gsfPzCalib", &Electron_gsfPzCalib, "Electron_gsfPzCalib[Nelectrons]/D");
 		DYTree->Branch("Electron_gsfEta", &Electron_gsfEta, "Electron_gsfEta[Nelectrons]/D");
 		DYTree->Branch("Electron_gsfPhi", &Electron_gsfPhi, "Electron_gsfPhi[Nelectrons]/D");
 		DYTree->Branch("Electron_gsfCharge", &Electron_gsfCharge, "Electron_gsfCharge[Nelectrons]/I");
@@ -960,6 +966,46 @@ void DYntupleMaker::beginJob()
 		DYTree->Branch("Electron_ambGsf3Eta", &Electron_ambGsf3Eta, "Electron_ambGsf3Eta[Nelectrons]/D");
 		DYTree->Branch("Electron_ambGsf3Phi", &Electron_ambGsf3Phi, "Electron_ambGsf3Phi[Nelectrons]/D");
 		DYTree->Branch("Electron_ambGsf3Charge", &Electron_ambGsf3Charge, "Electron_ambGsf3Charge[Nelectrons]/D");
+		DYTree->Branch("vtxTrkDiE1Pt", &vtxTrkDiE1Pt);
+		DYTree->Branch("vtxTrkDiE2Pt", &vtxTrkDiE2Pt);
+		DYTree->Branch("vtxTrkDiEChi2", &vtxTrkDiEChi2);
+		DYTree->Branch("vtxTrkDiEProb", &vtxTrkDiEProb);
+		DYTree->Branch("vtxTrkDiENdof", &vtxTrkDiENdof);
+	}
+
+	// Calibrated Electron
+	if( theStoreCalibElectronFlag )
+	{
+		DYTree->Branch("NCalibelectrons", &NCalibelectrons,"NCalibelectrons/I");
+		DYTree->Branch("Electron_ECalib", &Electron_ECalib, "Electron_ECalib[NCalibelectrons]/D");
+		DYTree->Branch("Electron_caloEnergyCalib", &Electron_caloEnergyCalib, "Electron_caloEnergyCalib[NCalibelectrons]/D");
+		DYTree->Branch("Electron_pTCalib", &Electron_pTCalib, "Electron_pTCalib[NCalibelectrons]/D");
+		DYTree->Branch("Electron_PxCalib", &Electron_PxCalib, "Electron_PxCalib[NCalibelectrons]/D");
+		DYTree->Branch("Electron_PyCalib", &Electron_PyCalib, "Electron_PyCalib[NCalibelectrons]/D");
+		DYTree->Branch("Electron_PzCalib", &Electron_PzCalib, "Electron_PzCalib[NCalibelectrons]/D");
+		DYTree->Branch("Electron_gsfpTCalib", &Electron_gsfpTCalib, "Electron_gsfpTCalib[NCalibelectrons]/D");
+		DYTree->Branch("Electron_gsfPxCalib", &Electron_gsfPxCalib, "Electron_gsfPxCalib[NCalibelectrons]/D");
+		DYTree->Branch("Electron_gsfPyCalib", &Electron_gsfPyCalib, "Electron_gsfPyCalib[NCalibelectrons]/D");
+		DYTree->Branch("Electron_gsfPzCalib", &Electron_gsfPzCalib, "Electron_gsfPzCalib[NCalibelectrons]/D");
+		DYTree->Branch("vtxTrkDiE1Pt_Calib", &vtxTrkDiE1Pt_Calib);
+		DYTree->Branch("vtxTrkDiE2Pt_Calib", &vtxTrkDiE2Pt_Calib);
+		DYTree->Branch("vtxTrkDiEChi2_Calib", &vtxTrkDiEChi2_Calib);
+		DYTree->Branch("vtxTrkDiEProb_Calib", &vtxTrkDiEProb_Calib);
+		DYTree->Branch("vtxTrkDiENdof_Calib", &vtxTrkDiENdof_Calib);
+		DYTree->Branch("vtxTrkEMu1Pt", &vtxTrkEMu1Pt);
+		DYTree->Branch("vtxTrkEMu2Pt", &vtxTrkEMu2Pt);
+		DYTree->Branch("vtxTrkEMuChi2", &vtxTrkEMuChi2);
+		DYTree->Branch("vtxTrkEMuProb", &vtxTrkEMuProb);
+		DYTree->Branch("vtxTrkEMuNdof", &vtxTrkEMuNdof);
+		DYTree->Branch("vtxTrkEMu1Pt_TuneP", &vtxTrkEMu1Pt_TuneP);
+		DYTree->Branch("vtxTrkEMu2Pt_TuneP", &vtxTrkEMu2Pt_TuneP);
+		DYTree->Branch("vtxTrkEMuChi2_TuneP", &vtxTrkEMuChi2_TuneP);
+		DYTree->Branch("vtxTrkEMuProb_TuneP", &vtxTrkEMuProb_TuneP);
+		DYTree->Branch("vtxTrkEMuNdof_TuneP", &vtxTrkEMuNdof_TuneP);
+
+		// This is just for check about correction
+		DYTree->Branch("Electron_etaCalib", &Electron_etaCalib, "Electron_etaCalib[NCalibelectrons]/D");
+		DYTree->Branch("Electron_phiCalib", &Electron_phiCalib, "Electron_phiCalib[NCalibelectrons]/D");
 	}
 
 	// -- muon variables -- //
@@ -1087,16 +1133,6 @@ void DYntupleMaker::beginJob()
 		DYTree->Branch("vtxTrkChi2", &vtxTrkChi2);
 		DYTree->Branch("vtxTrkProb", &vtxTrkProb);
 		DYTree->Branch("vtxTrkNdof", &vtxTrkNdof);
-		DYTree->Branch("vtxTrkDiE1Pt", &vtxTrkDiE1Pt);
-		DYTree->Branch("vtxTrkDiE2Pt", &vtxTrkDiE2Pt);
-		DYTree->Branch("vtxTrkDiEChi2", &vtxTrkDiEChi2);
-		DYTree->Branch("vtxTrkDiEProb", &vtxTrkDiEProb);
-		DYTree->Branch("vtxTrkDiENdof", &vtxTrkDiENdof);
-		DYTree->Branch("vtxTrkEMu1Pt", &vtxTrkEMu1Pt);
-		DYTree->Branch("vtxTrkEMu2Pt", &vtxTrkEMu2Pt);
-		DYTree->Branch("vtxTrkEMuChi2", &vtxTrkEMuChi2);
-		DYTree->Branch("vtxTrkEMuProb", &vtxTrkEMuProb);
-		DYTree->Branch("vtxTrkEMuNdof", &vtxTrkEMuNdof);
 
 		DYTree->Branch("CosAngle_TuneP", &CosAngle_TuneP);
 		DYTree->Branch("vtxTrk1Pt_TuneP", &vtxTrk1Pt_TuneP);
@@ -2467,8 +2503,231 @@ void DYntupleMaker::fillElectrons(const edm::Event &iEvent)
 
 }
 
+/////////////////////////////////////////
+// -- Get Calibrated Electrons info -- //
+/////////////////////////////////////////
+//void DYntupleMaker::fillCalibElectrons(const edm::Event &iEvent)
+void DYntupleMaker::fillCalibElectrons(const edm::Event &iEvent, const edm::EventSetup& iSetup)
+{
+	// cout << "##### Start of fillCalibElectrons #####" << endl;
+
+	// -- electron -- //
+	edm::Handle< edm::View<reco::GsfElectron> > ElecHandle;
+	iEvent.getByToken(CalibElectronToken, ElecHandle);
+
+	// muons
+	ESHandle<MagneticField> B;
+	iSetup.get<IdealMagneticFieldRecord>().get(B);
+
+	// -- Call PAT muons -- //
+	edm::Handle< std::vector<pat::Muon> > muonHandle;
+	iEvent.getByToken(MuonToken, muonHandle);
+
+	int _nElectron = 0;
+	std::vector< double > _ambGsfTrkPt;
+	for(int i=0; i< (int)ElecHandle->size(); i++)
+	{
+		const auto el = ElecHandle->ptrAt(i);
+
+		Electron_ECalib[_nElectron] = el->energy();
+		Electron_caloEnergyCalib[_nElectron] = el->ecalEnergy();
+		Electron_pTCalib[_nElectron] = el->pt();
+		Electron_PxCalib[_nElectron] = el->px();
+		Electron_PyCalib[_nElectron] = el->py();
+		Electron_PzCalib[_nElectron] = el->pz();
+
+		Electron_etaCalib[_nElectron] = el->eta();
+		Electron_phiCalib[_nElectron] = el->phi();
+
+		// -- Track - Impact Parameter, Conversion rejection, Converted -- //
+		reco::GsfTrackRef elecTrk = el->gsfTrack();
+
+		if( elecTrk.isNonnull() )
+		{
+			Electron_gsfpTCalib[_nElectron] = elecTrk->pt();
+			Electron_gsfPxCalib[_nElectron] = elecTrk->px();
+			Electron_gsfPyCalib[_nElectron] = elecTrk->py();
+			Electron_gsfPzCalib[_nElectron] = elecTrk->pz();
+		}
+
+		// cout << "##### fillElectrons: Start Dielectron Loop #####" << endl;
+		// -- Dielectron variables -- //
+		for(int j=0; j<(int)ElecHandle->size(); j++)
+		{
+			if( i <= j ) continue; // -- prevent double-counting -- //
+
+			const auto el2 = ElecHandle->ptrAt(j);
+		
+			reco::GsfTrackRef elecTrk = el->gsfTrack();
+			reco::GsfTrackRef elecTrk2 = el2->gsfTrack();
+
+			if( elecTrk.isNonnull() && elecTrk2.isNonnull() )
+			{
+				vector<reco::TransientTrack> dielecTracksTrk;
+				dielecTracksTrk.push_back(theTTBuilder->build(elecTrk));
+				dielecTracksTrk.push_back(theTTBuilder->build(elecTrk2));
+				KalmanVertexFitter KalmanFitterTrk(true);
+				CachingVertex<5> vertexTrk;
+				TransientVertex vtxtmpTrk;
+				bool isVertexTrk = true;
+				try
+				{
+					vertexTrk = KalmanFitterTrk.vertex(dielecTracksTrk);
+					vtxtmpTrk = KalmanFitterTrk.vertex(dielecTracksTrk);
+				}
+				catch( exception & err ) 
+				{
+					isVertexTrk = false;
+				}
+
+				if( isVertexTrk && vertexTrk.isValid() )
+				{
+					// inv. mass refit using the dielec vtx
+					InvariantMassFromVertex imfvTrk;
+					static const double elec_mass = 0.000511;
+					const CachingVertex<5>& vtxTrk = vertexTrk;
+					Measurement1D new_massTrk = imfvTrk.invariantMass(vtxTrk, elec_mass);
+					
+					vtxTrkDiE1Pt_Calib.push_back(elecTrk->pt());
+					vtxTrkDiE2Pt_Calib.push_back(elecTrk2->pt());
+					vtxTrkDiEChi2_Calib.push_back(vtxTrk.totalChiSquared());
+					vtxTrkDiENdof_Calib.push_back(vtxTrk.degreesOfFreedom());
+					vtxTrkDiEProb_Calib.push_back(TMath::Prob(vtxTrk.totalChiSquared(),(int)vtxTrk.degreesOfFreedom()));
+				}
+			} // -- end of if( elecTrk.isNonnull() && elecTrk2.isNonnull() ) -- // 
+
+		} // -- end of for(int j=0; j<(int)ElecHandle->size(); j++): 2nd electron iteration -- //
+
+		// -- emu variables -- //
+		for( unsigned j = 0; j != muonHandle->size(); j++ )
+		{
+			const pat::Muon imuon2 = muonHandle->at(j);
+			int index_type = -1;
+
+			if( imuon2.isStandAloneMuon() )
+			{
+				if( imuon2.isGlobalMuon() )
+				{
+					if( imuon2.isTrackerMuon() ) 
+						index_type = 0; // -- STA + GLB + TRK -- //
+					else
+						index_type = 1; // -- STA + GLB -- //
+				}
+				else
+				{
+					if( imuon2.isTrackerMuon() ) 
+						index_type = 2; // -- STA + TRK -- //
+					else 
+						index_type = 3; // -- STA -- //
+				}
+			}
+			else
+			{
+				if( imuon2.isTrackerMuon() )
+					index_type = 4; // -- TRK -- //
+			}
+
+			if( index_type == 3 ) continue; // -- Don't check when 2nd muon is STA muon -- //
+
+			// -- vertex variables are calculated using InnerTrack information -- //
+			reco::GsfTrackRef elecTrk = el->gsfTrack();
+			reco::TrackRef InnerTrk2 = imuon2.innerTrack();
+
+			if( elecTrk.isNonnull() && InnerTrk2.isNonnull() )
+			{
+				reco::TransientTrack muTransient2(InnerTrk2, B.product());
+
+				vector<reco::TransientTrack> emuTracksTrk;
+				emuTracksTrk.push_back(theTTBuilder->build(elecTrk));
+				emuTracksTrk.push_back(muTransient2);
+				KalmanVertexFitter KalmanFitterTrk(true);
+				CachingVertex<5> vertexTrk;
+				TransientVertex vtxtmpTrk;
+				bool isVertexTrk = true;
+
+				try
+				{
+					vertexTrk = KalmanFitterTrk.vertex(emuTracksTrk);
+					vtxtmpTrk = KalmanFitterTrk.vertex(emuTracksTrk);
+				}
+				catch( exception & err )
+				{
+					isVertexTrk = false;
+				}
+
+				if( isVertexTrk && vertexTrk.isValid() )
+				{
+					const CachingVertex<5>& vtxTrk = vertexTrk;
+
+					vtxTrkEMu1Pt.push_back(elecTrk->pt());
+					vtxTrkEMu2Pt.push_back(InnerTrk2->pt());
+					vtxTrkEMuChi2.push_back(vtxTrk.totalChiSquared());
+					vtxTrkEMuNdof.push_back(vtxTrk.degreesOfFreedom());
+					vtxTrkEMuProb.push_back( TMath::Prob(vtxTrk.totalChiSquared(),(int)vtxTrk.degreesOfFreedom()) );
+				}
+
+				// cosmic variable
+				//double cosine = acos( -elecTrk->momentum().Dot( InnerTrk2->momentum() / elecTrk->p()/InnerTrk2->p()) );
+				//CosAngle.push_back(cosine);
+
+			} // -- end of if( elecTrk.isNonnull() && InnerTrk2.isNonnull() ) -- //
+
+			// --vertex variables are calculated using TuneP information -- //
+			reco::TrackRef TunePTrk2 = imuon2.tunePMuonBestTrack();
+
+			if( elecTrk.isNonnull() && TunePTrk2.isNonnull() )
+			{
+				reco::TransientTrack muTransient2(TunePTrk2, B.product());
+
+				vector<reco::TransientTrack> emuTracksTrk;
+				emuTracksTrk.push_back(theTTBuilder->build(elecTrk));
+				emuTracksTrk.push_back(muTransient2);
+				KalmanVertexFitter KalmanFitterTrk(true);
+				CachingVertex<5> vertexTrk;
+				TransientVertex vtxtmpTrk;
+				bool isVertexTrk = true;
+
+				try
+				{
+					vertexTrk = KalmanFitterTrk.vertex(emuTracksTrk);
+					vtxtmpTrk = KalmanFitterTrk.vertex(emuTracksTrk);
+				}
+				catch( exception & err )
+				{
+					isVertexTrk = false;
+				}
+
+				if( isVertexTrk && vertexTrk.isValid() )
+				{
+					const CachingVertex<5>& vtxTrk = vertexTrk;
+
+					vtxTrkEMu1Pt_TuneP.push_back(elecTrk->pt());
+					vtxTrkEMu2Pt_TuneP.push_back(TunePTrk2->pt());
+					vtxTrkEMuChi2_TuneP.push_back(vtxTrk.totalChiSquared());
+					vtxTrkEMuNdof_TuneP.push_back(vtxTrk.degreesOfFreedom());
+					vtxTrkEMuProb_TuneP.push_back( TMath::Prob(vtxTrk.totalChiSquared(),(int)vtxTrk.degreesOfFreedom()) );
+				}
+
+				// cosmic variable
+				//double cosine = acos( -elecTrk->momentum().Dot( TunePTrk2->momentum() / elecTrk->p()/TunePTrk2->p()) );
+				//CosAngle_TuneP.push_back(cosine);
+
+			} // -- end of if( TunePTrk.isNonnull() && InnerTrk2.isNonnull() ) -- //
+
+		} // -- end of for( unsigned j = 0; j != muonHandle->size(); j++ ): iteration for 2nd muon -- //
+
+		_nElectron++;
+
+	} // -- end of for(int i=0; i< (int)ElecHandle->size(); i++): 1st electron iteration -- //
+
+	NCalibelectrons = _nElectron;
+
+	// cout << "##### End of fillCalibElectrons #####" << endl;
+
+}
+
 ////////////////////////
-// -- Get GEN info -- //
+// -- Get LHE info -- //
 ////////////////////////
 void DYntupleMaker::fillLHEInfo(const edm::Event &iEvent)
 {
@@ -2534,7 +2793,8 @@ void DYntupleMaker::fillGENInfo(const edm::Event &iEvent)
 	{
 		// const reco::GenParticle &parCand = (*particles)[ipar];
 		reco::GenParticle parCand = (*particles)[ipar];
-		if( abs(parCand.pdgId()) == 13 || abs(parCand.pdgId()) == 11 || abs(parCand.pdgId()) == 15 ) // -- Electron, Muon and Tau -- //
+		//if( abs(parCand.pdgId()) == 13 || abs(parCand.pdgId()) == 11 || abs(parCand.pdgId()) == 15 ) // -- Electron, Muon and Tau -- //
+		if( abs(parCand.pdgId()) == 11 || abs(parCand.pdgId()) == 12 || abs(parCand.pdgId()) == 13 || abs(parCand.pdgId()) == 14 || abs(parCand.pdgId()) == 15 || abs(parCand.pdgId()) == 16 ) // -- All leptons and neutrinos -- //
 		{
 			GENLepton_ID[_GennPair] = parCand.pdgId(); 
 			GENLepton_pT[_GennPair] = parCand.pt(); 

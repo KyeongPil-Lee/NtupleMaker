@@ -19,6 +19,13 @@
 	mkdir -p ../external/slc6_amd64_gcc530/data/RecoEgamma/ElectronIdentification/ #we need this for the mva weights which runs in VID regardless if you need it or not
 	git clone https://github.com/cms-data/RecoEgamma-ElectronIdentification ../external/slc6_amd64_gcc530/data/RecoEgamma/ElectronIdentification/data #we need this for the mva weights which runs in VID regardless if you need it or not
 
+	# -- EGM corrections -- # (https://twiki.cern.ch/twiki/bin/viewauth/CMS/EGMRegression)
+	git cms-init
+	git cms-merge-topic cms-egamma:EGM_gain_v1
+	cd EgammaAnalysis/ElectronTools/data
+	git clone -b Moriond17_gainSwitch_unc https://github.com/ECALELFS/ScalesSmearings.git
+	cd $CMSSW_BASE/src
+
 	# -- ntuple maker -- #
 	git clone https://github.com/KyeongPil-Lee/NtupleMaker.git Phys -b 80X
 	scram b -j 20 >&log&
