@@ -7,7 +7,9 @@ DYntupleMaker = cms.EDAnalyzer("DYntupleMaker",
 
 	# -- Object Tags -- #
 	Muon = cms.untracked.InputTag("selectedPatMuons"),
-	Electron = cms.untracked.InputTag("gedGsfElectrons"),
+	#Electron = cms.untracked.InputTag("gedGsfElectrons"),
+	Electron = cms.untracked.InputTag("slimmedElectrons"),
+	CalibElectron = cms.untracked.InputTag("slimmedElectrons"),
 	Photon = cms.untracked.InputTag("gedPhotons"),
 	Jet = cms.untracked.InputTag("selectedPatJets"),
 	MET = cms.untracked.InputTag("patMETs"),
@@ -59,6 +61,7 @@ DYntupleMaker = cms.EDAnalyzer("DYntupleMaker",
 	# -- Store Flags -- #
 	StoreMuonFlag = cms.untracked.bool(True),
 	StoreElectronFlag = cms.untracked.bool(True),
+	StoreCalibElectronFlag = cms.untracked.bool(True),
 	StorePhotonFlag = cms.untracked.bool(False),
 	StoreJetFlag = cms.untracked.bool(False),
 	StoreMETFlag = cms.untracked.bool(False),

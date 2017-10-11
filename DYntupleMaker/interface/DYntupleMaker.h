@@ -115,6 +115,7 @@ private:
 	virtual void fillPhotons(const edm::Event &iEvent);
 	virtual void fillMuons(const edm::Event &iEvent, const edm::EventSetup& iSetup);
 	virtual void fillElectrons(const edm::Event &iEvent);
+	virtual void fillCalibElectrons(const edm::Event &iEvent, const edm::EventSetup& iSetup); // fill calibrated electrons with emu variables
 	virtual void fillJet(const edm::Event &iEvent);            // fill jet and b-tagging information
 	virtual void hltReport(const edm::Event &iEvent);          // fill list of triggers fired in an event
 	virtual void fillLHEInfo(const edm::Event &iEvent);
@@ -136,6 +137,7 @@ private:
 	// -- Tokens (for 76X) -- //
 	edm::EDGetTokenT< std::vector<pat::Muon> > 						MuonToken;
 	edm::EDGetTokenT< edm::View<reco::GsfElectron> > 				ElectronToken;
+	edm::EDGetTokenT< edm::View<reco::GsfElectron> >                                CalibElectronToken;
 	edm::EDGetTokenT< edm::View<reco::Photon> > 					PhotonToken;
 	edm::EDGetTokenT< std::vector<pat::Jet> > 						JetToken;
 	edm::EDGetTokenT< std::vector<pat::MET> > 						MetToken;
@@ -210,6 +212,7 @@ private:
 	bool theStoreHLTReportFlag;             // Yes or No to store HLT reuslts (list of triggers fired)
 	bool theStoreMuonFlag;
 	bool theStoreElectronFlag;
+	bool theStoreCalibElectronFlag;
 	bool theStoreLHEFlag;
 	bool theStoreGENFlag;
 	bool theStoreGenOthersFlag;
@@ -290,6 +293,7 @@ private:
 	// double pfMET_phi;
 	int Njets;
 	int Nelectrons;
+	int NCalibelectrons; // for calibrated electrons
 	int Nmuons;
 	int Nbtagged;
 	int NbtaggedCloseMuon;
@@ -376,6 +380,8 @@ private:
 	double Electron_PzCalib[MPSIZE];
 	double Electron_eta[MPSIZE];
 	double Electron_phi[MPSIZE];
+	double Electron_etaCalib[MPSIZE]; // just for check of EGM corrections
+	double Electron_phiCalib[MPSIZE]; // just for check of EGM corrections
 	int Electron_charge[MPSIZE];
 	double Electron_gsfpT[MPSIZE];
 	double Electron_gsfPx[MPSIZE];
@@ -474,6 +480,28 @@ private:
 	bool Electron_passMVAID_WP90[MPSIZE];
 	bool Electron_passHEEPID[MPSIZE];
 
+	std::vector<double> vtxTrkDiEChi2;
+	std::vector<double> vtxTrkDiEProb;
+	std::vector<double> vtxTrkDiENdof;
+	std::vector<double> vtxTrkDiE1Pt;
+	std::vector<double> vtxTrkDiE2Pt;
+	std::vector<double> vtxTrkDiEChi2_Calib;
+	std::vector<double> vtxTrkDiEProb_Calib;
+	std::vector<double> vtxTrkDiENdof_Calib;
+	std::vector<double> vtxTrkDiE1Pt_Calib;
+	std::vector<double> vtxTrkDiE2Pt_Calib;
+
+	std::vector<double> vtxTrkEMuChi2;
+	std::vector<double> vtxTrkEMuProb;
+	std::vector<double> vtxTrkEMuNdof;
+	std::vector<double> vtxTrkEMu1Pt;
+	std::vector<double> vtxTrkEMu2Pt;
+	std::vector<double> vtxTrkEMuChi2_TuneP;
+	std::vector<double> vtxTrkEMuProb_TuneP;
+	std::vector<double> vtxTrkEMuNdof_TuneP;
+	std::vector<double> vtxTrkEMu1Pt_TuneP;
+	std::vector<double> vtxTrkEMu2Pt_TuneP;
+
 	// Pat Muon
 	//pf isolations
 	double Muon_PfChargedHadronIsoR05[MPSIZE];
@@ -556,16 +584,6 @@ private:
 	std::vector<double> vtxTrkNdof;
 	std::vector<double> vtxTrkCkt1Pt;
 	std::vector<double> vtxTrkCkt2Pt;
-	std::vector<double> vtxTrkDiEChi2;
-	std::vector<double> vtxTrkDiEProb;
-	std::vector<double> vtxTrkDiENdof;
-	std::vector<double> vtxTrkDiE1Pt;
-	std::vector<double> vtxTrkDiE2Pt;
-	std::vector<double> vtxTrkEMuChi2;
-	std::vector<double> vtxTrkEMuProb;
-	std::vector<double> vtxTrkEMuNdof;
-	std::vector<double> vtxTrkEMu1Pt;
-	std::vector<double> vtxTrkEMu2Pt;
 
 	std::vector<double> CosAngle_TuneP;
 	std::vector<double> vtxTrk1Pt_TuneP;
