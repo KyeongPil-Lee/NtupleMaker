@@ -90,8 +90,8 @@ process.RandomNumberGeneratorService = cms.Service("RandomNumberGeneratorService
 process.load('EgammaAnalysis.ElectronTools.calibratedPatElectronsRun2_cfi')
 process.load('EgammaAnalysis.ElectronTools.calibratedPatPhotonsRun2_cfi')
 
-process.calibratedPatElectrons.isMC = cms.bool(False)
-process.calibratedPatPhotons.isMC = cms.bool(False)
+process.calibratedPatElectrons.isMC = cms.bool(isMC)
+process.calibratedPatPhotons.isMC = cms.bool(isMC)
 
 #########################
 # -- for electron ID -- #
