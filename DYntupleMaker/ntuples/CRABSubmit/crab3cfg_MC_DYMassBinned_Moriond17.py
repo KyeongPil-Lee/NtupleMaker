@@ -5,7 +5,7 @@ config.General.requestName = ''
 config.General.workArea = 'DYntuple'
 
 config.JobType.pluginName = 'Analysis'
-config.JobType.psetName = '../MC_cfg_80X_mcRun2_asymptotic_2016_TrancheIV_v6_SignalMC.py'
+config.JobType.psetName = '../withEGMcorrection/MC_cfg_80X_mcRun2_asymptotic_2016_TrancheIV_v6_withEGMcorrection.py'
 
 config.Data.inputDataset = ''
 
@@ -18,7 +18,7 @@ config.Data.publication = False
 
 config.Site.storageSite = 'T3_KR_KISTI'
 
-version = '_v20170929_'
+version = '_v20171011_EGMCorr_'
 # 'MultiCRAB' part
 if __name__ == '__main__':
     
