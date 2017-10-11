@@ -12,12 +12,6 @@
 	cmsrel CMSSW_8_0_26_patch1
 	cd CMSSW_8_0_26_patch1/src
 	cmsenv
-	# -- https://twiki.cern.ch/twiki/bin/view/CMS/HEEPElectronIdentificationRun2#Instructions_to_checkout_HEEPV70 -- #
-	git cms-merge-topic Sam-Harper:HEEPV70VID_8010_ReducedCheckout  #brings in HEEP V70 into VID
-	git cms-merge-topic ikrav:egm_id_80X_v3 #for other E/gamma IDs in VID if you wish to have them
-	git cms-merge-topic Sam-Harper:PackedCandNoPuppi #only necessary to run HEEP V70 on AOD (it will crash if this is not present looking for puppi candidates
-	mkdir -p ../external/slc6_amd64_gcc530/data/RecoEgamma/ElectronIdentification/ #we need this for the mva weights which runs in VID regardless if you need it or not
-	git clone https://github.com/cms-data/RecoEgamma-ElectronIdentification ../external/slc6_amd64_gcc530/data/RecoEgamma/ElectronIdentification/data #we need this for the mva weights which runs in VID regardless if you need it or not
 
 	# -- EGM corrections -- # (https://twiki.cern.ch/twiki/bin/viewauth/CMS/EGMRegression)
 	git cms-init
@@ -26,6 +20,23 @@
 	git clone -b Moriond17_gainSwitch_unc https://github.com/ECALELFS/ScalesSmearings.git
 	cd $CMSSW_BASE/src
 
-	# -- ntuple maker -- #
+	# -- https://twiki.cern.ch/twiki/bin/view/CMS/HEEPElectronIdentificationRun2#Instructions_to_checkout_HEEPV70 -- #
+	git cms-merge-topic Sam-Harper:HEEPV70VID_8010_ReducedCheckout  #brings in HEEP V70 into VID
+	git cms-merge-topic ikrav:egm_id_80X_v3 #for other E/gamma IDs in VID if you wish to have them
+	git cms-merge-topic Sam-Harper:PackedCandNoPuppi #only necessary to run HEEP V70 on AOD (it will crash if this is not present looking for puppi candidates
+	mkdir -p ../external/slc6_amd64_gcc530/data/RecoEgamma/ElectronIdentification/ #we need this for the mva weights which runs in VID regardless if you need it or not
+	git clone https://github.com/cms-data/RecoEgamma-ElectronIdentification ../external/slc6_amd64_gcc530/data/RecoEgamma/ElectronIdentification/data #we need this for the mva weights which runs in VID regardless if you need it or not
+
+	# -- this ntuple maker -- #
 	git clone https://github.com/KyeongPil-Lee/NtupleMaker.git Phys -b 80X
+
+	# -- compile -- #
 	scram b -j 20 >&log&
+
+	# -- Example for CRAB submission -- #
+	source /cvmfs/cms.cern.ch/crab3/crab.sh
+	voms-proxy-init --voms cms
+
+	cd Phys/DYntupleMaker/ntuples/CRABSubmit
+	python crab3cfg_MC_DYMassBinned_Moriond17.py
+
