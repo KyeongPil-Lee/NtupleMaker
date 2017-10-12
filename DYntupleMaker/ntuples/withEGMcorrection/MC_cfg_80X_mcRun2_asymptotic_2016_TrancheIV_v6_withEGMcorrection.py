@@ -16,8 +16,8 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 ## Source
 FileName = ""
 if isMC == True:
-#	FileName = "file:/u/user/kplee/scratch/ROOTFiles_Test/80X/ExampleMiniAODv2_ZMuMuPowheg_M120to200_Moriond17.root"
-	FileName = "file:/u/user/dmpai/scratch/ROOTFiles_Test/80X/00312D7A-FEBD-E611-A713-002590DB923E.root"
+	FileName = "file:/u/user/kplee/scratch/ROOTFiles_Test/80X/ExampleMiniAODv2_ZMuMuPowheg_M120to200_Moriond17.root"
+	# FileName = "file:/u/user/dmpai/scratch/ROOTFiles_Test/80X/00312D7A-FEBD-E611-A713-002590DB923E.root"
 else:
   FileName = "file:/cms/home/kplee/scratch/ROOTFiles_Test/80X/SingleMuon_Run2016B_v2_Run273450.root"
 
@@ -119,21 +119,7 @@ for idmod in my_id_modules:
 ###################################
 # -- (reco) Photon Information -- #
 ###################################
-# Several photon variables can not be found inside of a photon object
-# and it is easiest to compute them upstream with a dedicated producer,
-# such as this standard producer used for photon ID.
-#    The producer computes full5x5 cluster shapes and PF isolation variables.
-#
-# Do not forget to add this producer to the path below!
-#
-#process.load("RecoEgamma/PhotonIdentification/PhotonIDValueMapProducer_cfi")
-
-
-# -- load the PAT config -- //
-# process.load("PhysicsTools.PatAlgos.producersLayer1.patCandidates_cff")
-# from PhysicsTools.PatAlgos.tools.coreTools import *
-# if isMC==False:
-#    removeMCMatching(process, ['All'])
+# -- photon part should be updated! later when it is necessary -- #
 
 #################
 # -- DY Tree -- #
@@ -186,7 +172,9 @@ process.recoTree.ApplyFilter = False
 process.recoTree.StoreMuonFlag = True
 process.recoTree.StoreElectronFlag = True
 process.recoTree.StoreCalibElectronFlag = True
-process.recoTree.StorePhotonFlag = True
+# -- photon part should be updated! later when it is necessary -- #
+process.recoTree.StorePhotonFlag = False
+
 process.recoTree.StoreLHEFlag = False
 process.recoTree.StoreGENFlag = isMC
 process.recoTree.StoreGenOthersFlag = isMC
@@ -196,21 +184,13 @@ process.recoTree.StoreMETFlag = True
 ####################
 # -- Let it run -- #
 ####################
-#process.p = cms.Path(
-#  process.FastFilters *
-#  # process.patCandidates *
-#  process.egmGsfElectronIDSequence *
-#  process.photonIDValueMapProducer *
-#    # process.patDefaultSequence
-#    process.recoTree
-#)
 process.p = cms.Path(
+  process.FastFilters *
   process.regressionApplication *
   process.calibratedPatElectrons *
   #process.calibratedPatPhotons*
-  process.FastFilters *
   process.egmGsfElectronIDSequence *
-  #process.photonIDValueMapProducer *
+  # process.photonIDValueMapProducer *
   #process.egmPhotonIDSequence*
   process.recoTree
 )
