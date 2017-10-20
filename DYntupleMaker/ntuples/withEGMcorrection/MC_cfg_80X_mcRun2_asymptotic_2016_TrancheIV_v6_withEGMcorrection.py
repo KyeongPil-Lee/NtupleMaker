@@ -1,6 +1,20 @@
 import FWCore.ParameterSet.Config as cms
 
+#####################
+# -- set by hand -- #
+#####################
 isMC = True
+isSignalMC = False
+
+GT_MC = '80X_mcRun2_asymptotic_2016_TrancheIV_v6'
+GT_DATA = '80X_dataRun2_Prompt_v16' # -- 2016 prompt-reco -- #
+# GT_DATA = '80X_dataRun2_2016SeptRepro_v7' # -- 2016 re-reco -- #
+
+TESTFILE_MC = 'file:/u/user/kplee/scratch/ROOTFiles_Test/80X/ExampleMiniAODv2_ZMuMuPowheg_M120to200_Moriond17.root'
+TESTFILE_DATA = 'file:/cms/home/kplee/scratch/ROOTFiles_Test/80X/SingleMuon_Run2016B_v2_Run273450.root'
+####################################################################################################################
+
+if not isMC: isSignalMC = False
 
 process = cms.Process("DYSkim")
 
@@ -14,12 +28,8 @@ process.options   = cms.untracked.PSet(
 process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
 ## Source
-FileName = ""
-if isMC == True:
-	FileName = "file:/u/user/kplee/scratch/ROOTFiles_Test/80X/ExampleMiniAODv2_ZMuMuPowheg_M120to200_Moriond17.root"
-	# FileName = "file:/u/user/dmpai/scratch/ROOTFiles_Test/80X/00312D7A-FEBD-E611-A713-002590DB923E.root"
-else:
-  FileName = "file:/cms/home/kplee/scratch/ROOTFiles_Test/80X/SingleMuon_Run2016B_v2_Run273450.root"
+FileName = TESTFILE_DATA
+if isMC: FileName = TESTFILE_MC
 
 process.source = cms.Source("PoolSource",
 	fileNames = cms.untracked.vstring( FileName )
@@ -35,9 +45,9 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 # -- Global Tags -- #
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff")
 if isMC == True:
-  process.GlobalTag.globaltag = cms.string('80X_mcRun2_asymptotic_2016_TrancheIV_v6')
+  process.GlobalTag.globaltag = cms.string(GT_MC)
 else:
-  process.GlobalTag.globaltag = cms.string('80X_dataRun2_Prompt_v8') #prompt-reco global tag
+  process.GlobalTag.globaltag = cms.string(GT_DATA) #prompt-reco global tag
 
 
 # -- HLT Filters -- #
@@ -70,9 +80,9 @@ process.goodOfflinePrimaryVertices = cms.EDFilter("VertexSelector",
 process.FastFilters = cms.Sequence( process.goodOfflinePrimaryVertices )
 
 ########################
-# -- EGM Correction -- #
+# -- EGM Correction: -- #
 ########################
-# -- EGM 80X regression -- #
+# -- EGM 80X regression: https://twiki.cern.ch/twiki/bin/viewauth/CMS/EGMRegression -- #
 from EgammaAnalysis.ElectronTools.regressionWeights_cfi import regressionWeights
 process = regressionWeights(process)
 process.load('EgammaAnalysis.ElectronTools.regressionApplication_cff')
@@ -97,6 +107,11 @@ process.calibratedPatPhotons.isMC = cms.bool(isMC)
 #########################
 # -- for electron ID -- #
 #########################
+process.selectedElectrons = cms.EDFilter("PATElectronSelector",
+    src = cms.InputTag("calibratedPatElectrons"),
+    cut = cms.string("pt>5 && abs(eta)")
+)
+
 from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
 # turn on VID producer, indicate data format  to be
 # DataFormat.AOD or DataFormat.MiniAOD, as appropriate 
@@ -109,8 +124,12 @@ my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.cutBasedElect
                  'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV70_cff']
 
 process.load("RecoEgamma.ElectronIdentification.ElectronIDValueMapProducer_cfi")
-process.electronIDValueMapProducer.srcMiniAOD = cms.InputTag('slimmedElectrons')
-process.electronMVAValueMapProducer.srcMiniAOD = cms.InputTag('slimmedElectrons')
+# process.electronIDValueMapProducer.srcMiniAOD = cms.InputTag('slimmedElectrons')
+# process.electronMVAValueMapProducer.srcMiniAOD = cms.InputTag('slimmedElectrons')
+process.egmGsfElectronIDs.physicsObjectSrc = cms.InputTag('selectedElectrons')
+process.electronIDValueMapProducer.srcMiniAOD = cms.InputTag('selectedElectrons')
+process.electronRegressionValueMapProducer.srcMiniAOD = cms.InputTag('selectedElectrons')
+process.electronMVAValueMapProducer.srcMiniAOD = cms.InputTag('selectedElectrons')
 
 #add them to the VID producer
 for idmod in my_id_modules:
@@ -132,8 +151,8 @@ process.recoTree.isMC = isMC
 
 # -- Objects -- #
 process.recoTree.Muon = cms.untracked.InputTag("slimmedMuons") # -- miniAOD -- #
-process.recoTree.Electron = cms.untracked.InputTag("slimmedElectrons") # -- miniAOD -- #
-process.recoTree.CalibElectron = cms.untracked.InputTag("calibratedPatElectrons") # -- miniAOD -- #
+process.recoTree.Electron = cms.untracked.InputTag("selectedElectrons") # -- miniAOD -- #
+process.recoTree.UnCorrElectron = cms.untracked.InputTag("slimmedElectrons") # -- miniAOD: before applying energy scale correction -- #
 process.recoTree.Photon = cms.untracked.InputTag("slimmedPhotons") # -- miniAOD -- #
 process.recoTree.Jet = cms.untracked.InputTag("slimmedJets") # -- miniAOD -- #
 process.recoTree.MET = cms.untracked.InputTag("slimmedMETs") # -- miniAOD -- #
@@ -171,15 +190,12 @@ process.recoTree.ApplyFilter = False
 # -- Store Flags -- #
 process.recoTree.StoreMuonFlag = True
 process.recoTree.StoreElectronFlag = True
-process.recoTree.StoreCalibElectronFlag = True
-# -- photon part should be updated! later when it is necessary -- #
-process.recoTree.StorePhotonFlag = False
-
-process.recoTree.StoreLHEFlag = False
-process.recoTree.StoreGENFlag = isMC
-process.recoTree.StoreGenOthersFlag = isMC
+process.recoTree.StorePhotonFlag = False # -- photon part should be updated! later when it is necessary -- #
 process.recoTree.StoreJetFlag = True
 process.recoTree.StoreMETFlag = True
+process.recoTree.StoreGENFlag = isMC
+process.recoTree.StoreGenOthersFlag = isSignalMC
+process.recoTree.StoreLHEFlag = isSignalMC
 
 ####################
 # -- Let it run -- #
@@ -189,18 +205,9 @@ process.p = cms.Path(
   process.regressionApplication *
   process.calibratedPatElectrons *
   #process.calibratedPatPhotons*
+  process.selectedElectrons *
   process.egmGsfElectronIDSequence *
   # process.photonIDValueMapProducer *
   #process.egmPhotonIDSequence*
   process.recoTree
 )
-
-# process.p.remove(process.makePatPhotons)
-# process.p.remove(process.makePatJets)
-# process.p.remove(process.makePatTaus)
-# process.p.remove(process.makePatMETs)
-# process.p.remove(process.patCandidateSummary)
-
-# if isMC == False:
-# 	process.p.remove(process.electronMatch)
-# 	process.p.remove(process.muonMatch)

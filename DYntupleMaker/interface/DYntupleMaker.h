@@ -115,7 +115,6 @@ private:
 	virtual void fillPhotons(const edm::Event &iEvent);
 	virtual void fillMuons(const edm::Event &iEvent, const edm::EventSetup& iSetup);
 	virtual void fillElectrons(const edm::Event &iEvent);
-	virtual void fillCalibElectrons(const edm::Event &iEvent, const edm::EventSetup& iSetup); // fill calibrated electrons with emu variables
 	virtual void fillJet(const edm::Event &iEvent);            // fill jet and b-tagging information
 	virtual void hltReport(const edm::Event &iEvent);          // fill list of triggers fired in an event
 	virtual void fillLHEInfo(const edm::Event &iEvent);
@@ -137,7 +136,7 @@ private:
 	// -- Tokens (for 76X) -- //
 	edm::EDGetTokenT< std::vector<pat::Muon> > 						MuonToken;
 	edm::EDGetTokenT< edm::View<reco::GsfElectron> > 				ElectronToken;
-	edm::EDGetTokenT< edm::View<reco::GsfElectron> >                                CalibElectronToken;
+	edm::EDGetTokenT< edm::View<reco::GsfElectron> >                UnCorrElectron;
 	edm::EDGetTokenT< edm::View<reco::Photon> > 					PhotonToken;
 	edm::EDGetTokenT< std::vector<pat::Jet> > 						JetToken;
 	edm::EDGetTokenT< std::vector<pat::MET> > 						MetToken;
@@ -212,7 +211,6 @@ private:
 	bool theStoreHLTReportFlag;             // Yes or No to store HLT reuslts (list of triggers fired)
 	bool theStoreMuonFlag;
 	bool theStoreElectronFlag;
-	bool theStoreCalibElectronFlag;
 	bool theStoreLHEFlag;
 	bool theStoreGENFlag;
 	bool theStoreGenOthersFlag;
@@ -293,7 +291,6 @@ private:
 	// double pfMET_phi;
 	int Njets;
 	int Nelectrons;
-	int NCalibelectrons; // for calibrated electrons
 	int Nmuons;
 	int Nbtagged;
 	int NbtaggedCloseMuon;
@@ -365,32 +362,17 @@ private:
 	double Electron_et[MPSIZE];
 	double Electron_caloEnergy[MPSIZE];
 	double Electron_Energy[MPSIZE];
-	double Electron_etCorr[MPSIZE];
 	double Electron_pT[MPSIZE];
 	double Electron_Px[MPSIZE];
 	double Electron_Py[MPSIZE];
 	double Electron_Pz[MPSIZE];
-	double Electron_etCalib[MPSIZE];
-	double Electron_caloEnergyCalib[MPSIZE];
-	double Electron_ECalib[MPSIZE];
-	double Electron_etCorrCalib[MPSIZE];
-	double Electron_pTCalib[MPSIZE];
-	double Electron_PxCalib[MPSIZE];
-	double Electron_PyCalib[MPSIZE];
-	double Electron_PzCalib[MPSIZE];
 	double Electron_eta[MPSIZE];
 	double Electron_phi[MPSIZE];
-	double Electron_etaCalib[MPSIZE]; // just for check of EGM corrections
-	double Electron_phiCalib[MPSIZE]; // just for check of EGM corrections
 	int Electron_charge[MPSIZE];
 	double Electron_gsfpT[MPSIZE];
 	double Electron_gsfPx[MPSIZE];
 	double Electron_gsfPy[MPSIZE];
 	double Electron_gsfPz[MPSIZE];
-	double Electron_gsfpTCalib[MPSIZE];
-	double Electron_gsfPxCalib[MPSIZE];
-	double Electron_gsfPyCalib[MPSIZE];
-	double Electron_gsfPzCalib[MPSIZE];
 	double Electron_gsfEta[MPSIZE];
 	double Electron_gsfPhi[MPSIZE];
 	int Electron_gsfCharge[MPSIZE];
@@ -485,12 +467,8 @@ private:
 	std::vector<double> vtxTrkDiENdof;
 	std::vector<double> vtxTrkDiE1Pt;
 	std::vector<double> vtxTrkDiE2Pt;
-	std::vector<double> vtxTrkDiEChi2_Calib;
-	std::vector<double> vtxTrkDiEProb_Calib;
-	std::vector<double> vtxTrkDiENdof_Calib;
-	std::vector<double> vtxTrkDiE1Pt_Calib;
-	std::vector<double> vtxTrkDiE2Pt_Calib;
 
+	// -- emu vertex -- //
 	std::vector<double> vtxTrkEMuChi2;
 	std::vector<double> vtxTrkEMuProb;
 	std::vector<double> vtxTrkEMuNdof;
@@ -501,6 +479,20 @@ private:
 	std::vector<double> vtxTrkEMuNdof_TuneP;
 	std::vector<double> vtxTrkEMu1Pt_TuneP;
 	std::vector<double> vtxTrkEMu2Pt_TuneP;
+
+	// -- Un-corrected electrons -- //
+	int nUnCorrElectron;
+	double Electron_pTUnCorr[MPSIZE];
+	double Electron_etaUnCorr[MPSIZE];
+	double Electron_phiUnCorr[MPSIZE];
+	double Electron_PxUnCorr[MPSIZE];
+	double Electron_PyUnCorr[MPSIZE];
+	double Electron_PzUnCorr[MPSIZE];
+	double Electron_EnergyUnCorr[MPSIZE];
+	double Electron_EnergySCUnCorr[MPSIZE];
+	double Electron_etaSCUnCorr[MPSIZE];
+	double Electron_phiSCUnCorr[MPSIZE];
+	double Electron_etSCUnCorr[MPSIZE];
 
 	// Pat Muon
 	//pf isolations
@@ -673,6 +665,11 @@ private:
 	int GENLepton_fromHardProcessFinalState[MPSIZE];
 	int GENLepton_isMostlyLikePythia6Status3[MPSIZE];
 	double GENEvt_weight;
+	double GENEvt_QScale;
+	double GENEvt_x1;
+	double GENEvt_x2;
+	double GENEvt_alphaQCD;
+	double GENEvt_alphaQED;
 
 	int nGenOthers;
 	double GenOthers_phi[MPSIZE];
