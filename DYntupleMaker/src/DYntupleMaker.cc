@@ -2256,8 +2256,9 @@ void DYntupleMaker::fillElectrons(const edm::Event &iEvent, const edm::EventSetu
 	edm::Handle<edm::ValueMap<bool> > mva_id_wp90_decisions;
 	iEvent.getByToken(eleMVAIdWP90MapToken, mva_id_wp90_decisions);
 
-	edm::Handle<edm::ValueMap<bool> > heep_id_decisions;
-	iEvent.getByToken(eleHEEPIdMapToken, heep_id_decisions);
+	// -- HEEP recipe is not working under 80X regression recipe (why?): temporarily disabled -- //
+	// edm::Handle<edm::ValueMap<bool> > heep_id_decisions;
+	// iEvent.getByToken(eleHEEPIdMapToken, heep_id_decisions);
 
 	// -- B-field for vertex variables (ee, emu) -- //
 	ESHandle<MagneticField> B;
@@ -2385,7 +2386,7 @@ void DYntupleMaker::fillElectrons(const edm::Event &iEvent, const edm::EventSetu
 		bool isPassTight  = (*tight_id_decisions)[el];
 		bool isPassMVA_WP80  = (*mva_id_wp80_decisions)[el];
 		bool isPassMVA_WP90  = (*mva_id_wp90_decisions)[el];
-		bool isPassHEEP  = (*heep_id_decisions)[el];
+		// bool isPassHEEP  = (*heep_id_decisions)[el];
 
 		// cout << "isPassVeto: " << isPassVeto << ", isPassLoose: " << isPassLoose << ", isPassMedium: " << isPassMedium << ", isPassTight: " << isPassTight << endl;
 		Electron_passVetoID[_nElectron] = isPassVeto;
@@ -2394,7 +2395,7 @@ void DYntupleMaker::fillElectrons(const edm::Event &iEvent, const edm::EventSetu
 		Electron_passTightID[_nElectron] = isPassTight;
 		Electron_passMVAID_WP80[_nElectron] = isPassMVA_WP80;
 		Electron_passMVAID_WP90[_nElectron] = isPassMVA_WP90;
-		Electron_passHEEPID[_nElectron] = isPassHEEP;
+		// Electron_passHEEPID[_nElectron] = isPassHEEP;
 
 		// cout << "##### fillElectrons: Start Dielectron Loop #####" << endl;
 		// -- Dielectron variables -- //
@@ -2617,21 +2618,21 @@ void DYntupleMaker::fillElectrons(const edm::Event &iEvent, const edm::EventSetu
 	{
 		const auto el = UnCorrElecHandle->ptrAt(i);
 
-		Electron_pTUnCorr[_nElectron] = el->pt();
-		Electron_etaUnCorr[_nElectron] = el->eta();
-		Electron_phiUnCorr[_nElectron] = el->phi();
-		Electron_PxUnCorr[_nElectron] = el->px();
-		Electron_PyUnCorr[_nElectron] = el->py();
-		Electron_PzUnCorr[_nElectron] = el->pz();
-		Electron_EnergyUnCorr[_nElectron] = el->energy();
+		Electron_pTUnCorr[_nUnCorrElectron] = el->pt();
+		Electron_etaUnCorr[_nUnCorrElectron] = el->eta();
+		Electron_phiUnCorr[_nUnCorrElectron] = el->phi();
+		Electron_PxUnCorr[_nUnCorrElectron] = el->px();
+		Electron_PyUnCorr[_nUnCorrElectron] = el->py();
+		Electron_PzUnCorr[_nUnCorrElectron] = el->pz();
+		Electron_EnergyUnCorr[_nUnCorrElectron] = el->energy();
 
 		// -- Information from SuperCluster -- //
-		Electron_EnergySCUnCorr[_nElectron] = el->superCluster()->energy();
-		Electron_etaSCUnCorr[_nElectron] = el->superCluster()->eta();
-		Electron_phiSCUnCorr[_nElectron] = el->superCluster()->phi();
+		Electron_EnergySCUnCorr[_nUnCorrElectron] = el->superCluster()->energy();
+		Electron_etaSCUnCorr[_nUnCorrElectron] = el->superCluster()->eta();
+		Electron_phiSCUnCorr[_nUnCorrElectron] = el->superCluster()->phi();
 		double R = sqrt(el->superCluster()->x()*el->superCluster()->x() + el->superCluster()->y()*el->superCluster()->y() +el->superCluster()->z()*el->superCluster()->z());
 		double Rt = sqrt(el->superCluster()->x()*el->superCluster()->x() + el->superCluster()->y()*el->superCluster()->y());
-		Electron_etSCUnCorr[_nElectron] = el->superCluster()->energy()*(Rt/R);
+		Electron_etSCUnCorr[_nUnCorrElectron] = el->superCluster()->energy()*(Rt/R);
 
 		_nUnCorrElectron++;
 	}

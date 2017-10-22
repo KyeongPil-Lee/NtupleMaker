@@ -10,8 +10,10 @@ GT_MC = '80X_mcRun2_asymptotic_2016_TrancheIV_v6'
 GT_DATA = '80X_dataRun2_Prompt_v16' # -- 2016 prompt-reco -- #
 # GT_DATA = '80X_dataRun2_2016SeptRepro_v7' # -- 2016 re-reco -- #
 
-TESTFILE_MC = 'file:/u/user/kplee/scratch/ROOTFiles_Test/80X/ExampleMiniAODv2_ZMuMuPowheg_M120to200_Moriond17.root'
-TESTFILE_DATA = 'file:/cms/home/kplee/scratch/ROOTFiles_Test/80X/SingleMuon_Run2016B_v2_Run273450.root'
+TESTFILE_MC = 'file:/u/user/kplee/scratch/ROOTFiles_Test/80X/ExampleMiniAODv2_ZMuMuPowheg_M120to200_Moriond17.root' # -- no signal -- #
+# TESTFILE_MC = 'file:/u/user/kplee/scratch/ROOTFiles_Test/80X/MINIAOD_DYLL_M50toInf_Morind17.root' # -- signal -- #
+#TESTFILE_DATA = 'file:/cms/home/kplee/scratch/ROOTFiles_Test/80X/ReMINIAOD_SingleMuon_Run2017H_Run281613.root' # -- prompt-reco -- #
+TESTFILE_DATA = 'file:/cms/home/kplee/scratch/ROOTFiles_Test/80X/ExampleReMINIAOD_Run2016B_Run274250.root' # -- re-reco -- #
 ####################################################################################################################
 
 if not isMC: isSignalMC = False
@@ -107,33 +109,40 @@ process.calibratedPatPhotons.isMC = cms.bool(isMC)
 #########################
 # -- for electron ID -- #
 #########################
-process.selectedElectrons = cms.EDFilter("PATElectronSelector",
-    src = cms.InputTag("calibratedPatElectrons"),
-    cut = cms.string("pt>5 && abs(eta)")
-)
+
 
 from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
 # turn on VID producer, indicate data format  to be
 # DataFormat.AOD or DataFormat.MiniAOD, as appropriate 
 dataFormat = DataFormat.MiniAOD
+# -- switchOnVIDElectronIdProducer: load RecoEgamma.ElectronIdentification.egmGsfElectronIDs_cff <- makes egmGsfElectronIDSequence
+# -- egmGsfElectronIDSequence = cms.Sequence( electronMVAValueMapProducer * egmGsfElectronIDs * electronRegressionValueMapProducer) -- #
 switchOnVIDElectronIdProducer(process, dataFormat)
 
 # define which IDs we want to produce
 my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Summer16_80X_V1_cff',
                  'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring16_GeneralPurpose_V1_cff',
-                 'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV70_cff']
+                 # 'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV70_cff'
+                 ]
 
 process.load("RecoEgamma.ElectronIdentification.ElectronIDValueMapProducer_cfi")
 # process.electronIDValueMapProducer.srcMiniAOD = cms.InputTag('slimmedElectrons')
 # process.electronMVAValueMapProducer.srcMiniAOD = cms.InputTag('slimmedElectrons')
-process.egmGsfElectronIDs.physicsObjectSrc = cms.InputTag('selectedElectrons')
-process.electronIDValueMapProducer.srcMiniAOD = cms.InputTag('selectedElectrons')
-process.electronRegressionValueMapProducer.srcMiniAOD = cms.InputTag('selectedElectrons')
-process.electronMVAValueMapProducer.srcMiniAOD = cms.InputTag('selectedElectrons')
 
 #add them to the VID producer
 for idmod in my_id_modules:
     setupAllVIDIdsInModule(process,idmod,setupVIDElectronSelection)
+
+
+process.selectedElectrons = cms.EDFilter("PATElectronSelector",
+    src = cms.InputTag("calibratedPatElectrons"),
+    cut = cms.string("pt>5 && abs(eta)")
+)
+
+process.egmGsfElectronIDs.physicsObjectSrc = cms.InputTag('selectedElectrons')
+process.electronIDValueMapProducer.srcMiniAOD = cms.InputTag('selectedElectrons')
+process.electronRegressionValueMapProducer.srcMiniAOD = cms.InputTag('selectedElectrons')
+process.electronMVAValueMapProducer.srcMiniAOD = cms.InputTag('selectedElectrons')
 
 ###################################
 # -- (reco) Photon Information -- #
@@ -165,7 +174,7 @@ process.recoTree.eleVetoIdMap = cms.untracked.InputTag("egmGsfElectronIDs:cutBas
 process.recoTree.eleLooseIdMap = cms.untracked.InputTag("egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-loose")
 process.recoTree.eleMediumIdMap = cms.untracked.InputTag("egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-medium")
 process.recoTree.eleTightIdMap = cms.untracked.InputTag("egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-tight")
-process.recoTree.eleHEEPIdMap = cms.untracked.InputTag("egmGsfElectronIDs:heepElectronID-HEEPV70")
+# process.recoTree.eleHEEPIdMap = cms.untracked.InputTag("egmGsfElectronIDs:heepElectronID-HEEPV70") # -- HEEP recipe is not working under 80X regression recipe (why?): temporarily disabled -- #
 process.recoTree.eleMVAIdWP80Map = cms.untracked.InputTag( "egmGsfElectronIDs:mvaEleID-Spring16-GeneralPurpose-V1-wp80" )
 process.recoTree.eleMVAIdWP90Map = cms.untracked.InputTag( "egmGsfElectronIDs:mvaEleID-Spring16-GeneralPurpose-V1-wp90" )
 
@@ -204,10 +213,14 @@ process.p = cms.Path(
   process.FastFilters *
   process.regressionApplication *
   process.calibratedPatElectrons *
+
   #process.calibratedPatPhotons*
+
   process.selectedElectrons *
   process.egmGsfElectronIDSequence *
+
   # process.photonIDValueMapProducer *
-  #process.egmPhotonIDSequence*
+  # process.egmPhotonIDSequence*
+
   process.recoTree
 )

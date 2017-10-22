@@ -1,6 +1,22 @@
 import FWCore.ParameterSet.Config as cms
 
+#####################
+# -- set by hand -- #
+#####################
 isMC = False
+isSignalMC = False
+
+GT_MC = '80X_mcRun2_asymptotic_2016_TrancheIV_v6'
+GT_DATA = '80X_dataRun2_Prompt_v16' # -- 2016 prompt-reco -- #
+# GT_DATA = '80X_dataRun2_2016SeptRepro_v7' # -- 2016 re-reco -- #
+
+# TESTFILE_MC = 'file:/u/user/kplee/scratch/ROOTFiles_Test/80X/ExampleMiniAODv2_ZMuMuPowheg_M120to200_Moriond17.root' # -- no signal -- #
+TESTFILE_MC = 'file:/u/user/kplee/scratch/ROOTFiles_Test/80X/MINIAOD_DYLL_M50toInf_Morind17.root' # -- signal -- #
+TESTFILE_DATA = 'file:/u/user/kplee/scratch/ROOTFiles_Test/80X/ReMINIAOD_SingleMuon_Run2017H_Run281613.root' # -- prompt-reco -- #
+# TESTFILE_DATA = 'file:/u/user/kplee/scratch/ROOTFiles_Test/80X/ExampleReMINIAOD_Run2016B_Run274250.root' # -- re-reco -- #
+####################################################################################################################
+
+if not isMC: isSignalMC = False
 
 process = cms.Process("DYSkim")
 
@@ -14,12 +30,8 @@ process.options   = cms.untracked.PSet(
 process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
 ## Source
-FileName = ""
-if isMC == True:
-  FileName = "file:/cms/home/kplee/scratch/ROOTFiles_Test/80X/DYLL_M50_MadgraphMLM_80X_mcRun2_asymptotic_2016_miniAODv2_v0.root"
-else:
-  #FileName = "file:/u/user/kplee/scratch/ROOTFiles_Test/80X/ExampleReMINIAOD_Run2016B_Run274250.root"
-  FileName = "file:/u/user/dmpai/scratch/ROOTFiles_Test/80X/DoubleEG_Run2016C_reminiaod_00371362-6AEC-E611-9845-842B2B758BAA.root"
+FileName = TESTFILE_DATA
+if isMC: FileName = TESTFILE_MC
 
 process.source = cms.Source("PoolSource",
 	fileNames = cms.untracked.vstring( FileName )
@@ -35,11 +47,12 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 # -- Global Tags -- #
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff")
 if isMC == True:
-  process.GlobalTag.globaltag = cms.string('80X_mcRun2_asymptotic_2016_miniAODv2_v0')
+  process.GlobalTag.globaltag = cms.string(GT_MC)
 else:
-  process.GlobalTag.globaltag = cms.string('80X_dataRun2_2016SeptRepro_v7') #Re-miniAOD global tag
+  process.GlobalTag.globaltag = cms.string(GT_DATA) #prompt-reco global tag
 
-# # -- HLT Filters -- #
+
+# -- HLT Filters -- #
 # import HLTrigger.HLTfilters.hltHighLevel_cfi
 # process.dimuonsHLTFilter = HLTrigger.HLTfilters.hltHighLevel_cfi.hltHighLevel.clone()
 
@@ -69,9 +82,9 @@ process.goodOfflinePrimaryVertices = cms.EDFilter("VertexSelector",
 process.FastFilters = cms.Sequence( process.goodOfflinePrimaryVertices )
 
 ########################
-# -- EGM Correction -- #
+# -- EGM Correction: -- #
 ########################
-# -- EGM 80X regression -- #
+# -- EGM 80X regression: https://twiki.cern.ch/twiki/bin/viewauth/CMS/EGMRegression -- #
 from EgammaAnalysis.ElectronTools.regressionWeights_cfi import regressionWeights
 process = regressionWeights(process)
 process.load('EgammaAnalysis.ElectronTools.regressionApplication_cff')
@@ -96,43 +109,45 @@ process.calibratedPatPhotons.isMC = cms.bool(isMC)
 #########################
 # -- for electron ID -- #
 #########################
+
+
 from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
 # turn on VID producer, indicate data format  to be
 # DataFormat.AOD or DataFormat.MiniAOD, as appropriate 
 dataFormat = DataFormat.MiniAOD
+# -- switchOnVIDElectronIdProducer: load RecoEgamma.ElectronIdentification.egmGsfElectronIDs_cff <- makes egmGsfElectronIDSequence
+# -- egmGsfElectronIDSequence = cms.Sequence( electronMVAValueMapProducer * egmGsfElectronIDs * electronRegressionValueMapProducer) -- #
 switchOnVIDElectronIdProducer(process, dataFormat)
 
 # define which IDs we want to produce
 my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Summer16_80X_V1_cff',
                  'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring16_GeneralPurpose_V1_cff',
-                 'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV70_cff']
+                 # 'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV70_cff'
+                 ]
 
 process.load("RecoEgamma.ElectronIdentification.ElectronIDValueMapProducer_cfi")
-process.electronIDValueMapProducer.srcMiniAOD = cms.InputTag('slimmedElectrons')
-process.electronMVAValueMapProducer.srcMiniAOD = cms.InputTag('slimmedElectrons')
+# process.electronIDValueMapProducer.srcMiniAOD = cms.InputTag('slimmedElectrons')
+# process.electronMVAValueMapProducer.srcMiniAOD = cms.InputTag('slimmedElectrons')
 
 #add them to the VID producer
 for idmod in my_id_modules:
     setupAllVIDIdsInModule(process,idmod,setupVIDElectronSelection)
 
+
+process.selectedElectrons = cms.EDFilter("PATElectronSelector",
+    src = cms.InputTag("calibratedPatElectrons"),
+    cut = cms.string("pt>5 && abs(eta)")
+)
+
+process.egmGsfElectronIDs.physicsObjectSrc = cms.InputTag('selectedElectrons')
+process.electronIDValueMapProducer.srcMiniAOD = cms.InputTag('selectedElectrons')
+process.electronRegressionValueMapProducer.srcMiniAOD = cms.InputTag('selectedElectrons')
+process.electronMVAValueMapProducer.srcMiniAOD = cms.InputTag('selectedElectrons')
+
 ###################################
 # -- (reco) Photon Information -- #
 ###################################
-# Several photon variables can not be found inside of a photon object
-# and it is easiest to compute them upstream with a dedicated producer,
-# such as this standard producer used for photon ID.
-#    The producer computes full5x5 cluster shapes and PF isolation variables.
-#
-# Do not forget to add this producer to the path below!
-#
-#process.load("RecoEgamma/PhotonIdenitification/PhotonIDValueMapProducer_cfi")
-
-
-# -- load the PAT config -- //
-# process.load("PhysicsTools.PatAlgos.producersLayer1.patCandidates_cff")
-# from PhysicsTools.PatAlgos.tools.coreTools import *
-# if isMC==False:
-#    removeMCMatching(process, ['All'])
+# -- photon part should be updated! later when it is necessary -- #
 
 #################
 # -- DY Tree -- #
@@ -145,8 +160,8 @@ process.recoTree.isMC = isMC
 
 # -- Objects -- #
 process.recoTree.Muon = cms.untracked.InputTag("slimmedMuons") # -- miniAOD -- #
-process.recoTree.Electron = cms.untracked.InputTag("slimmedElectrons") # -- miniAOD -- #
-process.recoTree.CalibElectron = cms.untracked.InputTag("calibratedPatElectrons") # -- miniAOD -- #
+process.recoTree.Electron = cms.untracked.InputTag("selectedElectrons") # -- miniAOD -- #
+process.recoTree.UnCorrElectron = cms.untracked.InputTag("slimmedElectrons") # -- miniAOD: before applying energy scale correction -- #
 process.recoTree.Photon = cms.untracked.InputTag("slimmedPhotons") # -- miniAOD -- #
 process.recoTree.Jet = cms.untracked.InputTag("slimmedJets") # -- miniAOD -- #
 process.recoTree.MET = cms.untracked.InputTag("slimmedMETs") # -- miniAOD -- #
@@ -159,7 +174,7 @@ process.recoTree.eleVetoIdMap = cms.untracked.InputTag("egmGsfElectronIDs:cutBas
 process.recoTree.eleLooseIdMap = cms.untracked.InputTag("egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-loose")
 process.recoTree.eleMediumIdMap = cms.untracked.InputTag("egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-medium")
 process.recoTree.eleTightIdMap = cms.untracked.InputTag("egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-tight")
-process.recoTree.eleHEEPIdMap = cms.untracked.InputTag("egmGsfElectronIDs:heepElectronID-HEEPV70")
+# process.recoTree.eleHEEPIdMap = cms.untracked.InputTag("egmGsfElectronIDs:heepElectronID-HEEPV70") # -- HEEP recipe is not working under 80X regression recipe (why?): temporarily disabled -- #
 process.recoTree.eleMVAIdWP80Map = cms.untracked.InputTag( "egmGsfElectronIDs:mvaEleID-Spring16-GeneralPurpose-V1-wp80" )
 process.recoTree.eleMVAIdWP90Map = cms.untracked.InputTag( "egmGsfElectronIDs:mvaEleID-Spring16-GeneralPurpose-V1-wp90" )
 
@@ -176,7 +191,7 @@ process.recoTree.effAreaPhoFile   = cms.untracked.FileInPath("RecoEgamma/PhotonI
 process.recoTree.PrimaryVertex = cms.untracked.InputTag("offlineSlimmedPrimaryVertices") # -- miniAOD -- #
 
 # -- Else -- #
-process.recoTree.PileUpInfo = cms.untracked.InputTag("addPileupInfo")
+process.recoTree.PileUpInfo = cms.untracked.InputTag("slimmedAddPileupInfo")
 
 # -- Filters -- #
 process.recoTree.ApplyFilter = False
@@ -184,42 +199,28 @@ process.recoTree.ApplyFilter = False
 # -- Store Flags -- #
 process.recoTree.StoreMuonFlag = True
 process.recoTree.StoreElectronFlag = True
-process.recoTree.StoreCalibElectronFlag = True
-process.recoTree.StorePhotonFlag = True
-process.recoTree.StoreGENFlag = isMC
-process.recoTree.StoreGenOthersFlag = isMC
+process.recoTree.StorePhotonFlag = False # -- photon part should be updated! later when it is necessary -- #
 process.recoTree.StoreJetFlag = True
 process.recoTree.StoreMETFlag = True
+process.recoTree.StoreGENFlag = isMC
+process.recoTree.StoreGenOthersFlag = isSignalMC
+process.recoTree.StoreLHEFlag = isSignalMC
 
 ####################
 # -- Let it run -- #
 ####################
-#process.p = cms.Path(
-#  process.FastFilters *
-#  # process.patCandidates *
-#  process.egmGsfElectronIDSequence *
-#  process.photonIDValueMapProducer *
-#    # process.patDefaultSequence
-#    process.recoTree
-#)
 process.p = cms.Path(
+  process.FastFilters *
   process.regressionApplication *
   process.calibratedPatElectrons *
+
   #process.calibratedPatPhotons*
-  process.FastFilters *
+
+  process.selectedElectrons *
   process.egmGsfElectronIDSequence *
-  #process.photonIDValueMapProducer *
-  #process.egmPhotonIDSequence*
+
+  # process.photonIDValueMapProducer *
+  # process.egmPhotonIDSequence*
+
   process.recoTree
 )
-
-# process.p.remove(process.makePatPhotons)
-# process.p.remove(process.makePatJets)
-# process.p.remove(process.makePatTaus)
-# process.p.remove(process.makePatMETs)
-# process.p.remove(process.patCandidateSummary)
-
-# if isMC == False:
-# 	process.p.remove(process.electronMatch)
-# 	process.p.remove(process.muonMatch)
-

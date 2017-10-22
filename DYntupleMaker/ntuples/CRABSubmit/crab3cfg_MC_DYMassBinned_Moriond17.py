@@ -5,7 +5,7 @@ config.General.requestName = ''
 config.General.workArea = 'DYntuple'
 
 config.JobType.pluginName = 'Analysis'
-config.JobType.psetName = '../withEGMcorrection/MC_cfg_80X_mcRun2_asymptotic_2016_TrancheIV_v6_withEGMcorrection.py'
+config.JobType.psetName = '../withEGMcorrection/MC_cfg_Signal.py'
 
 config.Data.inputDataset = ''
 
@@ -18,14 +18,22 @@ config.Data.publication = False
 
 config.Site.storageSite = 'T3_KR_KISTI'
 
-version = '_v20171011_EGMCorr_'
+version = '_v20171022_EGMCorr_'
 # 'MultiCRAB' part
 if __name__ == '__main__':
     
     from CRABAPI.RawCommand import crabCommand
 
-    config.General.requestName = 'DYntuple'+version+'DYLL_M10to50'
+    config.General.requestName = 'DYntuple'+version+'DYLL_M10to50_v1'
+    config.Data.inputDataset = '/DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM'
+    crabCommand('submit', config = config)
+
+    config.General.requestName = 'DYntuple'+version+'DYLL_M10to50_v2'
     config.Data.inputDataset = '/DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v2/MINIAODSIM'
+    crabCommand('submit', config = config)
+
+    config.General.requestName = 'DYntuple'+version+'DYLL_M10to50_ext_v1'
+    config.Data.inputDataset = '/DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM'
     crabCommand('submit', config = config)
 
     config.General.requestName = 'DYntuple'+version+'DYLL_M50toInf'

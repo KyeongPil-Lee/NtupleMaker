@@ -3,17 +3,17 @@ import FWCore.ParameterSet.Config as cms
 #####################
 # -- set by hand -- #
 #####################
-isMC = True
-isSignalMC = True
+isMC = False
+isSignalMC = False
 
 GT_MC = '80X_mcRun2_asymptotic_2016_TrancheIV_v6'
-GT_DATA = '80X_dataRun2_Prompt_v16' # -- 2016 prompt-reco -- #
-# GT_DATA = '80X_dataRun2_2016SeptRepro_v7' # -- 2016 re-reco -- #
+# GT_DATA = '80X_dataRun2_Prompt_v16' # -- 2016 prompt-reco -- #
+GT_DATA = '80X_dataRun2_2016SeptRepro_v7' # -- 2016 re-reco -- #
 
 # TESTFILE_MC = 'file:/u/user/kplee/scratch/ROOTFiles_Test/80X/ExampleMiniAODv2_ZMuMuPowheg_M120to200_Moriond17.root' # -- no signal -- #
 TESTFILE_MC = 'file:/u/user/kplee/scratch/ROOTFiles_Test/80X/MINIAOD_DYLL_M50toInf_Morind17.root' # -- signal -- #
-#TESTFILE_DATA = 'file:/cms/home/kplee/scratch/ROOTFiles_Test/80X/ReMINIAOD_SingleMuon_Run2017H_Run281613.root' # -- prompt-reco -- #
-TESTFILE_DATA = 'file:/cms/home/kplee/scratch/ROOTFiles_Test/80X/ExampleReMINIAOD_Run2016B_Run274250.root' # -- re-reco -- #
+# TESTFILE_DATA = 'file:/u/user/kplee/scratch/ROOTFiles_Test/80X/ReMINIAOD_SingleMuon_Run2017H_Run281613.root' # -- prompt-reco -- #
+TESTFILE_DATA = 'file:/u/user/kplee/scratch/ROOTFiles_Test/80X/ExampleReMINIAOD_Run2016B_Run274250.root' # -- re-reco -- #
 ####################################################################################################################
 
 if not isMC: isSignalMC = False
@@ -122,7 +122,8 @@ switchOnVIDElectronIdProducer(process, dataFormat)
 # define which IDs we want to produce
 my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Summer16_80X_V1_cff',
                  'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring16_GeneralPurpose_V1_cff',
-                 'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV70_cff']
+                 # 'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV70_cff'
+                 ]
 
 process.load("RecoEgamma.ElectronIdentification.ElectronIDValueMapProducer_cfi")
 # process.electronIDValueMapProducer.srcMiniAOD = cms.InputTag('slimmedElectrons')
@@ -173,7 +174,7 @@ process.recoTree.eleVetoIdMap = cms.untracked.InputTag("egmGsfElectronIDs:cutBas
 process.recoTree.eleLooseIdMap = cms.untracked.InputTag("egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-loose")
 process.recoTree.eleMediumIdMap = cms.untracked.InputTag("egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-medium")
 process.recoTree.eleTightIdMap = cms.untracked.InputTag("egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-tight")
-process.recoTree.eleHEEPIdMap = cms.untracked.InputTag("egmGsfElectronIDs:heepElectronID-HEEPV70")
+# process.recoTree.eleHEEPIdMap = cms.untracked.InputTag("egmGsfElectronIDs:heepElectronID-HEEPV70") # -- HEEP recipe is not working under 80X regression recipe (why?): temporarily disabled -- #
 process.recoTree.eleMVAIdWP80Map = cms.untracked.InputTag( "egmGsfElectronIDs:mvaEleID-Spring16-GeneralPurpose-V1-wp80" )
 process.recoTree.eleMVAIdWP90Map = cms.untracked.InputTag( "egmGsfElectronIDs:mvaEleID-Spring16-GeneralPurpose-V1-wp90" )
 
@@ -216,10 +217,10 @@ process.p = cms.Path(
   #process.calibratedPatPhotons*
 
   process.selectedElectrons *
-  process.egmGsfElectronIDSequence
+  process.egmGsfElectronIDSequence *
 
   # process.photonIDValueMapProducer *
   # process.egmPhotonIDSequence*
 
-  # process.recoTree
+  process.recoTree
 )
