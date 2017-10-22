@@ -734,7 +734,7 @@ void DYntupleMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 	if( !isRD && theStoreGenOthersFlag ) fillGenOthersInfo(iEvent);
 	if( theStorePhotonFlag ) fillPhotons(iEvent);
 	if( theStoreMuonFlag ) fillMuons(iEvent, iSetup);
-	if( theStoreElectronFlag ) fillElectrons(iEvent);
+	if( theStoreElectronFlag ) fillElectrons(iEvent, iSetup);
 	if( theStoreTTFlag ) fillTT(iEvent);
 	DYTree->Fill();
 }
@@ -2215,7 +2215,7 @@ void DYntupleMaker::fillMuons(const edm::Event &iEvent, const edm::EventSetup& i
 //////////////////////////////
 // -- Get Electrons info -- //
 //////////////////////////////
-void DYntupleMaker::fillElectrons(const edm::Event &iEvent)
+void DYntupleMaker::fillElectrons(const edm::Event &iEvent, const edm::EventSetup& iSetup)
 {
 	// cout << "##### Start of fillElectrons #####" << endl;
 	// -- BeamSpot -- //
@@ -2642,6 +2642,60 @@ void DYntupleMaker::fillElectrons(const edm::Event &iEvent)
 }
 
 ////////////////////////
+// -- Get LHE info -- //
+////////////////////////
+void DYntupleMaker::fillLHEInfo(const edm::Event &iEvent)
+{
+	Handle<LHEEventProduct> LHEInfo;
+	iEvent.getByToken(LHEEventProductToken, LHEInfo);
+
+	const lhef::HEPEUP& lheEvent = LHEInfo->hepeup();
+	std::vector<lhef::HEPEUP::FiveVector> lheParticles = lheEvent.PUP;
+
+	Int_t _nLHEParticle = 0;
+	for( size_t idxParticle = 0; idxParticle < lheParticles.size(); ++idxParticle )
+	{
+		Int_t id = lheEvent.IDUP[idxParticle];
+
+		if( fabs(id) == 13 || fabs(id) == 11 || fabs(id) == 15 )
+		{
+			Double_t Px = lheParticles[idxParticle][0];
+			Double_t Py = lheParticles[idxParticle][1];
+			Double_t Pz = lheParticles[idxParticle][2];
+			Double_t E = lheParticles[idxParticle][3];
+			// Double_t M = lheParticles[idxParticle][4];		
+			Int_t status = lheEvent.ISTUP[idxParticle];
+
+			LHELepton_ID[_nLHEParticle] = id;
+			LHELepton_status[_nLHEParticle] = status;
+			LHELepton_Px[_nLHEParticle] = Px;
+			LHELepton_Py[_nLHEParticle] = Py;
+			LHELepton_Pz[_nLHEParticle] = Pz;
+			LHELepton_E[_nLHEParticle] = E;
+
+			_nLHEParticle++;
+		}
+	}
+	nLHEParticle = _nLHEParticle;
+
+	// -- PDf weights for theoretical uncertainties: scale, PDF replica and alphaS variation -- //
+	// -- ref: https://twiki.cern.ch/twiki/bin/viewauth/CMS/LHEReaderCMSSW -- //
+	double OriginalWeight = LHEInfo->originalXWGTUP();
+	// std::cout << "OriginalWeight: " << OriginalWeight << endl;
+	int nWeight = (int)LHEInfo->weights().size();
+	// std::cout << "nWeight: " << nWeight << endl;
+
+	for(int i=0; i<nWeight; i++)
+	{
+		double weight = LHEInfo->weights()[i].wgt;
+		double ratio = weight / OriginalWeight;
+		PDFWeights.push_back( ratio );
+
+		// std::cout << i << "th weight = " << weight << "(ID=" << LHEInfo->weights()[i].id <<"), ratio w.r.t. original: " << ratio << endl;
+	}
+}
+
+////////////////////////
 // -- Get GEN info -- //
 ////////////////////////
 void DYntupleMaker::fillGENInfo(const edm::Event &iEvent)
@@ -2696,8 +2750,8 @@ void DYntupleMaker::fillGENInfo(const edm::Event &iEvent)
 	iEvent.getByToken(GenEventInfoToken, genEvtInfo);
 	GENEvt_weight = genEvtInfo->weight();
 	GENEvt_QScale = genEvtInfo->qScale();
-	GENEvt_x1 = genEvtInfo->pdf()->x.first();
-	GENEvt_x2 = genEvtInfo->pdf()->x.second();
+	GENEvt_x1 = genEvtInfo->pdf()->x.first;
+	GENEvt_x2 = genEvtInfo->pdf()->x.second;
 	GENEvt_alphaQCD = genEvtInfo->alphaQCD();
 	GENEvt_alphaQED = genEvtInfo->alphaQED();
 }

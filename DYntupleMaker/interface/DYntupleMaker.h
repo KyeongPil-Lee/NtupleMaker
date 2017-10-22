@@ -114,7 +114,7 @@ private:
 	virtual void fillMET(const edm::Event &iEvent);            // fill MET information
 	virtual void fillPhotons(const edm::Event &iEvent);
 	virtual void fillMuons(const edm::Event &iEvent, const edm::EventSetup& iSetup);
-	virtual void fillElectrons(const edm::Event &iEvent);
+	virtual void fillElectrons(const edm::Event &iEvent, const edm::EventSetup& iSetup);
 	virtual void fillJet(const edm::Event &iEvent);            // fill jet and b-tagging information
 	virtual void hltReport(const edm::Event &iEvent);          // fill list of triggers fired in an event
 	virtual void fillLHEInfo(const edm::Event &iEvent);
@@ -136,7 +136,7 @@ private:
 	// -- Tokens (for 76X) -- //
 	edm::EDGetTokenT< std::vector<pat::Muon> > 						MuonToken;
 	edm::EDGetTokenT< edm::View<reco::GsfElectron> > 				ElectronToken;
-	edm::EDGetTokenT< edm::View<reco::GsfElectron> >                UnCorrElectron;
+	edm::EDGetTokenT< edm::View<reco::GsfElectron> >                UnCorrElectronToken;
 	edm::EDGetTokenT< edm::View<reco::Photon> > 					PhotonToken;
 	edm::EDGetTokenT< std::vector<pat::Jet> > 						JetToken;
 	edm::EDGetTokenT< std::vector<pat::MET> > 						MetToken;
