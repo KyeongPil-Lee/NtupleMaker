@@ -2,22 +2,26 @@
 import subprocess
 import os
 
+crabDirBase = "DYntuple"
 proxy = '"/tmp/x509up_u41004"'
 
-FileList = os.listdir(".")
+FileList = os.listdir("./%s" % crabDirBase)
 print "available crabDir list: "
 for filename in FileList:
 	if "crab_" in filename:
 		print "'"+filename+"',"
 
-CRABDirs = [
-# 'crab_DYntuple_v20170428_80XReMiniAOD_FixEvtNum_SingleMuon_Run2016G_v1_GoldenJSON_271036_to_284044',
-]
+# CRABDirs = [
+# # 'crab_DYntuple_v20170428_80XReMiniAOD_FixEvtNum_SingleMuon_Run2016G_v1_GoldenJSON_271036_to_284044',
+# ]
 
+# CRABDirs.sort()
+
+# print "Selected file list: "
+# print CRABDirs
+
+CRABDirs = FileList # -- all crab directories in crabDirBase -- #
 CRABDirs.sort()
-
-print "Selected file list: "
-print CRABDirs
 
 # for File in FileList:
 # 	if "crab_" in File and os.path.isdir( File ):
@@ -30,6 +34,7 @@ UnknownList = []
 OthersList = []
 
 for crabDir in CRABDirs:
+	crabDir = "%s/%s" % (crabDirBase, crabDir)
 	# outputDir = "v" + crabDir.split("_v")[1]
 	
 	cmd = 'crab status "'+crabDir+'" --proxy='+proxy
