@@ -6,10 +6,12 @@ crabDirBase = "DYntuple"
 proxy = '"/tmp/x509up_u41004"'
 
 FileList = os.listdir("./%s" % crabDirBase)
+List_CRABDir = []
 print "available crabDir list: "
 for filename in FileList:
 	if "crab_" in filename:
 		print "'"+filename+"',"
+		List_CRABDir.append( filename )
 
 # CRABDirs = [
 # # 'crab_DYntuple_v20170428_80XReMiniAOD_FixEvtNum_SingleMuon_Run2016G_v1_GoldenJSON_271036_to_284044',
@@ -20,7 +22,7 @@ for filename in FileList:
 # print "Selected file list: "
 # print CRABDirs
 
-CRABDirs = FileList # -- all crab directories in crabDirBase -- #
+CRABDirs = List_CRABDir # -- all crab directories in crabDirBase -- #
 CRABDirs.sort()
 
 # for File in FileList:
@@ -34,10 +36,10 @@ UnknownList = []
 OthersList = []
 
 for crabDir in CRABDirs:
-	crabDir = "%s/%s" % (crabDirBase, crabDir)
+	crabDirPath = "%s/%s" % (crabDirBase, crabDir)
 	# outputDir = "v" + crabDir.split("_v")[1]
 	
-	cmd = 'crab status "'+crabDir+'" --proxy='+proxy
+	cmd = 'crab status "'+crabDirPath+'" --proxy='+proxy
 	result = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 	(stdout, stderr) = result.communicate()
 	print "#" * 100
@@ -49,7 +51,7 @@ for crabDir in CRABDirs:
 	print "#" * 100 +'\n\n'
 
 	if "failed" in stdout:
-		ResubmtCMD += ['crab resubmit '+crabDir+' --proxy='+proxy]
+		ResubmtCMD += ['crab resubmit '+crabDirPath+' --proxy='+proxy]
 
 	elif "COMPLETED" in stdout:
 		CompletedList.append( crabDir )
