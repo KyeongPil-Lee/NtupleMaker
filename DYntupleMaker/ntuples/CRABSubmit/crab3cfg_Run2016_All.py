@@ -1,3 +1,5 @@
+import os
+from shutil import copyfile
 from CRABClient.UserUtilities import config, getUsernameFromSiteDB
 config = config()
 
@@ -27,7 +29,7 @@ config.Site.storageSite = 'T3_KR_KISTI'
 version = '_v20171022_EGMCorr_'
 # 'MultiCRAB' part
 
-GoldenJSON = '/u/user/kplee/JSON/Run2016/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt'
+GoldenJSON = './Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt'
 # MuonPhysJSON = '/u/user/kplee/JSON/Run2016/Cert_271036-277148_13TeV_PromptReco_Collisions16_JSON_MuonPhys.txt'
 StartRun = 271036
 EndRun = 284044
@@ -35,6 +37,11 @@ EndRun = 284044
 if __name__ == '__main__':
     
     from CRABAPI.RawCommand import crabCommand
+
+    # -- MET phi correction for B to F -- #
+    src = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pfMETmultShiftCorrections_B2F_cfi.py')
+    dst= os.path.join(os.path.dirname(os.path.abspath(__file__)), '..','..','..','..','JetMETCorrections/Type1MET/python/pfMETmultShiftCorrections_cfi.py')
+    copyfile(src,dst)
 
     # -- Run2016B -- #
     config.General.requestName = 'DYntuple'+version+'SingleMuon_Run2016B_v3_GoldenJSON_%d_to_%d' % (StartRun, EndRun)
@@ -70,6 +77,12 @@ if __name__ == '__main__':
     config.Data.lumiMask = GoldenJSON
     config.Data.runRange = '%d-%d' % (StartRun, EndRun)
     crabCommand('submit', config = config)
+
+
+    # -- MET phi correction for G to H -- #
+    src = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pfMETmultShiftCorrections_GH_cfi.py')
+    dst= os.path.join(os.path.dirname(os.path.abspath(__file__)), '..','..','..','..','JetMETCorrections/Type1MET/python/pfMETmultShiftCorrections_cfi.py')
+    copyfile(src,dst)
 
     # -- Run2016G -- #
     config.General.requestName = 'DYntuple'+version+'SingleMuon_Run2016G_v1_GoldenJSON_%d_to_%d' % (StartRun, EndRun)

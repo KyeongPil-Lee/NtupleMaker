@@ -1,3 +1,5 @@
+import os
+from shutil import copyfile
 from CRABClient.UserUtilities import config, getUsernameFromSiteDB
 config = config()
 
@@ -24,6 +26,11 @@ version = '_v20171031_'
 if __name__ == '__main__':
     
     from CRABAPI.RawCommand import crabCommand
+
+    # -- MET phi correction for MC -- #
+    src = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pfMETmultShiftCorrections_MC_cfi.py')
+    dst= os.path.join(os.path.dirname(os.path.abspath(__file__)), '..','..','..','..','JetMETCorrections/Type1MET/python/pfMETmultShiftCorrections_cfi.py')
+    copyfile(src,dst)
 
     #############################
     # -- Mu-enriched samples -- #

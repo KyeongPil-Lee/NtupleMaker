@@ -24,6 +24,11 @@ if __name__ == '__main__':
     
     from CRABAPI.RawCommand import crabCommand
 
+    # -- MET phi correction for MC -- #
+    src = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pfMETmultShiftCorrections_MC_cfi.py')
+    dst= os.path.join(os.path.dirname(os.path.abspath(__file__)), '..','..','..','..','JetMETCorrections/Type1MET/python/pfMETmultShiftCorrections_cfi.py')
+    copyfile(src,dst)
+
     config.General.requestName = 'DYntuple'+version+'ttbarTo2L2Nu'
     config.Data.inputDataset = '/TTTo2L2Nu_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM'
     crabCommand('submit', config = config)
