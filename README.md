@@ -9,13 +9,18 @@
 	cmsrel CMSSW_8_0_26_patch1
 	cd CMSSW_8_0_26_patch1/src
 	cmsenv
+	git cms-init
 
 	# -- EGM corrections -- # (https://twiki.cern.ch/twiki/bin/viewauth/CMS/EGMRegression)
-	git cms-init
 	git cms-merge-topic cms-egamma:EGM_gain_v1
 	cd EgammaAnalysis/ElectronTools/data
 	git clone -b Moriond17_gainSwitch_unc https://github.com/ECALELFS/ScalesSmearings.git
 	cd $CMSSW_BASE/src
+
+	# -- MET corrections (phi) -- #
+	git cms-merge-topic cms-met:METRecipe_8020 -u
+	git cms-merge-topic cms-met:METRecipe_80X_part2 -u
+	git cms-addpkg JetMETCorrections
 
 	# -- this ntuple maker -- #
 	git clone https://github.com/KyeongPil-Lee/NtupleMaker.git Phys -b 80X
