@@ -661,6 +661,12 @@ void DYntupleMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 		pfMET_Type1_Py = -100; 
 		pfMET_Type1_SumEt = -100;
 
+		pfMET_Type1_PhiCor_pT = -100;
+		pfMET_Type1_PhiCor_phi = -100; 
+		pfMET_Type1_PhiCor_Px = -100; 
+		pfMET_Type1_PhiCor_Py = -100; 
+		pfMET_Type1_PhiCor_SumEt = -100;
+
 	} // -- End of "i" iteration -- //
 
 	// cout << "##### Analyze:Initialization #####" << endl;
@@ -1287,6 +1293,12 @@ void DYntupleMaker::beginJob()
 		DYTree->Branch("pfMET_Type1_Px", &pfMET_Type1_Px,"pfMET_Type1_Px/D");
 		DYTree->Branch("pfMET_Type1_Py", &pfMET_Type1_Py,"pfMET_Type1_Py/D");
 		DYTree->Branch("pfMET_Type1_SumEt", &pfMET_Type1_SumEt,"pfMET_Type1_SumEt/D");
+
+		DYTree->Branch("pfMET_Type1_PhiCor_pT", &pfMET_Type1_PhiCor_pT,"pfMET_Type1_PhiCor_pT/D");
+		DYTree->Branch("pfMET_Type1_PhiCor_phi", &pfMET_Type1_PhiCor_phi,"pfMET_Type1_PhiCor_phi/D");
+		DYTree->Branch("pfMET_Type1_PhiCor_Px", &pfMET_Type1_PhiCor_Px,"pfMET_Type1_PhiCor_Px/D");
+		DYTree->Branch("pfMET_Type1_PhiCor_Py", &pfMET_Type1_PhiCor_Py,"pfMET_Type1_PhiCor_Py/D");
+		DYTree->Branch("pfMET_Type1_PhiCor_SumEt", &pfMET_Type1_PhiCor_SumEt,"pfMET_Type1_PhiCor_SumEt/D");
 	}
 }
 
@@ -2897,6 +2909,12 @@ void DYntupleMaker::fillMET(const edm::Event &iEvent)
 	pfMET_Type1_Px = metHandle->front().px();
 	pfMET_Type1_Py = metHandle->front().py();
 	pfMET_Type1_SumEt = metHandle->front().sumEt();
+
+	pfMET_Type1_PhiCor_pT = metHandle->front().corPt(pat::MET::Type1XY);
+	pfMET_Type1_PhiCor_phi = metHandle->front().corPhi(pat::MET::Type1XY);
+	pfMET_Type1_PhiCor_Px = metHandle->front().corPx(pat::MET::Type1XY);
+	pfMET_Type1_PhiCor_Py = metHandle->front().corPy(pat::MET::Type1XY);
+	pfMET_Type1_PhiCor_SumEt = metHandle->front().corSumEt(pat::MET::Type1XY);
 
 
 	// pat::METCollection::const_iterator iMET = metHandle->begin();

@@ -149,6 +149,12 @@ process.electronMVAValueMapProducer.srcMiniAOD = cms.InputTag('selectedElectrons
 ###################################
 # -- photon part should be updated! later when it is necessary -- #
 
+######################
+# MET Phi Correction #
+######################
+from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
+runMetCorAndUncFromMiniAOD(process, isData=False )  #For MC isData=False
+
 #################
 # -- DY Tree -- #
 #################
@@ -213,14 +219,8 @@ process.p = cms.Path(
   process.FastFilters *
   process.regressionApplication *
   process.calibratedPatElectrons *
-
-  #process.calibratedPatPhotons*
-
   process.selectedElectrons *
   process.egmGsfElectronIDSequence *
-
-  # process.photonIDValueMapProducer *
-  # process.egmPhotonIDSequence*
-
-  process.recoTree
+  process.fullPatMetSequence *  #This is the phi corrections part
+ process.recoTree
 )

@@ -751,5 +751,11 @@ private:
 	double pfMET_Type1_Px; 
 	double pfMET_Type1_Py; 
 	double pfMET_Type1_SumEt;
+
+	double pfMET_Type1_PhiCor_pT;
+	double pfMET_Type1_PhiCor_phi; 
+	double pfMET_Type1_PhiCor_Px; 
+	double pfMET_Type1_PhiCor_Py; 
+	double pfMET_Type1_PhiCor_SumEt;
 };
 #endif
