@@ -25,6 +25,9 @@
 	# -- this ntuple maker -- #
 	git clone https://github.com/KyeongPil-Lee/NtupleMaker.git Phys -b 80X
 
+	# -- copy the MET correction recipe (80X) -- #
+	cp Phys/DYntupleMaker/python/METCorr/multPhiCorr_*.py JetMETCorrections/Type1MET/python/
+	
 	# -- compile -- #
 	scram b -j 20 >&log&
 
