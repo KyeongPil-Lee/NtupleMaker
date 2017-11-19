@@ -8,7 +8,6 @@ config.General.workArea = 'DYntuple'
 
 config.JobType.pluginName = 'Analysis'
 config.JobType.psetName = '../withEGMcorrection/DATA_cfg_ReReco.py'
-# config.JobType.maxJobRuntimeMin = 2700 # -- maximum -- #
 
 config.Data.inputDataset = ''
 
@@ -20,13 +19,8 @@ config.Data.publication = False
 
 
 config.Site.storageSite = 'T3_KR_KISTI'
-# config.Site.storageSite = 'T2_KR_KNU'
 
-# config.Data.lumiMask = '/u/user/kplee/JSON/Run2016/Cert_271036-273730_13TeV_PromptReco_Collisions16_JSON.txt'
-# config.Data.lumiMask = '/u/user/kplee/JSON/Run2016/Cert_271036-274240_13TeV_PromptReco_Collisions16_JSON.txt'
-# config.Data.runRange = '273731-274240'
-
-version = '_v20171022_EGMCorr_'
+version = '_v2p0_'
 # 'MultiCRAB' part
 
 GoldenJSON = './Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt'
@@ -44,35 +38,35 @@ if __name__ == '__main__':
     copyfile(src,dst)
 
     # -- Run2016B -- #
-    config.General.requestName = 'DYntuple'+version+'SingleMuon_Run2016B_v3_GoldenJSON_%d_to_%d' % (StartRun, EndRun)
+    config.General.requestName = 'DYntuple'+version+'SingleMuon_RunB'
     config.Data.inputDataset = '/SingleMuon/Run2016B-03Feb2017_ver2-v2/MINIAOD'
     config.Data.lumiMask = GoldenJSON
     config.Data.runRange = '%d-%d' % (StartRun, EndRun)
     crabCommand('submit', config = config)
 
     # -- Run2016C -- #
-    config.General.requestName = 'DYntuple'+version+'SingleMuon_Run2016C_v1_GoldenJSON_%d_to_%d' % (StartRun, EndRun)
+    config.General.requestName = 'DYntuple'+version+'SingleMuon_RunC'
     config.Data.inputDataset = '/SingleMuon/Run2016C-03Feb2017-v1/MINIAOD'
     config.Data.lumiMask = GoldenJSON
     config.Data.runRange = '%d-%d' % (StartRun, EndRun)
     crabCommand('submit', config = config)
 
     # -- Run2016D -- #
-    config.General.requestName = 'DYntuple'+version+'SingleMuon_Run2016D_v1_GoldenJSON_%d_to_%d' % (StartRun, EndRun)
+    config.General.requestName = 'DYntuple'+version+'SingleMuon_RunD'
     config.Data.inputDataset = '/SingleMuon/Run2016D-03Feb2017-v1/MINIAOD'
     config.Data.lumiMask = GoldenJSON
     config.Data.runRange = '%d-%d' % (StartRun, EndRun)
     crabCommand('submit', config = config)
 
     # -- Run2016E -- #
-    config.General.requestName = 'DYntuple'+version+'SingleMuon_Run2016E_v1_GoldenJSON_%d_to_%d' % (StartRun, EndRun)
+    config.General.requestName = 'DYntuple'+version+'SingleMuon_RunE'
     config.Data.inputDataset = '/SingleMuon/Run2016E-03Feb2017-v1/MINIAOD'
     config.Data.lumiMask = GoldenJSON
     config.Data.runRange = '%d-%d' % (StartRun, EndRun)
     crabCommand('submit', config = config)
 
     # -- Run2016F -- #
-    config.General.requestName = 'DYntuple'+version+'SingleMuon_Run2016F_v1_GoldenJSON_%d_to_%d' % (StartRun, EndRun)
+    config.General.requestName = 'DYntuple'+version+'SingleMuon_RunF'
     config.Data.inputDataset = '/SingleMuon/Run2016F-03Feb2017-v1/MINIAOD'
     config.Data.lumiMask = GoldenJSON
     config.Data.runRange = '%d-%d' % (StartRun, EndRun)
@@ -85,14 +79,14 @@ if __name__ == '__main__':
     copyfile(src,dst)
 
     # -- Run2016G -- #
-    config.General.requestName = 'DYntuple'+version+'SingleMuon_Run2016G_v1_GoldenJSON_%d_to_%d' % (StartRun, EndRun)
+    config.General.requestName = 'DYntuple'+version+'SingleMuon_RunG'
     config.Data.inputDataset = '/SingleMuon/Run2016G-03Feb2017-v1/MINIAOD'
     config.Data.lumiMask = GoldenJSON
     config.Data.runRange = '%d-%d' % (StartRun, EndRun)
     crabCommand('submit', config = config)
 
     # -- Run2016H, v2 -- #
-    config.General.requestName = 'DYntuple'+version+'SingleMuon_Run2016H_v2_GoldenJSON_%d_to_%d' % (StartRun, EndRun)
+    config.General.requestName = 'DYntuple'+version+'SingleMuon_RunHver2'
     config.Data.inputDataset = '/SingleMuon/Run2016H-03Feb2017_ver2-v1/MINIAOD'
     config.Data.lumiMask = GoldenJSON
     config.Data.runRange = '%d-%d' % (StartRun, EndRun)
@@ -100,7 +94,7 @@ if __name__ == '__main__':
     crabCommand('submit', config = config)
 
     # -- Run2016H, v3 -- #
-    config.General.requestName = 'DYntuple'+version+'SingleMuon_Run2016H_v3_GoldenJSON_%d_to_%d' % (StartRun, EndRun)
+    config.General.requestName = 'DYntuple'+version+'SingleMuon_RunHver3'
     config.Data.inputDataset = '/SingleMuon/Run2016H-03Feb2017_ver3-v1/MINIAOD'
     config.Data.lumiMask = GoldenJSON
     config.Data.runRange = '%d-%d' % (StartRun, EndRun)
