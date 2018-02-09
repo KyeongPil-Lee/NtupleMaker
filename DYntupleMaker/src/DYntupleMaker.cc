@@ -1354,7 +1354,8 @@ void DYntupleMaker::beginRun(const Run & iRun, const EventSetup & iSetup)
 		"HLT_Ele23_WPLoose_Gsf_v*",
 		"HLT_Ele27_WPLoose_Gsf_v*",
 		"HLT_Ele27_eta2p1_WPLoose_v*",
-		"HLT_Ele27_eta2p1_WPLoose_Gsf_v*"
+		//"HLT_Ele27_eta2p1_WPLoose_Gsf_v*"
+		"HLT_Ele27_eta2p1_WPLoose_Gsf_v*",
 		"HLT_Ele27_WPTight_Gsf_v*",
 		"HLT_Ele27_eta2p1_WPTight_Gsf_v*",
 		"HLT_Ele30_WPTight_Gsf_v*",
