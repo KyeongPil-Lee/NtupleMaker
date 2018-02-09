@@ -3,7 +3,8 @@ from shutil import copyfile
 from CRABClient.UserUtilities import config, getUsernameFromSiteDB
 config = config()
 
-version = '_v2p0_'
+#version = '_v2p0_'
+version = '_v2p1_'
 
 config.General.requestName = ''
 config.General.workArea = 'DYntuple'
