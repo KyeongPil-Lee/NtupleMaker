@@ -4,7 +4,7 @@ from CRABClient.UserUtilities import config, getUsernameFromSiteDB
 config = config()
 
 #version = '_v2p0_'
-version = '_v2p1_'
+version = '_v2p2_'
 
 config.General.requestName = ''
 config.General.workArea = 'DYntuple'
