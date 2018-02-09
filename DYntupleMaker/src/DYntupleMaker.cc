@@ -2781,7 +2781,8 @@ void DYntupleMaker::fillGenOthersInfo(const edm::Event &iEvent)
 	for( size_t ipar = 0; ipar < particles->size(); ipar++ )
 	{
 		reco::GenParticle parCand = (*particles)[ipar];
-		if( abs(parCand.pdgId()) == 22 || abs(parCand.pdgId()) == 6 ) // -- Photons, top quarks -- //
+		//if( abs(parCand.pdgId()) == 22 || abs(parCand.pdgId()) == 6 ) // -- Photons, top quarks -- //
+		if( abs(parCand.pdgId()) == 22 || abs(parCand.pdgId()) == 1 || abs(parCand.pdgId()) == 2 || abs(parCand.pdgId()) == 3 || abs(parCand.pdgId()) == 4 || abs(parCand.pdgId()) == 5 || abs(parCand.pdgId()) == 6 ) // -- Photons, and all quarks -- //
 		{
 			GenOthers_ID[_nGenOthers] = parCand.pdgId(); 
 			GenOthers_pT[_nGenOthers] = parCand.pt(); 

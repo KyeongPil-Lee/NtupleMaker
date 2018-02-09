@@ -209,7 +209,8 @@ process.recoTree.StorePhotonFlag = False # -- photon part should be updated! lat
 process.recoTree.StoreJetFlag = True
 process.recoTree.StoreMETFlag = True
 process.recoTree.StoreGENFlag = isMC
-process.recoTree.StoreGenOthersFlag = isSignalMC
+#process.recoTree.StoreGenOthersFlag = isSignalMC
+process.recoTree.StoreGenOthersFlag = isMC
 process.recoTree.StoreLHEFlag = isSignalMC
 
 ####################
