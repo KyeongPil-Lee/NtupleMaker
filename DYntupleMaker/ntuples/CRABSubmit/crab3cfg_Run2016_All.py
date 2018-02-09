@@ -19,8 +19,8 @@ config.Data.splitting = 'LumiBased'
 config.Data.unitsPerJob = 40
 #config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB())
 config.Data.outLFNDirBase = '/store/user/%s/%s' % (getUsernameFromSiteDB(), version)
-#config.Data.publication = False
-config.Data.publication = True
+config.Data.publication = False
+#config.Data.publication = True
 
 config.Site.storageSite = 'T3_KR_KISTI'
 
