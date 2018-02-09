@@ -629,12 +629,12 @@ private:
 
 	// LHE
 	int nLHEParticle;
-	double LHELepton_Px[MPSIZE];
-	double LHELepton_Py[MPSIZE];
-	double LHELepton_Pz[MPSIZE];
-	double LHELepton_E[MPSIZE];
-	int LHELepton_ID[MPSIZE];
-	int LHELepton_status[MPSIZE];
+	double LHEParticle_Px[MPSIZE];
+	double LHEParticle_Py[MPSIZE];
+	double LHEParticle_Pz[MPSIZE];
+	double LHEParticle_E[MPSIZE];
+	int LHEParticle_ID[MPSIZE];
+	int LHEParticle_status[MPSIZE];
 
 	// GEN
 	int GENnPair;

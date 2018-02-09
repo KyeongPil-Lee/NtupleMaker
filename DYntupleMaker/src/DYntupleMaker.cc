@@ -580,12 +580,12 @@ void DYntupleMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 		Muon_TuneP_phi[i] = -9999;
 
 		// -- LHE -- //
-		LHELepton_Px[i] = 0;
-		LHELepton_Py[i] = 0;
-		LHELepton_Pz[i] = 0;
-		LHELepton_E[i] = 0;
-		LHELepton_ID[i] = 0;
-		LHELepton_status[i] = 0;
+		LHEParticle_Px[i] = 0;
+		LHEParticle_Py[i] = 0;
+		LHEParticle_Pz[i] = 0;
+		LHEParticle_E[i] = 0;
+		LHEParticle_ID[i] = 0;
+		LHEParticle_status[i] = 0;
 		
 		// GEN
 		GENLepton_phi[i] = GENLepton_eta[i] = GENLepton_pT[i] = GENLepton_mother[i] = GENLepton_mother_pT[i] = -100;
@@ -1147,12 +1147,12 @@ void DYntupleMaker::beginJob()
 	if( theStoreLHEFlag )
 	{
 		DYTree->Branch("nLHEParticle",&nLHEParticle,"nLHEParticle/I");
-		DYTree->Branch("LHELepton_Px", &LHELepton_Px,"LHELepton_Px[nLHEParticle]/D");
-		DYTree->Branch("LHELepton_Py", &LHELepton_Py,"LHELepton_Py[nLHEParticle]/D");
-		DYTree->Branch("LHELepton_Pz", &LHELepton_Pz,"LHELepton_Pz[nLHEParticle]/D");
-		DYTree->Branch("LHELepton_E", &LHELepton_E,"LHELepton_E[nLHEParticle]/D");
-		DYTree->Branch("LHELepton_ID", &LHELepton_ID,"LHELepton_ID[nLHEParticle]/I");
-		DYTree->Branch("LHELepton_status", &LHELepton_status,"LHELepton_status[nLHEParticle]/I");
+		DYTree->Branch("LHEParticle_Px", &LHEParticle_Px,"LHEParticle_Px[nLHEParticle]/D");
+		DYTree->Branch("LHEParticle_Py", &LHEParticle_Py,"LHEParticle_Py[nLHEParticle]/D");
+		DYTree->Branch("LHEParticle_Pz", &LHEParticle_Pz,"LHEParticle_Pz[nLHEParticle]/D");
+		DYTree->Branch("LHEParticle_E", &LHEParticle_E,"LHEParticle_E[nLHEParticle]/D");
+		DYTree->Branch("LHEParticle_ID", &LHEParticle_ID,"LHEParticle_ID[nLHEParticle]/I");
+		DYTree->Branch("LHEParticle_status", &LHEParticle_status,"LHEParticle_status[nLHEParticle]/I");
 	}
 
 	// GEN info
@@ -2670,7 +2670,8 @@ void DYntupleMaker::fillLHEInfo(const edm::Event &iEvent)
 	{
 		Int_t id = lheEvent.IDUP[idxParticle];
 
-		if( fabs(id) == 13 || fabs(id) == 11 || fabs(id) == 15 )
+		//if( fabs(id) == 13 || fabs(id) == 11 || fabs(id) == 15 )
+		if( ( 0 < fabs(id) && fabs(id) < 7 ) || ( 10 < fabs(id) && fabs(id) < 17 ) || ( 20 < fabs(id) && fabs(id) < 25 ) )
 		{
 			Double_t Px = lheParticles[idxParticle][0];
 			Double_t Py = lheParticles[idxParticle][1];
@@ -2679,12 +2680,12 @@ void DYntupleMaker::fillLHEInfo(const edm::Event &iEvent)
 			// Double_t M = lheParticles[idxParticle][4];		
 			Int_t status = lheEvent.ISTUP[idxParticle];
 
-			LHELepton_ID[_nLHEParticle] = id;
-			LHELepton_status[_nLHEParticle] = status;
-			LHELepton_Px[_nLHEParticle] = Px;
-			LHELepton_Py[_nLHEParticle] = Py;
-			LHELepton_Pz[_nLHEParticle] = Pz;
-			LHELepton_E[_nLHEParticle] = E;
+			LHEParticle_ID[_nLHEParticle] = id;
+			LHEParticle_status[_nLHEParticle] = status;
+			LHEParticle_Px[_nLHEParticle] = Px;
+			LHEParticle_Py[_nLHEParticle] = Py;
+			LHEParticle_Pz[_nLHEParticle] = Pz;
+			LHEParticle_E[_nLHEParticle] = E;
 
 			_nLHEParticle++;
 		}
