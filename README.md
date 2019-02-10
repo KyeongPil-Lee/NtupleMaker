@@ -22,8 +22,11 @@
 	git cms-merge-topic cms-met:METRecipe_80X_part2 -u
 	git cms-addpkg JetMETCorrections
 
-	# -- this ntuple maker -- #
-	git clone https://github.com/KyeongPil-Lee/NtupleMaker.git Phys -b 80X
+	# -- ntuple maker -- #
+	git clone https://github.com/KyeongPil-Lee/NtupleMaker.git Phys
+	cd Phys
+	git checkout v2.3-HLT_Ele27_WPTight
+	cd ..
 
 	# -- copy the MET correction recipe (80X) -- #
 	cp Phys/DYntupleMaker/python/METCorr/multPhiCorr_*.py JetMETCorrections/Type1MET/python/
