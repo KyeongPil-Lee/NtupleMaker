@@ -11,8 +11,6 @@ GT_DATA = '80X_dataRun2_Prompt_v16' # -- 2016 prompt-reco -- #
 # GT_DATA = '80X_dataRun2_2016SeptRepro_v7' # -- 2016 re-reco -- #
 
 TESTFILE_MC = 'file:/u/user/kplee/scratch/ROOTFiles_Test/80X/ExampleMiniAODv2_ZMuMuPowheg_M120to200_Moriond17.root' # -- no signal -- #
-# TESTFILE_MC = 'file:/u/user/kplee/scratch/ROOTFiles_Test/80X/MINIAOD_DYLL_M50toInf_Morind17.root' # -- signal -- #
-#TESTFILE_DATA = 'file:/cms/home/kplee/scratch/ROOTFiles_Test/80X/ReMINIAOD_SingleMuon_Run2017H_Run281613.root' # -- prompt-reco -- #
 TESTFILE_DATA = 'file:/cms/home/kplee/scratch/ROOTFiles_Test/80X/ExampleReMINIAOD_Run2016B_Run274250.root' # -- re-reco -- #
 ####################################################################################################################
 
@@ -63,7 +61,22 @@ process.TFileService = cms.Service("TFileService",
   fileName = cms.string('ntuple_skim.root')
 )
 
-# -- FastFilters -- //
+################################
+# -- Level 1 ECAL prefiring -- #
+################################
+# -- https://twiki.cern.ch/twiki/bin/viewauth/CMS/L1ECALPrefiringWeightRecipe -- #
+process.prefiringweight = cms.EDProducer("L1ECALPrefiringWeightProducer",
+                                         ThePhotons = cms.InputTag("slimmedPhotons"),
+                                         TheJets = cms.InputTag("slimmedJets"),
+                                         L1Maps = cms.string("L1PrefiringMaps_new.root"),
+                                         DataEra = cms.string("2016BtoH"),
+                                         UseJetEMPt = cms.bool(False), #can be set to true to use jet prefiring maps parametrized vs pt(em) instead of pt
+                                         PrefiringRateSystematicUncty = cms.double(0.2) #Minimum relative prefiring uncty per object
+                                         )
+
+#####################
+# -- FastFilters -- #
+#####################
 process.goodOfflinePrimaryVertices = cms.EDFilter("VertexSelector",
    # src = cms.InputTag("offlinePrimaryVertices"),
    src = cms.InputTag("offlineSlimmedPrimaryVertices"), # -- miniAOD -- #
@@ -82,7 +95,7 @@ process.goodOfflinePrimaryVertices = cms.EDFilter("VertexSelector",
 process.FastFilters = cms.Sequence( process.goodOfflinePrimaryVertices )
 
 ########################
-# -- EGM Correction: -- #
+# -- EGM Correction -- #
 ########################
 # -- EGM 80X regression: https://twiki.cern.ch/twiki/bin/viewauth/CMS/EGMRegression -- #
 from EgammaAnalysis.ElectronTools.regressionWeights_cfi import regressionWeights
@@ -109,8 +122,6 @@ process.calibratedPatPhotons.isMC = cms.bool(isMC)
 #########################
 # -- for electron ID -- #
 #########################
-
-
 from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
 # turn on VID producer, indicate data format  to be
 # DataFormat.AOD or DataFormat.MiniAOD, as appropriate 
@@ -147,7 +158,27 @@ process.electronMVAValueMapProducer.srcMiniAOD = cms.InputTag('selectedElectrons
 ###################################
 # -- (reco) Photon Information -- #
 ###################################
-# -- photon part should be updated! later when it is necessary -- #
+
+switchOnVIDPhotonIdProducer(process, dataFormat)
+
+# define which IDs we want to produce
+my_id_modules = ['RecoEgamma.PhotonIdentification.Identification.cutBasedPhotonID_Spring16_V2p2_cff']
+
+#add them to the VID producer
+for idmod in my_id_modules:
+    setupAllVIDIdsInModule(process,idmod,setupVIDPhotonSelection)
+
+
+process.selectedPhotons = cms.EDFilter('PATPhotonSelector',
+    src = cms.InputTag('calibratedPatPhotons'),
+    cut = cms.string('pt>5 && abs(eta)')
+)
+
+process.egmPhotonIDs.physicsObjectSrc = cms.InputTag('selectedPhotons')
+process.egmPhotonIsolation.srcToIsolate = cms.InputTag('selectedPhotons')
+process.photonIDValueMapProducer.srcMiniAOD = cms.InputTag('selectedPhotons')
+process.photonRegressionValueMapProducer.srcMiniAOD = cms.InputTag('selectedPhotons')
+process.photonMVAValueMapProducer.srcMiniAOD = cms.InputTag('selectedPhotons')
 
 ######################
 # MET Phi Correction #
@@ -168,7 +199,8 @@ process.recoTree.isMC = isMC
 process.recoTree.Muon = cms.untracked.InputTag("slimmedMuons") # -- miniAOD -- #
 process.recoTree.Electron = cms.untracked.InputTag("selectedElectrons") # -- miniAOD -- #
 process.recoTree.UnCorrElectron = cms.untracked.InputTag("slimmedElectrons") # -- miniAOD: before applying energy scale correction -- #
-process.recoTree.Photon = cms.untracked.InputTag("slimmedPhotons") # -- miniAOD -- #
+#process.recoTree.Photon = cms.untracked.InputTag("slimmedPhotons") # -- miniAOD -- #
+process.recoTree.Photon = cms.untracked.InputTag("selectedPhotons") # -- miniAOD -- #
 process.recoTree.Jet = cms.untracked.InputTag("slimmedJets") # -- miniAOD -- #
 process.recoTree.MET = cms.untracked.InputTag("slimmedMETs") # -- miniAOD -- #
 process.recoTree.GenParticle = cms.untracked.InputTag("prunedGenParticles") # -- miniAOD -- #
@@ -185,13 +217,14 @@ process.recoTree.eleMVAIdWP80Map = cms.untracked.InputTag( "egmGsfElectronIDs:mv
 process.recoTree.eleMVAIdWP90Map = cms.untracked.InputTag( "egmGsfElectronIDs:mvaEleID-Spring16-GeneralPurpose-V1-wp90" )
 
 # -- for photons -- #
-process.recoTree.full5x5SigmaIEtaIEtaMap   = cms.untracked.InputTag("photonIDValueMapProducer:phoFull5x5SigmaIEtaIEta")
+#process.recoTree.full5x5SigmaIEtaIEtaMap   = cms.untracked.InputTag("photonIDValueMapProducer:phoFull5x5SigmaIEtaIEta")
 process.recoTree.phoChargedIsolation = cms.untracked.InputTag("photonIDValueMapProducer:phoChargedIsolation")
 process.recoTree.phoNeutralHadronIsolation = cms.untracked.InputTag("photonIDValueMapProducer:phoNeutralHadronIsolation")
 process.recoTree.phoPhotonIsolation = cms.untracked.InputTag("photonIDValueMapProducer:phoPhotonIsolation")
 process.recoTree.effAreaChHadFile = cms.untracked.FileInPath("RecoEgamma/PhotonIdentification/data/PHYS14/effAreaPhotons_cone03_pfChargedHadrons_V2.txt")
 process.recoTree.effAreaNeuHadFile= cms.untracked.FileInPath("RecoEgamma/PhotonIdentification/data/PHYS14/effAreaPhotons_cone03_pfNeutralHadrons_V2.txt")
 process.recoTree.effAreaPhoFile   = cms.untracked.FileInPath("RecoEgamma/PhotonIdentification/data/PHYS14/effAreaPhotons_cone03_pfPhotons_V2.txt")
+process.recoTree.phoMediumIdMap = cms.untracked.InputTag("egmPhotonIDs:cutBasedPhotonID-Spring16-V2p2-medium")
 
 # -- for Track & Vertex -- #
 process.recoTree.PrimaryVertex = cms.untracked.InputTag("offlineSlimmedPrimaryVertices") # -- miniAOD -- #
@@ -205,7 +238,8 @@ process.recoTree.ApplyFilter = False
 # -- Store Flags -- #
 process.recoTree.StoreMuonFlag = True
 process.recoTree.StoreElectronFlag = True
-process.recoTree.StorePhotonFlag = False # -- photon part should be updated! later when it is necessary -- #
+#process.recoTree.StorePhotonFlag = False # -- photon part should be updated! later when it is necessary -- #
+process.recoTree.StorePhotonFlag = True
 process.recoTree.StoreJetFlag = True
 process.recoTree.StoreMETFlag = True
 process.recoTree.StoreGENFlag = isMC
@@ -217,11 +251,15 @@ process.recoTree.StoreLHEFlag = isSignalMC
 # -- Let it run -- #
 ####################
 process.p = cms.Path(
+  process.prefiringweight * #Level 1 ECAL prefiring
   process.FastFilters *
   process.regressionApplication *
   process.calibratedPatElectrons *
   process.selectedElectrons *
   process.egmGsfElectronIDSequence *
+  process.calibratedPatPhotons *
+  process.selectedPhotons *
+  process.egmPhotonIDSequence *
   process.fullPatMetSequence *  #This is the phi corrections part
- process.recoTree
+  process.recoTree
 )

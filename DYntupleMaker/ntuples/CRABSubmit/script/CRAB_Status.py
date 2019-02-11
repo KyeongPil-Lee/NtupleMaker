@@ -1,9 +1,13 @@
 #!/usr/bin/env python
 import subprocess
 import os
+import sys
 
-crabDirBase = "DYntuple"
-proxy = '"/tmp/x509up_u41004"'
+#crabDirBase = "DYntuple"
+crabDirBase = sys.argv[1]
+#proxy = '"/tmp/x509up_u41004"'
+#proxy = '"/tmp/x509up_u556950670"' ## KISTI
+proxy = '"/tmp/x509up_u41058"' ## KNU
 
 FileList = os.listdir("./%s" % crabDirBase)
 List_CRABDir = []

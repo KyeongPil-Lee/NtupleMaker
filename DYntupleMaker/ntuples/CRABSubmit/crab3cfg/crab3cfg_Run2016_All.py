@@ -20,9 +20,9 @@ config.Data.unitsPerJob = 40
 #config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB())
 config.Data.outLFNDirBase = '/store/user/%s/%s' % (getUsernameFromSiteDB(), version)
 config.Data.publication = False
+#config.Data.publication = True
 
-#config.Site.storageSite = 'T3_KR_KISTI'
-config.Site.storageSite = 'T2_KR_KNU'
+config.Site.storageSite = 'T3_KR_KISTI'
 
 
 ### -- 'MultiCRAB' part -- ###
@@ -115,6 +115,43 @@ if __name__ == '__main__':
     config.Data.runRange = '%d-%d' % (StartRun, EndRun)
     crabCommand('submit', config = config)
 
+### -- SingleElectron -- ###
+
+    # -- Run2016B -- #
+    config.General.requestName = 'SingleElectron_Run2016B'
+    config.Data.inputDataset = '/SingleElectron/Run2016B-03Feb2017_ver2-v2/MINIAOD'
+    config.Data.lumiMask = GoldenJSON
+    config.Data.runRange = '%d-%d' % (StartRun, EndRun)
+    crabCommand('submit', config = config)
+
+    # -- Run2016C -- #
+    config.General.requestName = 'SingleElectron_Run2016C'
+    config.Data.inputDataset = '/SingleElectron/Run2016C-03Feb2017-v1/MINIAOD'
+    config.Data.lumiMask = GoldenJSON
+    config.Data.runRange = '%d-%d' % (StartRun, EndRun)
+    crabCommand('submit', config = config)
+
+    # -- Run2016D -- #
+    config.General.requestName = 'SingleElectron_Run2016D'
+    config.Data.inputDataset = '/SingleElectron/Run2016D-03Feb2017-v1/MINIAOD'
+    config.Data.lumiMask = GoldenJSON
+    config.Data.runRange = '%d-%d' % (StartRun, EndRun)
+    crabCommand('submit', config = config)
+
+    # -- Run2016E -- #
+    config.General.requestName = 'SingleElectron_Run2016E'
+    config.Data.inputDataset = '/SingleElectron/Run2016E-03Feb2017-v1/MINIAOD'
+    config.Data.lumiMask = GoldenJSON
+    config.Data.runRange = '%d-%d' % (StartRun, EndRun)
+    crabCommand('submit', config = config)
+
+    # -- Run2016F -- #
+    config.General.requestName = 'SingleElectron_Run2016F'
+    config.Data.inputDataset = '/SingleElectron/Run2016F-03Feb2017-v1/MINIAOD'
+    config.Data.lumiMask = GoldenJSON
+    config.Data.runRange = '%d-%d' % (StartRun, EndRun)
+    crabCommand('submit', config = config)
+
 
     # -- MET phi correction for G to H -- #
     src = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pfMETmultShiftCorrections_GH_cfi.py')
@@ -166,6 +203,31 @@ if __name__ == '__main__':
     # -- Run2016H, v3 -- #
     config.General.requestName = 'DoubleEG_Run2016Hver3'
     config.Data.inputDataset = '/DoubleEG/Run2016H-03Feb2017_ver3-v1/MINIAOD'
+    config.Data.lumiMask = GoldenJSON
+    config.Data.runRange = '%d-%d' % (StartRun, EndRun)
+    config.JobType.psetName = '../withEGMcorrection/DATA_cfg_80X_PromptReco.py'
+    crabCommand('submit', config = config)
+
+### -- SingleElectron -- ###
+
+    # -- Run2016G -- #
+    config.General.requestName = 'SingleElectron_Run2016G'
+    config.Data.inputDataset = '/SingleElectron/Run2016G-03Feb2017-v1/MINIAOD'
+    config.Data.lumiMask = GoldenJSON
+    config.Data.runRange = '%d-%d' % (StartRun, EndRun)
+    crabCommand('submit', config = config)
+
+    # -- Run2016H, v2 -- #
+    config.General.requestName = 'SingleElectron_Run2016Hver2'
+    config.Data.inputDataset = '/SingleElectron/Run2016H-03Feb2017_ver2-v1/MINIAOD'
+    config.Data.lumiMask = GoldenJSON
+    config.Data.runRange = '%d-%d' % (StartRun, EndRun)
+    config.JobType.psetName = '../withEGMcorrection/DATA_cfg_80X_PromptReco.py'
+    crabCommand('submit', config = config)
+
+    # -- Run2016H, v3 -- #
+    config.General.requestName = 'SingleElectron_Run2016Hver3'
+    config.Data.inputDataset = '/SingleElectron/Run2016H-03Feb2017_ver3-v1/MINIAOD'
     config.Data.lumiMask = GoldenJSON
     config.Data.runRange = '%d-%d' % (StartRun, EndRun)
     config.JobType.psetName = '../withEGMcorrection/DATA_cfg_80X_PromptReco.py'
