@@ -35,10 +35,7 @@
 	git cms-merge-topic lathomas:L1Prefiring_8_0_32
 
 	# -- this ntuple maker -- #
-	git clone https://github.com/KyeongPil-Lee/NtupleMaker.git Phys
-	cd Phys
-	git checkout v2.6-Muon_ID_Flags
-	cd ..
+	git clone https://github.com/KyeongPil-Lee/NtupleMaker.git Phys -b 80X # current version is the tag 'v2.6-Muon_ID_Flags' of https://github.com/DalminPai/NtupleMaker
 
 	# -- copy the MET correction recipe (80X) -- #
 	cp Phys/DYntupleMaker/python/METCorr/multPhiCorr_*.py JetMETCorrections/Type1MET/python/
