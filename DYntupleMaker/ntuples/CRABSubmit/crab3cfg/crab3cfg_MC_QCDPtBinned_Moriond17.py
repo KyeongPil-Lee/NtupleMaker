@@ -3,13 +3,14 @@ from shutil import copyfile
 from CRABClient.UserUtilities import config, getUsernameFromSiteDB
 config = config()
 
-version = '_v2p0_'
+version = '_v2p6_'
 
 config.General.requestName = ''
 config.General.workArea = 'DYntuple'
 
 config.JobType.pluginName = 'Analysis'
 config.JobType.psetName = '../withEGMcorrection/MC_cfg_Others.py'
+config.JobType.inputFiles = ["L1PrefiringMaps_new.root"]
 
 config.Data.inputDataset = ''
 
@@ -18,8 +19,8 @@ config.Data.splitting = 'FileBased'
 config.Data.unitsPerJob = 2
 #config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB())
 config.Data.outLFNDirBase = '/store/user/%s/%s' % (getUsernameFromSiteDB(), version)
-#config.Data.publication = False
-config.Data.publication = True
+config.Data.publication = False
+#config.Data.publication = True
 # config.JobType.maxJobRuntimeMin = 2700 # -- 36 hours -- #
 
 config.Site.storageSite = 'T3_KR_KISTI'

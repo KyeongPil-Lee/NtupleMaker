@@ -9,8 +9,9 @@ DYntupleMaker = cms.EDAnalyzer("DYntupleMaker",
 	Muon = cms.untracked.InputTag("selectedPatMuons"),
 	#Electron = cms.untracked.InputTag("gedGsfElectrons"),
 	Electron = cms.untracked.InputTag("slimmedElectrons"),
-	CalibElectron = cms.untracked.InputTag("slimmedElectrons"),
-	Photon = cms.untracked.InputTag("gedPhotons"),
+	#CalibElectron = cms.untracked.InputTag("slimmedElectrons"),
+	#Photon = cms.untracked.InputTag("gedPhotons"),
+	Photon = cms.untracked.InputTag("slimmedPhotons"),
 	Jet = cms.untracked.InputTag("selectedPatJets"),
 	MET = cms.untracked.InputTag("patMETs"),
 	LHEEventProduct = cms.untracked.InputTag("externalLHEProducer"),
@@ -30,13 +31,14 @@ DYntupleMaker = cms.EDAnalyzer("DYntupleMaker",
 	GsfTrack = cms.untracked.InputTag("electronGsfTracks"),
 
 	# -- photon information -- #
-	full5x5SigmaIEtaIEtaMap   = cms.untracked.InputTag("photonIDValueMapProducer:phoFull5x5SigmaIEtaIEta"),
+	#full5x5SigmaIEtaIEtaMap   = cms.untracked.InputTag("photonIDValueMapProducer:phoFull5x5SigmaIEtaIEta"),
 	phoChargedIsolation = cms.untracked.InputTag("photonIDValueMapProducer:phoChargedIsolation"),
 	phoNeutralHadronIsolation = cms.untracked.InputTag("photonIDValueMapProducer:phoNeutralHadronIsolation"),
 	phoPhotonIsolation = cms.untracked.InputTag("photonIDValueMapProducer:phoPhotonIsolation"),
 	effAreaChHadFile = cms.untracked.FileInPath("RecoEgamma/PhotonIdentification/data/PHYS14/effAreaPhotons_cone03_pfChargedHadrons_V2.txt"),
 	effAreaNeuHadFile= cms.untracked.FileInPath("RecoEgamma/PhotonIdentification/data/PHYS14/effAreaPhotons_cone03_pfNeutralHadrons_V2.txt"),
 	effAreaPhoFile   = cms.untracked.FileInPath("RecoEgamma/PhotonIdentification/data/PHYS14/effAreaPhotons_cone03_pfPhotons_V2.txt"),
+	phoMediumIdMap = cms.untracked.InputTag("egmPhotonIDs:cutBasedPhotonID-Spring16-V2p2-medium"),
 
 	# -- Jet information -- #
 	BDiscriminant_tcheff = cms.untracked.double(0.7),
@@ -57,6 +59,13 @@ DYntupleMaker = cms.EDAnalyzer("DYntupleMaker",
 	PrimaryVertex = cms.untracked.InputTag("offlinePrimaryVerticesWithBS"),
 	Track = cms.untracked.InputTag("generalTracks"),
 	PileUpInfo = cms.untracked.InputTag("addPileupInfo"),
+
+	# -- Level 1 ECAL prefiring -- #
+	prefweight = cms.untracked.InputTag("prefiringweight:NonPrefiringProb"),
+	prefweightup = cms.untracked.InputTag("prefiringweight:NonPrefiringProbUp"),
+	prefweightdown = cms.untracked.InputTag("prefiringweight:NonPrefiringProbDown"),
+	
+
 
 	# -- Store Flags -- #
 	StoreMuonFlag = cms.untracked.bool(True),

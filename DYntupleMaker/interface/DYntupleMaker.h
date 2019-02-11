@@ -135,16 +135,16 @@ private:
 
 	// -- Tokens (for 76X) -- //
 	edm::EDGetTokenT< std::vector<pat::Muon> > 						MuonToken;
-	edm::EDGetTokenT< edm::View<reco::GsfElectron> > 				ElectronToken;
-	edm::EDGetTokenT< edm::View<reco::GsfElectron> >                UnCorrElectronToken;
-	edm::EDGetTokenT< edm::View<reco::Photon> > 					PhotonToken;
+	edm::EDGetTokenT< edm::View<reco::GsfElectron> > 					ElectronToken;
+	edm::EDGetTokenT< edm::View<reco::GsfElectron> > 					UnCorrElectronToken;
+	edm::EDGetTokenT< edm::View<reco::Photon> > 						PhotonToken;
 	edm::EDGetTokenT< std::vector<pat::Jet> > 						JetToken;
 	edm::EDGetTokenT< std::vector<pat::MET> > 						MetToken;
 	edm::EDGetTokenT< LHEEventProduct > 							LHEEventProductToken;
 	edm::EDGetTokenT< LHERunInfoProduct >							LHERunInfoProductToken;
-	edm::EDGetTokenT< std::vector<reco::GenParticle> > 				GenParticleToken;
+	edm::EDGetTokenT< std::vector<reco::GenParticle> > 					GenParticleToken;
 
-	edm::EDGetTokenT< double > 										RhoToken;
+	edm::EDGetTokenT< double > 								RhoToken;
 	edm::EDGetTokenT< edm::ValueMap<bool> > 						eleVetoIdMapToken;
 	edm::EDGetTokenT< edm::ValueMap<bool> > 						eleLooseIdMapToken;
 	edm::EDGetTokenT< edm::ValueMap<bool> > 						eleMediumIdMapToken;
@@ -152,25 +152,31 @@ private:
 	edm::EDGetTokenT< edm::ValueMap<bool> > 						eleMVAIdWP80MapToken;
 	edm::EDGetTokenT< edm::ValueMap<bool> > 						eleMVAIdWP90MapToken;
 	edm::EDGetTokenT< edm::ValueMap<bool> > 						eleHEEPIdMapToken;
-	edm::EDGetTokenT< std::vector<reco::Conversion> > 				ConversionsToken;
-	edm::EDGetTokenT< std::vector< reco::GsfTrack > > 				GsfTrackToken;
+	edm::EDGetTokenT< std::vector<reco::Conversion> > 					ConversionsToken;
+	edm::EDGetTokenT< std::vector< reco::GsfTrack > > 					GsfTrackToken;
 
-	edm::EDGetTokenT< edm::ValueMap<float> > 						full5x5SigmaIEtaIEtaMapToken;
+	//edm::EDGetTokenT< edm::ValueMap<float> > 						full5x5SigmaIEtaIEtaMapToken;
 	edm::EDGetTokenT< edm::ValueMap<float> > 						phoChargedIsolationToken;
 	edm::EDGetTokenT< edm::ValueMap<float> > 						phoNeutralHadronIsolationToken;
 	edm::EDGetTokenT< edm::ValueMap<float> > 						phoPhotonIsolationToken;
+	edm::EDGetTokenT< edm::ValueMap<bool> > 						phoMediumIdMapToken;
 
 	edm::EDGetTokenT< edm::TriggerResults > 						TriggerToken;
 	edm::EDGetTokenT< edm::TriggerResults > 						TriggerTokenPAT;
-	edm::EDGetTokenT< std::vector<pat::TriggerObjectStandAlone> > 	TriggerObjectToken;
+	edm::EDGetTokenT< std::vector<pat::TriggerObjectStandAlone> > 				TriggerObjectToken;
+	//edm::EDGetTokenT< trigger::TriggerEvent > 						TriggerSummaryToken;
 
 	edm::EDGetTokenT< GenEventInfoProduct > 						GenEventInfoToken;
-	edm::EDGetTokenT< reco::BeamSpot > 								BeamSpotToken;
+	edm::EDGetTokenT< reco::BeamSpot > 							BeamSpotToken;
 	edm::EDGetTokenT< reco::VertexCollection > 						PrimaryVertexToken;
 	edm::EDGetTokenT< edm::View<reco::Track> > 						TrackToken;
-	edm::EDGetTokenT< std::vector< PileupSummaryInfo > > 			PileUpInfoToken;
+	edm::EDGetTokenT< std::vector< PileupSummaryInfo > > 					PileUpInfoToken;
 
-	// edm::EDGetTokenT< trigger::TriggerEvent > 						TriggerSummaryToken;
+	// -- for Level 1 ECAL prefiring -- //
+	edm::EDGetTokenT< double > 								prefweight_token;
+	edm::EDGetTokenT< double > 								prefweightup_token;
+	edm::EDGetTokenT< double > 								prefweightdown_token;
+
 
 
 	// // -- For Electrons -- //
@@ -259,6 +265,11 @@ private:
 	double pileUpReweightMuonPhys;
 	double pileUpReweightPlusMuonPhys;
 	double pileUpReweightMinusMuonPhys;
+
+	// -- Level 1 ECAL prefiring -- //
+	double _prefiringweight;
+	double _prefiringweightup;
+	double _prefiringweightdown;
 
 	TTree *DYTree;
 
@@ -627,14 +638,28 @@ private:
 	double Muon_TuneP_eta[MPSIZE];
 	double Muon_TuneP_phi[MPSIZE];
 
+	//Medium ID
+	double Muon_segmentCompatibility[MPSIZE];
+	double Muon_chi2LocalPosition[MPSIZE];
+	double Muon_trkKink[MPSIZE];
+	double Muon_Inner_validFraction[MPSIZE];
+
+	//Muon IDs
+	bool Muon_passLooseID[MPSIZE];
+	bool Muon_passMediumID[MPSIZE];
+	bool Muon_passMediumID_from_var[MPSIZE];
+	bool Muon_passTightID[MPSIZE];
+	bool Muon_passHighPtID[MPSIZE];
+
+
 	// LHE
 	int nLHEParticle;
-	double LHELepton_Px[MPSIZE];
-	double LHELepton_Py[MPSIZE];
-	double LHELepton_Pz[MPSIZE];
-	double LHELepton_E[MPSIZE];
-	int LHELepton_ID[MPSIZE];
-	int LHELepton_status[MPSIZE];
+	double LHEParticle_Px[MPSIZE];
+	double LHEParticle_Py[MPSIZE];
+	double LHEParticle_Pz[MPSIZE];
+	double LHEParticle_E[MPSIZE];
+	int LHEParticle_ID[MPSIZE];
+	int LHEParticle_status[MPSIZE];
 
 	// GEN
 	int GENnPair;
@@ -718,6 +743,7 @@ private:
 	// EffectiveAreas effAreaChHadrons_;
 	// EffectiveAreas effAreaNeuHadrons_;
 	// EffectiveAreas effAreaPhotons_;
+	bool Photon_passMediumID[MPSIZE];
 
 	int NTT;
 	double TTrack_dxy[MPSIZE];
@@ -757,5 +783,6 @@ private:
 	double pfMET_Type1_PhiCor_Px; 
 	double pfMET_Type1_PhiCor_Py; 
 	double pfMET_Type1_PhiCor_SumEt;
+
 };
 #endif

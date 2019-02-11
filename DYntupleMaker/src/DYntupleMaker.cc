@@ -8,7 +8,7 @@
 //   Author:
 //   H.D.Yoo           Purdue University
 //   K.P.Lee           Seoul National University
-//   D.M.Pai           Seoul National University (EGM corrections, emu variables, and Gen-level neutrinos)
+//   D.M.Pai           Seoul National University
 //
 //--------------------------------------------------
 
@@ -160,41 +160,46 @@ using namespace isodeposit;
 // -- Constructor -- //
 DYntupleMaker::DYntupleMaker(const edm::ParameterSet& iConfig):
 // -- object tokens -- //
-MuonToken						( consumes< std::vector<pat::Muon> > 				(iConfig.getUntrackedParameter<edm::InputTag>("Muon")) ),
-ElectronToken					( consumes< edm::View<reco::GsfElectron> >			(iConfig.getUntrackedParameter<edm::InputTag>("Electron")) ),
-UnCorrElectronToken				( consumes< edm::View<reco::GsfElectron> >			(iConfig.getUntrackedParameter<edm::InputTag>("UnCorrElectron")) ),
-PhotonToken 					( consumes< edm::View<reco::Photon> >				(iConfig.getUntrackedParameter<edm::InputTag>("Photon")) ),
-JetToken 						( consumes< std::vector<pat::Jet> >					(iConfig.getUntrackedParameter<edm::InputTag>("Jet")) ),
-MetToken 						( consumes< std::vector<pat::MET> >					(iConfig.getUntrackedParameter<edm::InputTag>("MET")) ),
-LHEEventProductToken			( consumes< LHEEventProduct >  						(iConfig.getUntrackedParameter<edm::InputTag>("LHEEventProduct")) ),
-LHERunInfoProductToken			( consumes< LHERunInfoProduct,edm::InRun > 			(iConfig.getUntrackedParameter<edm::InputTag>("LHERunInfoProduct")) ),
-GenParticleToken 				( consumes< std::vector<reco::GenParticle> >		(iConfig.getUntrackedParameter<edm::InputTag>("GenParticle")) ),
+MuonToken			( consumes< std::vector<pat::Muon> > 			(iConfig.getUntrackedParameter<edm::InputTag>("Muon")) ),
+ElectronToken			( consumes< edm::View<reco::GsfElectron> >		(iConfig.getUntrackedParameter<edm::InputTag>("Electron")) ),
+UnCorrElectronToken		( consumes< edm::View<reco::GsfElectron> >		(iConfig.getUntrackedParameter<edm::InputTag>("UnCorrElectron")) ),
+PhotonToken 			( consumes< edm::View<reco::Photon> >			(iConfig.getUntrackedParameter<edm::InputTag>("Photon")) ),
+JetToken 			( consumes< std::vector<pat::Jet> >			(iConfig.getUntrackedParameter<edm::InputTag>("Jet")) ),
+MetToken 			( consumes< std::vector<pat::MET> >			(iConfig.getUntrackedParameter<edm::InputTag>("MET")) ),
+LHEEventProductToken		( consumes< LHEEventProduct >  				(iConfig.getUntrackedParameter<edm::InputTag>("LHEEventProduct")) ),
+LHERunInfoProductToken		( consumes< LHERunInfoProduct,edm::InRun > 		(iConfig.getUntrackedParameter<edm::InputTag>("LHERunInfoProduct")) ),
+GenParticleToken 		( consumes< std::vector<reco::GenParticle> >		(iConfig.getUntrackedParameter<edm::InputTag>("GenParticle")) ),
 // -- Electron tokens -- //
-RhoToken 						( consumes< double >								(iConfig.getUntrackedParameter<edm::InputTag>("rho")) ),
-eleVetoIdMapToken 				( consumes< edm::ValueMap<bool> >					(iConfig.getUntrackedParameter<edm::InputTag>("eleVetoIdMap")) ),
-eleLooseIdMapToken 				( consumes< edm::ValueMap<bool> >					(iConfig.getUntrackedParameter<edm::InputTag>("eleLooseIdMap")) ),
-eleMediumIdMapToken 			( consumes< edm::ValueMap<bool> >					(iConfig.getUntrackedParameter<edm::InputTag>("eleMediumIdMap")) ),
-eleTightIdMapToken 				( consumes< edm::ValueMap<bool> >					(iConfig.getUntrackedParameter<edm::InputTag>("eleTightIdMap")) ),
-eleMVAIdWP80MapToken 			( consumes< edm::ValueMap<bool> >					(iConfig.getUntrackedParameter<edm::InputTag>("eleMVAIdWP80Map")) ),
-eleMVAIdWP90MapToken 			( consumes< edm::ValueMap<bool> >					(iConfig.getUntrackedParameter<edm::InputTag>("eleMVAIdWP90Map")) ),
-eleHEEPIdMapToken 				( consumes< edm::ValueMap<bool> >					(iConfig.getUntrackedParameter<edm::InputTag>("eleHEEPIdMap")) ),
-ConversionsToken 				( consumes< std::vector<reco::Conversion> > 		(iConfig.getUntrackedParameter<edm::InputTag>("conversionsInputTag")) ),
-GsfTrackToken					( consumes< std::vector< reco::GsfTrack > > 		(iConfig.getUntrackedParameter<edm::InputTag>("GsfTrack")) ),
+RhoToken 			( consumes< double >					(iConfig.getUntrackedParameter<edm::InputTag>("rho")) ),
+eleVetoIdMapToken 		( consumes< edm::ValueMap<bool> >			(iConfig.getUntrackedParameter<edm::InputTag>("eleVetoIdMap")) ),
+eleLooseIdMapToken 		( consumes< edm::ValueMap<bool> >			(iConfig.getUntrackedParameter<edm::InputTag>("eleLooseIdMap")) ),
+eleMediumIdMapToken 		( consumes< edm::ValueMap<bool> >			(iConfig.getUntrackedParameter<edm::InputTag>("eleMediumIdMap")) ),
+eleTightIdMapToken 		( consumes< edm::ValueMap<bool> >			(iConfig.getUntrackedParameter<edm::InputTag>("eleTightIdMap")) ),
+eleMVAIdWP80MapToken 		( consumes< edm::ValueMap<bool> >			(iConfig.getUntrackedParameter<edm::InputTag>("eleMVAIdWP80Map")) ),
+eleMVAIdWP90MapToken 		( consumes< edm::ValueMap<bool> >			(iConfig.getUntrackedParameter<edm::InputTag>("eleMVAIdWP90Map")) ),
+eleHEEPIdMapToken 		( consumes< edm::ValueMap<bool> >			(iConfig.getUntrackedParameter<edm::InputTag>("eleHEEPIdMap")) ),
+ConversionsToken 		( consumes< std::vector<reco::Conversion> > 		(iConfig.getUntrackedParameter<edm::InputTag>("conversionsInputTag")) ),
+GsfTrackToken			( consumes< std::vector< reco::GsfTrack > > 		(iConfig.getUntrackedParameter<edm::InputTag>("GsfTrack")) ),
 // -- Photon tokens -- //
-full5x5SigmaIEtaIEtaMapToken	( consumes< edm::ValueMap<float> > 					(iConfig.getUntrackedParameter<edm::InputTag>("full5x5SigmaIEtaIEtaMap")) ),
-phoChargedIsolationToken 		( consumes< edm::ValueMap<float> > 					(iConfig.getUntrackedParameter<edm::InputTag>("phoChargedIsolation")) ),
-phoNeutralHadronIsolationToken 	( consumes< edm::ValueMap<float> > 					(iConfig.getUntrackedParameter<edm::InputTag>("phoNeutralHadronIsolation")) ),
-phoPhotonIsolationToken 		( consumes< edm::ValueMap<float> > 					(iConfig.getUntrackedParameter<edm::InputTag>("phoPhotonIsolation")) ),
+//full5x5SigmaIEtaIEtaMapToken	( consumes< edm::ValueMap<float> > 			(iConfig.getUntrackedParameter<edm::InputTag>("full5x5SigmaIEtaIEtaMap")) ),
+phoChargedIsolationToken 	( consumes< edm::ValueMap<float> > 			(iConfig.getUntrackedParameter<edm::InputTag>("phoChargedIsolation")) ),
+phoNeutralHadronIsolationToken 	( consumes< edm::ValueMap<float> > 			(iConfig.getUntrackedParameter<edm::InputTag>("phoNeutralHadronIsolation")) ),
+phoPhotonIsolationToken 	( consumes< edm::ValueMap<float> > 			(iConfig.getUntrackedParameter<edm::InputTag>("phoPhotonIsolation")) ),
+phoMediumIdMapToken 		( consumes< edm::ValueMap<bool> >			(iConfig.getUntrackedParameter<edm::InputTag>("phoMediumIdMap")) ),
 // -- Trigger Token -- //
-TriggerToken 					( consumes< edm::TriggerResults >  					(iConfig.getUntrackedParameter<edm::InputTag>("TriggerResults")) ),
-TriggerTokenPAT 				( consumes< edm::TriggerResults >  					(iConfig.getUntrackedParameter<edm::InputTag>("TriggerResultsPAT")) ),
-TriggerObjectToken 				( consumes< std::vector<pat::TriggerObjectStandAlone> >  	(iConfig.getUntrackedParameter<edm::InputTag>("TriggerObject")) ),
+TriggerToken 			( consumes< edm::TriggerResults >  			(iConfig.getUntrackedParameter<edm::InputTag>("TriggerResults")) ),
+TriggerTokenPAT 		( consumes< edm::TriggerResults >  			(iConfig.getUntrackedParameter<edm::InputTag>("TriggerResultsPAT")) ),
+TriggerObjectToken 		( consumes< std::vector<pat::TriggerObjectStandAlone> > (iConfig.getUntrackedParameter<edm::InputTag>("TriggerObject")) ),
 // -- Else -- //
-GenEventInfoToken 				( consumes< GenEventInfoProduct >  					(iConfig.getUntrackedParameter<edm::InputTag>("GenEventInfo")) ),
-BeamSpotToken					( consumes< reco::BeamSpot > 						(iConfig.getUntrackedParameter<edm::InputTag>("BeamSpot")) ),
-PrimaryVertexToken 				( consumes< reco::VertexCollection > 				(iConfig.getUntrackedParameter<edm::InputTag>("PrimaryVertex")) ),
-TrackToken 						( consumes< edm::View<reco::Track> >  				(iConfig.getUntrackedParameter<edm::InputTag>("Track")) ),
-PileUpInfoToken 				( consumes< std::vector< PileupSummaryInfo > >  	(iConfig.getUntrackedParameter<edm::InputTag>("PileUpInfo")) )
+GenEventInfoToken 		( consumes< GenEventInfoProduct >  			(iConfig.getUntrackedParameter<edm::InputTag>("GenEventInfo")) ),
+BeamSpotToken			( consumes< reco::BeamSpot > 				(iConfig.getUntrackedParameter<edm::InputTag>("BeamSpot")) ),
+PrimaryVertexToken 		( consumes< reco::VertexCollection > 			(iConfig.getUntrackedParameter<edm::InputTag>("PrimaryVertex")) ),
+TrackToken 			( consumes< edm::View<reco::Track> >  			(iConfig.getUntrackedParameter<edm::InputTag>("Track")) ),
+PileUpInfoToken 		( consumes< std::vector< PileupSummaryInfo > >  	(iConfig.getUntrackedParameter<edm::InputTag>("PileUpInfo")) ),
+// -- Level 1 ECAL prefiring -- //
+prefweight_token 		( consumes< double >					(iConfig.getUntrackedParameter<edm::InputTag>("prefweight")) ),
+prefweightup_token 		( consumes< double >					(iConfig.getUntrackedParameter<edm::InputTag>("prefweightup")) ),
+prefweightdown_token 		( consumes< double >					(iConfig.getUntrackedParameter<edm::InputTag>("prefweightdown")) )
 {
 	nEvt = 0;
 
@@ -315,6 +320,7 @@ void DYntupleMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 	PVy = -1000;
 	PVz = -1000;
 	PVprob = -1;
+
 
 	nLHEParticle = -1;
 	GENnPair = -1;
@@ -536,6 +542,16 @@ void DYntupleMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 		Muon_dxyVTX[i] = Muon_dszVTX[i] = Muon_dzVTX[i] = -100;
 		Muon_dxycktVTX[i] = Muon_dszcktVTX[i] = Muon_dzcktVTX[i] = -100;
 
+		// Medium ID
+		Muon_chi2LocalPosition[i] = Muon_trkKink[i] = Muon_segmentCompatibility[i] = Muon_Inner_validFraction[i] = -9999;
+
+		// Muon IDs
+		Muon_passLooseID[i] = 0;
+		Muon_passMediumID[i] = 0;
+		Muon_passMediumID_from_var[i] = 0;
+		Muon_passTightID[i] = 0;
+		Muon_passHighPtID[i] = 0;
+
 		//Various track informations
 		//MuonBestTrack
 		Muon_Best_pT[i] = -9999;
@@ -580,12 +596,12 @@ void DYntupleMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 		Muon_TuneP_phi[i] = -9999;
 
 		// -- LHE -- //
-		LHELepton_Px[i] = 0;
-		LHELepton_Py[i] = 0;
-		LHELepton_Pz[i] = 0;
-		LHELepton_E[i] = 0;
-		LHELepton_ID[i] = 0;
-		LHELepton_status[i] = 0;
+		LHEParticle_Px[i] = 0;
+		LHEParticle_Py[i] = 0;
+		LHEParticle_Pz[i] = 0;
+		LHEParticle_E[i] = 0;
+		LHEParticle_ID[i] = 0;
+		LHEParticle_status[i] = 0;
 		
 		// GEN
 		GENLepton_phi[i] = GENLepton_eta[i] = GENLepton_pT[i] = GENLepton_mother[i] = GENLepton_mother_pT[i] = -100;
@@ -647,6 +663,7 @@ void DYntupleMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 		Photon_ChIsoWithEA[i] = 0;
 		Photon_NhIsoWithEA[i] = 0;
 		Photon_PhIsoWithEA[i] = 0;
+		Photon_passMediumID[i] = 0;
 
 		// -- MET -- //
 		pfMET_pT = -100;
@@ -730,6 +747,26 @@ void DYntupleMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
 	// cout << "##### Analyze:PU-Reweighting #####" << endl;
 
+	// -- Level 1 ECAL prefiring -- //
+	// -- https://twiki.cern.ch/twiki/bin/viewauth/CMS/L1ECALPrefiringWeightRecipe -- //
+	_prefiringweight = -999;
+	_prefiringweightup = -999;
+	_prefiringweightdown = -999;
+	if( isMC )
+	{
+		edm::Handle< double > theprefweight;
+		iEvent.getByToken(prefweight_token, theprefweight ) ;
+		_prefiringweight =(*theprefweight);
+
+		edm::Handle< double > theprefweightup;
+		iEvent.getByToken(prefweightup_token, theprefweightup ) ;
+		_prefiringweightup =(*theprefweightup);
+
+		edm::Handle< double > theprefweightdown;
+		iEvent.getByToken(prefweightdown_token, theprefweightdown ) ;
+		_prefiringweightdown =(*theprefweightdown);
+	}
+
 	// fills
 	if( theStoreHLTReportFlag ) hltReport(iEvent);
 	if( theStorePriVtxFlag ) fillPrimaryVertex(iEvent);
@@ -791,6 +828,7 @@ void DYntupleMaker::beginJob()
 	DYTree->Branch("Flag_noBadMuons",&Flag_noBadMuons,"Flag_noBadMuons/O");
 
 	DYTree->Branch("PDFWeights", &PDFWeights);
+
 	
 	if(theStorePriVtxFlag)
 	{
@@ -1141,18 +1179,31 @@ void DYntupleMaker::beginJob()
 		DYTree->Branch("vtxTrkChi2_TuneP", &vtxTrkChi2_TuneP);
 		DYTree->Branch("vtxTrkNdof_TuneP", &vtxTrkNdof_TuneP);
 		DYTree->Branch("vtxTrkProb_TuneP", &vtxTrkProb_TuneP);
+
+		// Medium ID
+		DYTree->Branch("Muon_segmentCompatibility", &Muon_segmentCompatibility,"Muon_segmentCompatibility[nMuon]/D");
+		DYTree->Branch("Muon_chi2LocalPosition", &Muon_chi2LocalPosition,"Muon_chi2LocalPosition[nMuon]/D");
+		DYTree->Branch("Muon_trkKink", &Muon_trkKink,"Muon_trkKink[nMuon]/D");
+		DYTree->Branch("Muon_Inner_validFraction", &Muon_Inner_validFraction,"Muon_Inner_validFraction[nMuon]/D");
+
+		// Muon IDs
+		DYTree->Branch("Muon_passLooseID", &Muon_passLooseID, "Muon_passLooseID[nMuon]/O");
+		DYTree->Branch("Muon_passMediumID", &Muon_passMediumID, "Muon_passMediumID[nMuon]/O");
+		DYTree->Branch("Muon_passMediumID_from_var", &Muon_passMediumID_from_var, "Muon_passMediumID_from_var[nMuon]/O");
+		DYTree->Branch("Muon_passTightID", &Muon_passTightID, "Muon_passTightID[nMuon]/O");
+		DYTree->Branch("Muon_passHighPtID", &Muon_passHighPtID, "Muon_passHighPtID[nMuon]/O");
 	}
 
 	// -- LHE info -- //
 	if( theStoreLHEFlag )
 	{
 		DYTree->Branch("nLHEParticle",&nLHEParticle,"nLHEParticle/I");
-		DYTree->Branch("LHELepton_Px", &LHELepton_Px,"LHELepton_Px[nLHEParticle]/D");
-		DYTree->Branch("LHELepton_Py", &LHELepton_Py,"LHELepton_Py[nLHEParticle]/D");
-		DYTree->Branch("LHELepton_Pz", &LHELepton_Pz,"LHELepton_Pz[nLHEParticle]/D");
-		DYTree->Branch("LHELepton_E", &LHELepton_E,"LHELepton_E[nLHEParticle]/D");
-		DYTree->Branch("LHELepton_ID", &LHELepton_ID,"LHELepton_ID[nLHEParticle]/I");
-		DYTree->Branch("LHELepton_status", &LHELepton_status,"LHELepton_status[nLHEParticle]/I");
+		DYTree->Branch("LHEParticle_Px", &LHEParticle_Px,"LHEParticle_Px[nLHEParticle]/D");
+		DYTree->Branch("LHEParticle_Py", &LHEParticle_Py,"LHEParticle_Py[nLHEParticle]/D");
+		DYTree->Branch("LHEParticle_Pz", &LHEParticle_Pz,"LHEParticle_Pz[nLHEParticle]/D");
+		DYTree->Branch("LHEParticle_E", &LHEParticle_E,"LHEParticle_E[nLHEParticle]/D");
+		DYTree->Branch("LHEParticle_ID", &LHEParticle_ID,"LHEParticle_ID[nLHEParticle]/I");
+		DYTree->Branch("LHEParticle_status", &LHEParticle_status,"LHEParticle_status[nLHEParticle]/I");
 	}
 
 	// GEN info
@@ -1242,6 +1293,7 @@ void DYntupleMaker::beginJob()
 		DYTree->Branch("Photon_ChIsoWithEA",&Photon_ChIsoWithEA,"Photon_ChIsoWithEA[nPhotons]/D");
 		DYTree->Branch("Photon_NhIsoWithEA",&Photon_NhIsoWithEA,"Photon_NhIsoWithEA[nPhotons]/D");
 		DYTree->Branch("Photon_PhIsoWithEA",&Photon_PhIsoWithEA,"Photon_PhIsoWithEA[nPhotons]/D");
+		DYTree->Branch("Photon_passMediumID", &Photon_passMediumID, "Photon_passMediumID[nPhotons]/O");
 	}
 
 
@@ -1255,6 +1307,11 @@ void DYntupleMaker::beginJob()
 	DYTree->Branch("pileUpReweightMuonPhys",&pileUpReweightMuonPhys,"pileUpReweightMuonPhys/D");
 	DYTree->Branch("pileUpReweightPlusMuonPhys",&pileUpReweightPlusMuonPhys,"pileUpReweightPlusMuonPhys/D");
 	DYTree->Branch("pileUpReweightMinusMuonPhys",&pileUpReweightMinusMuonPhys,"pileUpReweightMinusMuonPhys/D");
+
+	// -- Level 1 ECAL prefiring -- //
+	DYTree->Branch("_prefiringweight",&_prefiringweight,"_prefiringweight/D");
+	DYTree->Branch("_prefiringweightup",&_prefiringweightup,"_prefiringweightup/D");
+	DYTree->Branch("_prefiringweightdown",&_prefiringweightdown,"_prefiringweightdown/D");
 
 	if( theStoreTTFlag )
 	{
@@ -1354,7 +1411,8 @@ void DYntupleMaker::beginRun(const Run & iRun, const EventSetup & iSetup)
 		"HLT_Ele23_WPLoose_Gsf_v*",
 		"HLT_Ele27_WPLoose_Gsf_v*",
 		"HLT_Ele27_eta2p1_WPLoose_v*",
-		"HLT_Ele27_eta2p1_WPLoose_Gsf_v*"
+		//"HLT_Ele27_eta2p1_WPLoose_Gsf_v*"
+		"HLT_Ele27_eta2p1_WPLoose_Gsf_v*",
 		"HLT_Ele27_WPTight_Gsf_v*",
 		"HLT_Ele27_eta2p1_WPTight_Gsf_v*",
 		"HLT_Ele30_WPTight_Gsf_v*",
@@ -2043,6 +2101,37 @@ void DYntupleMaker::fillMuons(const edm::Event &iEvent, const edm::EventSetup& i
 		Muon_PfGammaIsoR03[_nMuon] = imuon.pfIsolationR03().sumPhotonEt;
 		Muon_PFSumPUIsoR03[_nMuon] = imuon.pfIsolationR03().sumPUPt;
 
+		// -- Medium ID -- //
+		Muon_segmentCompatibility[_nMuon] = muon::segmentCompatibility(imuon);
+		Muon_chi2LocalPosition[_nMuon] = imuon.combinedQuality().chi2LocalPosition;
+		Muon_trkKink[_nMuon] = imuon.combinedQuality().trkKink;
+		Muon_Inner_validFraction[_nMuon] = imuon.innerTrack()->validFraction();
+
+		// -- Muon IDs -- //
+		bool isPassLoose  = muon::isLooseMuon(imuon);
+		bool isPassMedium = muon::isMediumMuon(imuon);
+		bool isPassTight  = muon::isTightMuon(imuon, vtx);
+		bool isPassHighPt  = muon::isHighPtMuon(imuon, vtx);
+
+		Muon_passLooseID[_nMuon] = isPassLoose;
+		Muon_passMediumID[_nMuon] = isPassMedium;
+		Muon_passTightID[_nMuon] = isPassTight;
+		Muon_passHighPtID[_nMuon] = isPassHighPt;
+
+		bool isPassMedium_from_var = false;
+		// here!!
+		if( isPFmuon[_nMuon] == 1
+			&& ( isGLBmuon[_nMuon] == 1 || isTRKmuon[_nMuon] == 1 )
+			&& Muon_Inner_validFraction[_nMuon] > 0.8
+			&& ( Muon_segmentCompatibility[_nMuon] > 0.451 || ( isGLBmuon[_nMuon] == 1
+									&& Muon_chi2dof[_nMuon] < 3
+									&& Muon_chi2LocalPosition[_nMuon] < 12
+									&& Muon_trkKink[_nMuon] < 20
+									&& Muon_segmentCompatibility[_nMuon] > 0.303 ) ) )
+			isPassMedium_from_var = true;
+		Muon_passMediumID_from_var[_nMuon] = isPassMedium_from_var;
+
+
 		// -- Else -- //
 		Muon_charge[_nMuon] = imuon.charge();
 		Muon_nChambers[_nMuon] = imuon.numberOfChambers(); // -- # of chambers -- //
@@ -2670,7 +2759,8 @@ void DYntupleMaker::fillLHEInfo(const edm::Event &iEvent)
 	{
 		Int_t id = lheEvent.IDUP[idxParticle];
 
-		if( fabs(id) == 13 || fabs(id) == 11 || fabs(id) == 15 )
+		//if( fabs(id) == 13 || fabs(id) == 11 || fabs(id) == 15 )
+		if( ( 0 < fabs(id) && fabs(id) < 7 ) || ( 10 < fabs(id) && fabs(id) < 17 ) || ( 20 < fabs(id) && fabs(id) < 25 ) )
 		{
 			Double_t Px = lheParticles[idxParticle][0];
 			Double_t Py = lheParticles[idxParticle][1];
@@ -2679,12 +2769,12 @@ void DYntupleMaker::fillLHEInfo(const edm::Event &iEvent)
 			// Double_t M = lheParticles[idxParticle][4];		
 			Int_t status = lheEvent.ISTUP[idxParticle];
 
-			LHELepton_ID[_nLHEParticle] = id;
-			LHELepton_status[_nLHEParticle] = status;
-			LHELepton_Px[_nLHEParticle] = Px;
-			LHELepton_Py[_nLHEParticle] = Py;
-			LHELepton_Pz[_nLHEParticle] = Pz;
-			LHELepton_E[_nLHEParticle] = E;
+			LHEParticle_ID[_nLHEParticle] = id;
+			LHEParticle_status[_nLHEParticle] = status;
+			LHEParticle_Px[_nLHEParticle] = Px;
+			LHEParticle_Py[_nLHEParticle] = Py;
+			LHEParticle_Pz[_nLHEParticle] = Pz;
+			LHEParticle_E[_nLHEParticle] = E;
 
 			_nLHEParticle++;
 		}
@@ -2781,7 +2871,9 @@ void DYntupleMaker::fillGenOthersInfo(const edm::Event &iEvent)
 	for( size_t ipar = 0; ipar < particles->size(); ipar++ )
 	{
 		reco::GenParticle parCand = (*particles)[ipar];
-		if( abs(parCand.pdgId()) == 22 || abs(parCand.pdgId()) == 6 ) // -- Photons, top quarks -- //
+		//if( abs(parCand.pdgId()) == 22 || abs(parCand.pdgId()) == 6 ) // -- Photons, top quarks -- //
+		//if( abs(parCand.pdgId()) == 22 || abs(parCand.pdgId()) == 1 || abs(parCand.pdgId()) == 2 || abs(parCand.pdgId()) == 3 || abs(parCand.pdgId()) == 4 || abs(parCand.pdgId()) == 5 || abs(parCand.pdgId()) == 6 ) // -- Photons, and all quarks -- //
+		if( abs(parCand.pdgId()) == 21 || abs(parCand.pdgId()) == 22 || abs(parCand.pdgId()) == 1 || abs(parCand.pdgId()) == 2 || abs(parCand.pdgId()) == 3 || abs(parCand.pdgId()) == 4 || abs(parCand.pdgId()) == 5 || abs(parCand.pdgId()) == 6 ) // -- gluon, photon, and all quarks -- //
 		{
 			GenOthers_ID[_nGenOthers] = parCand.pdgId(); 
 			GenOthers_pT[_nGenOthers] = parCand.pt(); 
@@ -2833,8 +2925,8 @@ void DYntupleMaker::fillPhotons(const edm::Event &iEvent)
 	float rho_ = *rhoH;
 
 	// Get the full5x5 map
-	edm::Handle<edm::ValueMap<float> > full5x5SigmaIEtaIEtaMap;
-	iEvent.getByToken(full5x5SigmaIEtaIEtaMapToken, full5x5SigmaIEtaIEtaMap);
+	//edm::Handle<edm::ValueMap<float> > full5x5SigmaIEtaIEtaMap;
+	//iEvent.getByToken(full5x5SigmaIEtaIEtaMapToken, full5x5SigmaIEtaIEtaMap);
 
 	// Get the isolation maps
 	edm::Handle<edm::ValueMap<float> > phoChargedIsolationMap;
@@ -2850,6 +2942,9 @@ void DYntupleMaker::fillPhotons(const edm::Event &iEvent)
 	EffectiveAreas effAreaNeuHadrons_( effAreaNeuHadronsFile.fullPath() );
 	EffectiveAreas effAreaPhotons_( effAreaPhotonsFile.fullPath() );
 
+	// Get the photon medium id map
+	edm::Handle<edm::ValueMap<bool> > medium_id_decisions;
+	iEvent.getByToken(phoMediumIdMapToken, medium_id_decisions);
 
 	int _nPhotons = 0;
 	for(size_t i=0; i< PhotonHandle->size(); ++i)
@@ -2865,7 +2960,8 @@ void DYntupleMaker::fillPhotons(const edm::Event &iEvent)
 
 		Photon_HoverE[_nPhotons] = pho->hadTowOverEm();
 		Photon_hasPixelSeed[_nPhotons] = (Int_t)pho->hasPixelSeed();
-		Photon_Full5x5_SigmaIEtaIEta[_nPhotons] = (*full5x5SigmaIEtaIEtaMap)[ pho ];
+		//Photon_Full5x5_SigmaIEtaIEta[_nPhotons] = (*full5x5SigmaIEtaIEtaMap)[ pho ];
+		Photon_Full5x5_SigmaIEtaIEta[_nPhotons] = pho->full5x5_sigmaIetaIeta(); // -- https://github.com/cms-sw/cmssw/blob/CMSSW_9_0_X/RecoEgamma/PhotonIdentification/plugins/cuts/PhoFull5x5SigmaIEtaIEtaCut.cc#L43 -- //
 
 		float chIso = (double)(*phoChargedIsolationMap)[pho];
 		float nhIso = (double)(*phoNeutralHadronIsolationMap)[pho];
@@ -2878,6 +2974,10 @@ void DYntupleMaker::fillPhotons(const edm::Event &iEvent)
 		Photon_ChIsoWithEA[_nPhotons] = std::max( (float)0.0, chIso - rho_*effAreaChHadrons_.getEffectiveArea(abseta) );
 		Photon_NhIsoWithEA[_nPhotons] = std::max( (float)0.0, nhIso - rho_*effAreaNeuHadrons_.getEffectiveArea(abseta) );
 		Photon_PhIsoWithEA[_nPhotons] = std::max( (float)0.0, phIso - rho_*effAreaPhotons_.getEffectiveArea(abseta) );
+
+		// -- for ID variables -- //
+		bool isPassMedium = (*medium_id_decisions)[pho];
+		Photon_passMediumID[_nPhotons] = isPassMedium;
 
 		_nPhotons++;
 	}
