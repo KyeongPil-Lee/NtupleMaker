@@ -54,7 +54,7 @@ for crabDir in CRABDirs:
 	print stderr
 	print "#" * 100 +'\n\n'
 
-	if "failed" in stdout:
+	if "jobs failed with" in stdout:
 		ResubmtCMD += ['crab resubmit '+crabDirPath+' --proxy='+proxy]
 
 	elif "COMPLETED" in stdout:
