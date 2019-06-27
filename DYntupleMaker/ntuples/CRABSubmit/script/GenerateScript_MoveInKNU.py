@@ -24,7 +24,7 @@ xrootdPathBase = '/u/user/kplee/SE_UserHome/_v2p6_'
 ## -- knu -- ##
 #outputPathBase = '/u/user/dmpai/SE_UserHome/_prime_/DYntuple/v2.4/'
 #outputPathBase = '/u/user/dmpai/SE_UserHome/_prime_/DYntuple/v2.5/'
-outputPathBase = '/pnfs/knu.ac.kr/data/cms/store/user/dpai/_prime_/DYntuple/v2.6'
+outputPathBase = '/u/user/kplee/SE_UserHome/DYntuple/v2.6'
 hostname = 'cms.knu.ac.kr'
 
 
