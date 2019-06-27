@@ -7,7 +7,7 @@ import subprocess
 user = 'dmpai'
 #xrootdPathBase = '/u/user/dmpai/SE_UserHome/_v2p4_/'
 #xrootdPathBase = '/u/user/dmpai/SE_UserHome/_v2p5_/'
-xrootdPathBase = '/u/user/dmpai/SE_UserHome/_v2p6_/'
+xrootdPathBase = '/u/user/kplee/SE_UserHome/_v2p6_'
 
 ## -- tamsa2 -- ##
 #outputPathBase = '/data9/DATA/DYntuple/v2.3/'
@@ -24,23 +24,21 @@ xrootdPathBase = '/u/user/dmpai/SE_UserHome/_v2p6_/'
 ## -- knu -- ##
 #outputPathBase = '/u/user/dmpai/SE_UserHome/_prime_/DYntuple/v2.4/'
 #outputPathBase = '/u/user/dmpai/SE_UserHome/_prime_/DYntuple/v2.5/'
-outputPathBase = '/u/user/dmpai/SE_UserHome/_prime_/DYntuple/v2.6/'
+outputPathBase = '/pnfs/knu.ac.kr/data/cms/store/user/dpai/_prime_/DYntuple/v2.6'
 hostname = 'cms.knu.ac.kr'
 
 
 print "=" * 100
 print "output directory: " + outputPathBase
 CRABDirs = [
-'crab_DYLL_M1000to1500',
-'crab_DYLL_M100to200_fixed',
-'crab_DYLL_M10to50_v2',
-'crab_DYLL_M1500to2000',
-'crab_DYLL_M2000to3000',
-'crab_DYLL_M200to400_fixed',
-'crab_DYLL_M400to500',
-'crab_DYLL_M500to700',
-'crab_DYLL_M700to800',
-'crab_DYLL_M800to1000',
+'crab_DoubleEG_Run2016B',
+'crab_DoubleEG_Run2016C',
+'crab_DoubleEG_Run2016D',
+'crab_DoubleEG_Run2016E',
+'crab_DoubleEG_Run2016F',
+'crab_DoubleEG_Run2016G',
+'crab_DoubleEG_Run2016Hver2',
+'crab_DoubleEG_Run2016Hver3',
 ]
 
 
