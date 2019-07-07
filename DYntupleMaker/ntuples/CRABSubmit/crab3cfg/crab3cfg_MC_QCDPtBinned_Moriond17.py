@@ -6,7 +6,7 @@ config = config()
 version = '_v2p6_'
 
 config.General.requestName = ''
-config.General.workArea = 'DYntuple'
+config.General.workArea = '../DYntuple'
 
 config.JobType.pluginName = 'Analysis'
 config.JobType.psetName = '../withEGMcorrection/MC_cfg_Others.py'
@@ -23,7 +23,8 @@ config.Data.publication = False
 #config.Data.publication = True
 # config.JobType.maxJobRuntimeMin = 2700 # -- 36 hours -- #
 
-config.Site.storageSite = 'T3_KR_KISTI'
+# config.Site.storageSite = 'T3_KR_KISTI'
+config.Site.storageSite = 'T2_KR_KNU'
 
 
 ### -- 'MultiCRAB' part -- ###
