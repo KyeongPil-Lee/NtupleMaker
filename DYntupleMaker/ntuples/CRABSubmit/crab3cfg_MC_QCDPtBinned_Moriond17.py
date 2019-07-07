@@ -6,7 +6,7 @@ config = config()
 version = '_v2p6_'
 
 config.General.requestName = ''
-config.General.workArea = '../DYntuple'
+config.General.workArea = 'DYntuple'
 
 config.JobType.pluginName = 'Analysis'
 config.JobType.psetName = '../withEGMcorrection/MC_cfg_Others.py'
