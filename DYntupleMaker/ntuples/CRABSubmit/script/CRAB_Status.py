@@ -7,7 +7,8 @@ import sys
 crabDirBase = sys.argv[1]
 #proxy = '"/tmp/x509up_u41004"'
 #proxy = '"/tmp/x509up_u556950670"' ## KISTI
-proxy = '"/tmp/x509up_u41058"' ## KNU
+#proxy = '"/tmp/x509up_u41058"' ## KNU
+proxy = '"/tmp/x509up_u41004"'
 
 FileList = os.listdir("./%s" % crabDirBase)
 List_CRABDir = []
@@ -54,7 +55,7 @@ for crabDir in CRABDirs:
 	print stderr
 	print "#" * 100 +'\n\n'
 
-	if "jobs failed with" in stdout:
+	if "jobs failed with" in stdout or "jobs failed in" in stdout:
 		ResubmtCMD += ['crab resubmit '+crabDirPath+' --proxy='+proxy]
 
 	elif "COMPLETED" in stdout:
