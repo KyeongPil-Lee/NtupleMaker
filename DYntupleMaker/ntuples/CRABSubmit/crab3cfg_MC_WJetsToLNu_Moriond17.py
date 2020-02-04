@@ -3,13 +3,13 @@ from shutil import copyfile
 from CRABClient.UserUtilities import config, getUsernameFromSiteDB
 config = config()
 
-version = '_v2p6_'
+version = '_v2p7_'
 
 config.General.requestName = ''
 config.General.workArea = 'DYntuple'
 
 config.JobType.pluginName = 'Analysis'
-config.JobType.psetName = '../withEGMcorrection/MC_cfg_Others.py'
+config.JobType.psetName = '../withEGMcorrection/SinglePhoton/MC_cfg_Others.py'
 config.JobType.inputFiles = ["L1PrefiringMaps_new.root"]
 
 config.Data.inputDataset = ''
