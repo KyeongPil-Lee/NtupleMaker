@@ -1,6 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 
-from DYntupleMaker.HLTList import GetList_HLT
+from Phys.DYntupleMaker.HLTList import GetList_HLT
 
 DYntupleMaker = cms.EDAnalyzer("DYntupleMaker",
 	isMC = cms.untracked.bool(True),
