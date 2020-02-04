@@ -238,6 +238,8 @@ private:
 	
 	edm::ESHandle<TransientTrackBuilder> theTTBuilder;
 
+	vector< std::string> vec_inputHLTList_;
+
 	std::vector<std::string > MuonHLT;
 	std::vector<int > MuonHLTPS;
 	std::vector<std::string > trigModuleNames;
