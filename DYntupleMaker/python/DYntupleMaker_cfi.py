@@ -1,5 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 
+from DYntupleMaker.HLTList import GetList_HLT
+
 DYntupleMaker = cms.EDAnalyzer("DYntupleMaker",
 	isMC = cms.untracked.bool(True),
 	processName = cms.untracked.string("HLT"),
@@ -84,4 +86,7 @@ DYntupleMaker = cms.EDAnalyzer("DYntupleMaker",
 	# -- Filters -- #
 	ApplyFilter = cms.untracked.bool(False),
 	FilterType = cms.untracked.int32(0),
+
+	# -- HLT list -- #
+	InputHLTList = cms.untracked.vstring(GetList_HLT()),
 )
