@@ -1,6 +1,6 @@
 import os
 from shutil import copyfile
-from CRABClient.UserUtilities import config, getUsernameFromSiteDB
+from CRABClient.UserUtilities import config
 config = config()
 
 version = '_v2p7_'
@@ -19,7 +19,7 @@ config.Data.splitting = 'FileBased'
 #config.Data.unitsPerJob = 2
 config.Data.unitsPerJob = 1
 #config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB())
-config.Data.outLFNDirBase = '/store/user/%s/%s' % (getUsernameFromSiteDB(), version)
+config.Data.outLFNDirBase = '/store/user/kplee/%s' % (version)
 config.Data.publication = False
 # config.JobType.maxJobRuntimeMin = 2700 # -- 36 hours -- #
 
