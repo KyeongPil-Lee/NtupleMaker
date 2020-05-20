@@ -382,6 +382,10 @@ private:
 	double Electron_eta[MPSIZE];
 	double Electron_phi[MPSIZE];
 	int Electron_charge[MPSIZE];
+	int Electron_scPixCharge[MPSIZE];
+	bool Electron_isGsfCtfScPixConsistent[MPSIZE];
+	bool Electron_isGsfScPixConsistent[MPSIZE];
+	bool Electron_isGsfCtfConsistent[MPSIZE];
 	double Electron_gsfpT[MPSIZE];
 	double Electron_gsfPx[MPSIZE];
 	double Electron_gsfPy[MPSIZE];

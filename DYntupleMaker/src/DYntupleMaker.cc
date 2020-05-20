@@ -408,6 +408,13 @@ void DYntupleMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 		Electron_caloEnergy[i] = -100;
 		Electron_Px[i] = Electron_Py[i] = Electron_Pz[i] = -9999;
 		Electron_charge[i] = -100;
+
+    // -- more charge information
+    Electron_scPixCharge[i] = -100;
+    Electron_isGsfCtfScPixConsistent[i] = false;
+    Electron_isGsfScPixConsistent[i] = false;
+    Electron_isGsfCtfConsistent[i] = false;
+
 		Electron_gsfpT[i] = Electron_gsfEta[i] = Electron_gsfPhi[i] = -100;
 		Electron_gsfPx[i] = Electron_gsfPy[i] = Electron_gsfPz[i] = -9999;
 		Electron_gsfCharge[i] = -100;
@@ -924,6 +931,10 @@ void DYntupleMaker::beginJob()
 		DYTree->Branch("Electron_eta", &Electron_eta, "Electron_eta[Nelectrons]/D");
 		DYTree->Branch("Electron_phi", &Electron_phi, "Electron_phi[Nelectrons]/D");
 		DYTree->Branch("Electron_charge", &Electron_charge, "Electron_charge[Nelectrons]/I");
+    DYTree->Branch("Electron_scPixCharge",             &Electron_scPixCharge,             "Electron_scPixCharge[Nelectrons]/I");
+    DYTree->Branch("Electron_isGsfCtfScPixConsistent", &Electron_isGsfCtfScPixConsistent, "Electron_isGsfCtfScPixConsistent[Nelectrons]/O");
+    DYTree->Branch("Electron_isGsfScPixConsistent",    &Electron_isGsfScPixConsistent,    "Electron_isGsfScPixConsistent[Nelectrons]/O");
+    DYTree->Branch("Electron_isGsfCtfConsistent",      &Electron_isGsfCtfConsistent,      "Electron_isGsfCtfConsistent[Nelectrons]/O");
 		DYTree->Branch("Electron_gsfpT", &Electron_gsfpT, "Electron_gsfpT[Nelectrons]/D");
 		DYTree->Branch("Electron_gsfPx", &Electron_gsfPx, "Electron_gsfPx[Nelectrons]/D");
 		DYTree->Branch("Electron_gsfPy", &Electron_gsfPy, "Electron_gsfPy[Nelectrons]/D");
@@ -2395,6 +2406,12 @@ void DYntupleMaker::fillElectrons(const edm::Event &iEvent, const edm::EventSetu
 		Electron_Pz[_nElectron] = el->pz();
 		Electron_Energy[_nElectron] = el->energy();
 		Electron_charge[_nElectron] = el->charge();
+
+    Electron_scPixCharge[_nElectron]             = el->ChargeInfo.scPixCharge;
+    Electron_isGsfCtfScPixConsistent[_nElectron] = el->ChargeInfo.isGsfCtfScPixConsistent;
+    Electron_isGsfScPixConsistent[_nElectron]    = el->ChargeInfo.isGsfScPixConsistent;
+    Electron_isGsfCtfConsistent[_nElectron]      = el->ChargeInfo.isGsfCtfConsistent;
+
 		Electron_fbrem[_nElectron] = el->fbrem();
 		Electron_eOverP[_nElectron] = el->eSuperClusterOverP();
 		Electron_ecalDriven[_nElectron] = el->ecalDrivenSeed();
