@@ -44,7 +44,7 @@ for crabDir in CRABDirs:
 	crabDirPath = "%s/%s" % (crabDirBase, crabDir)
 	# outputDir = "v" + crabDir.split("_v")[1]
 	
-	cmd = 'crab status "'+crabDirPath+'" --proxy='+proxy
+	cmd = 'crab status --verboseErrors "'+crabDirPath+'" --proxy='+proxy
 	result = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 	(stdout, stderr) = result.communicate()
 	print "#" * 100

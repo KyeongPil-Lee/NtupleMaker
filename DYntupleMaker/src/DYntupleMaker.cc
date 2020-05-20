@@ -2407,10 +2407,10 @@ void DYntupleMaker::fillElectrons(const edm::Event &iEvent, const edm::EventSetu
 		Electron_Energy[_nElectron] = el->energy();
 		Electron_charge[_nElectron] = el->charge();
 
-    Electron_scPixCharge[_nElectron]             = el->ChargeInfo.scPixCharge;
-    Electron_isGsfCtfScPixConsistent[_nElectron] = el->ChargeInfo.isGsfCtfScPixConsistent;
-    Electron_isGsfScPixConsistent[_nElectron]    = el->ChargeInfo.isGsfScPixConsistent;
-    Electron_isGsfCtfConsistent[_nElectron]      = el->ChargeInfo.isGsfCtfConsistent;
+    Electron_scPixCharge[_nElectron]             = el->chargeInfo().scPixCharge;
+    Electron_isGsfCtfScPixConsistent[_nElectron] = el->chargeInfo().isGsfCtfScPixConsistent;
+    Electron_isGsfScPixConsistent[_nElectron]    = el->chargeInfo().isGsfScPixConsistent;
+    Electron_isGsfCtfConsistent[_nElectron]      = el->chargeInfo().isGsfCtfConsistent;
 
 		Electron_fbrem[_nElectron] = el->fbrem();
 		Electron_eOverP[_nElectron] = el->eSuperClusterOverP();

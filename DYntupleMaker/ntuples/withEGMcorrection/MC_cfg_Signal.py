@@ -10,7 +10,8 @@ GT_MC = '80X_mcRun2_asymptotic_2016_TrancheIV_v6'
 GT_DATA = '80X_dataRun2_Prompt_v16' # -- 2016 prompt-reco -- #
 # GT_DATA = '80X_dataRun2_2016SeptRepro_v7' # -- 2016 re-reco -- #
 
-TESTFILE_MC = 'file:/u/user/dmpai/scratch/ROOTFiles_Test/80X/RunIISummer16MiniAODv2_DYJetsToLL_M-100to200_Example.root' # -- signal -- #
+# TESTFILE_MC = 'file:/u/user/dmpai/scratch/ROOTFiles_Test/80X/RunIISummer16MiniAODv2_DYJetsToLL_M-100to200_Example.root' # -- signal -- #
+TESTFILE_MC = 'file:/u/user/kplee/scratch/ROOTFiles_Test/80X/cmsRunFailure_DYntuple/MINIAODSIM_DYLL_M10to50_Summer16.root' # -- signal -- #
 TESTFILE_DATA = 'file:/cms/home/kplee/scratch/ROOTFiles_Test/80X/ExampleReMINIAOD_Run2016B_Run274250.root' # -- re-reco -- #
 ####################################################################################################################
 
@@ -35,7 +36,7 @@ process.source = cms.Source("PoolSource",
 	fileNames = cms.untracked.vstring( FileName )
 )
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(3000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 # -- Geometry and Detector Conditions (needed for a few patTuple production steps) -- #
 process.load("TrackingTools/TransientTrack/TransientTrackBuilder_cfi")

@@ -4,7 +4,7 @@ import sys
 import time
 import subprocess
 
-user = 'dmpai'
+user = 'kplee'
 #xrootdPathBase = '/u/user/dmpai/SE_UserHome/_v2p4_/'
 #xrootdPathBase = '/u/user/dmpai/SE_UserHome/_v2p5_/'
 # xrootdPathBase = '/u/user/kplee/SE_UserHome/_v2p6_'
@@ -25,7 +25,7 @@ xrootdPathBase = '/u/user/kplee/SE_UserHome/_v2p7_'
 ## -- knu -- ##
 #outputPathBase = '/u/user/dmpai/SE_UserHome/_prime_/DYntuple/v2.4/'
 #outputPathBase = '/u/user/dmpai/SE_UserHome/_prime_/DYntuple/v2.5/'
-outputPathBase = '/u/user/kplee/SE_UserHome/DYntuple/v2.6'
+# outputPathBase = '/u/user/kplee/SE_UserHome/DYntuple/v2.6'
 outputPathBase = '/u/user/kplee/SE_UserHome/DYntuple/v2.7'
 hostname = 'cms.knu.ac.kr'
 
@@ -33,63 +33,12 @@ hostname = 'cms.knu.ac.kr'
 print "=" * 100
 print "output directory: " + outputPathBase
 CRABDirs = [
-'crab_DYLL_M1000to1500',
-'crab_DYLL_M100to200_fixed',
-'crab_DYLL_M10to50_ext1v1',
-'crab_DYLL_M10to50_v2',
-'crab_DYLL_M1500to2000',
-'crab_DYLL_M2000to3000',
-'crab_DYLL_M200to400_fixed',
-'crab_DYLL_M400to500',
-'crab_DYLL_M500to700',
-'crab_DYLL_M50toInf',
-'crab_DYLL_M700to800',
-'crab_DYLL_M800to1000',
-'crab_QCDEMEnriched_Pt170to300',
-'crab_QCDEMEnriched_Pt30to50',
-'crab_QCDEMEnriched_Pt30to50_ext1',
-'crab_QCDEMEnriched_Pt50to80',
-'crab_QCDEMEnriched_Pt50to80_ext1',
-'crab_QCDEMEnriched_Pt80to120',
-'crab_QCDMuEnriched_Pt1000toInf_ext1',
-'crab_QCDMuEnriched_Pt120to170',
-'crab_QCDMuEnriched_Pt120to170_backup',
-'crab_QCDMuEnriched_Pt15to20',
-'crab_QCDMuEnriched_Pt170to300',
-'crab_QCDMuEnriched_Pt170to300_backup',
-'crab_QCDMuEnriched_Pt170to300_ext1',
-'crab_QCDMuEnriched_Pt20to30',
-'crab_QCDMuEnriched_Pt300to470',
-'crab_QCDMuEnriched_Pt300to470_ext1',
-'crab_QCDMuEnriched_Pt300to470_ext2',
-'crab_QCDMuEnriched_Pt470to600',
-'crab_QCDMuEnriched_Pt470to600_ext1',
-'crab_QCDMuEnriched_Pt470to600_ext2',
-'crab_QCDMuEnriched_Pt50to80',
-'crab_QCDMuEnriched_Pt600to800',
-'crab_QCDMuEnriched_Pt600to800_backup',
-'crab_QCDMuEnriched_Pt600to800_ext1',
-'crab_QCDMuEnriched_Pt800to1000',
-'crab_QCDMuEnriched_Pt800to1000_ext1',
-'crab_QCDMuEnriched_Pt800to1000_ext2',
-'crab_QCDMuEnriched_Pt80to120_ext1',
-'crab_ST_tW',
-'crab_ST_tbarW',
-'crab_SinglePhoton_Run2016B',
-'crab_SinglePhoton_Run2016C',
-'crab_SinglePhoton_Run2016D',
-'crab_SinglePhoton_Run2016E',
-'crab_SinglePhoton_Run2016F',
-'crab_SinglePhoton_Run2016G',
-'crab_SinglePhoton_Run2016Hver2',
-'crab_WJetsToLNu_amcatnlo_ext',
-'crab_WJetsToLNu_amcatnlo_ext2v5',
-'crab_WW',
-'crab_WZ',
-'crab_ZZ',
-'crab_ttbar',
-'crab_ttbarBackup',
-'crab_ttbar_M1000toInf',
+'crab_GJets_Pt1000to2000_Sherpa',
+'crab_GJets_Pt100to200_Sherpa',
+'crab_GJets_Pt2000to5000_Sherpa',
+'crab_GJets_Pt200to500_Sherpa',
+'crab_GJets_Pt20to100_Sherpa',
+'crab_GJets_Pt500to1000_Sherpa',
 ]
 
 

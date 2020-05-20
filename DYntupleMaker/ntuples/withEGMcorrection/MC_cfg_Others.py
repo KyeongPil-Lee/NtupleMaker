@@ -11,6 +11,8 @@ GT_DATA = '80X_dataRun2_Prompt_v16' # -- 2016 prompt-reco -- #
 # GT_DATA = '80X_dataRun2_2016SeptRepro_v7' # -- 2016 re-reco -- #
 
 TESTFILE_MC = 'file:/u/user/kplee/scratch/ROOTFiles_Test/80X/ExampleMiniAODv2_ZMuMuPowheg_M120to200_Moriond17.root' # -- no signal -- #
+# TESTFILE_MC = 'file:/u/user/kplee/scratch/ROOTFiles_Test/80X/cmsRunFailure_DYntuple/MINIAODSIM_TT_M700to1000_Summer16.root' # -- no signal -- #
+# TESTFILE_MC = 'file:/d0/scratch/kplee/DYntupleMaker/CMSSW/CMSSW_8_0_32/src/Phys/DYntupleMaker/ntuples/withEGMcorrection/pickevents.root' # -- no signal -- #
 TESTFILE_DATA = 'file:/cms/home/kplee/scratch/ROOTFiles_Test/80X/ExampleReMINIAOD_Run2016B_Run274250.root' # -- re-reco -- #
 ####################################################################################################################
 
@@ -35,7 +37,7 @@ process.source = cms.Source("PoolSource",
 	fileNames = cms.untracked.vstring( FileName )
 )
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(3000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 # -- Geometry and Detector Conditions (needed for a few patTuple production steps) -- #
 process.load("TrackingTools/TransientTrack/TransientTrackBuilder_cfi")
