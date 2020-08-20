@@ -1,15 +1,22 @@
 import os
-from shutil import copyfile
-from CRABClient.UserUtilities import config, getUsernameFromSiteDB
-config = config()
+import argparse
 
-version = '_v2p7_'
+parser = argparse.ArgumentParser(description='CRAB3 configuration to submit ntupler jobs. The version should be given by an argument (it will create a subdirectory under SE with version name)')
+parser.add_argument('--version', required=True, help="Production version (e.g. v2p8)")
+args = parser.parse_args()
+print "version: ", args.version
+
+from shutil import copyfile
+from CRABClient.UserUtilities import config
+config = config()
 
 config.General.requestName = ''
 config.General.workArea = 'DYntuple'
 
 config.JobType.pluginName = 'Analysis'
-config.JobType.psetName = '../withEGMcorrection/SinglePhoton/DATA_cfg_ReReco.py'
+config.JobType.psetName = '../withEGMcorrection/ntupler_arg.py'
+# -- arguments for ntupler_arg.py. inputFile & nEvent are not set here (will automiatically be set by CRAB).
+config.JobType.pyCfgParams = ['globalTag=80X_dataRun2_2016SeptRepro_v7', 'useSinglePhotonTrigger=1', 'isMC=0', 'isSignalMC=0']
 config.JobType.inputFiles = ["L1PrefiringMaps_new.root"]
 
 config.Data.inputDataset = ''
@@ -17,8 +24,7 @@ config.Data.inputDataset = ''
 config.Data.inputDBS = 'global'
 config.Data.splitting = 'LumiBased'
 config.Data.unitsPerJob = 40
-#config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB())
-config.Data.outLFNDirBase = '/store/user/%s/%s' % (getUsernameFromSiteDB(), version)
+config.Data.outLFNDirBase = '/store/user/kplee/%s' % (args.version)
 config.Data.publication = False
 
 #config.Site.storageSite = 'T3_KR_KISTI'

@@ -1,15 +1,22 @@
 import os
-from shutil import copyfile
-from CRABClient.UserUtilities import config, getUsernameFromSiteDB
-config = config()
+import argparse
 
-version = '_v2p7_'
+parser = argparse.ArgumentParser(description='CRAB3 configuration to submit ntupler jobs. The version should be given by an argument (it will create a subdirectory under SE with version name)')
+parser.add_argument('--version', required=True, help="Production version (e.g. v2p8)")
+args = parser.parse_args()
+print "version: ", args.version
+
+from shutil import copyfile
+from CRABClient.UserUtilities import config
+config = config()
 
 config.General.requestName = ''
 config.General.workArea = 'DYntuple'
 
 config.JobType.pluginName = 'Analysis'
-config.JobType.psetName = '../withEGMcorrection/DATA_cfg_ReReco.py'
+config.JobType.psetName = '../withEGMcorrection/ntupler_arg.py'
+# -- arguments for ntupler_arg.py. inputFile & nEvent are not set here (will automiatically be set by CRAB).
+config.JobType.pyCfgParams = ['globalTag=80X_dataRun2_2016SeptRepro_v7', 'useSinglePhotonTrigger=1', 'isMC=0', 'isSignalMC=0']
 config.JobType.inputFiles = ["L1PrefiringMaps_new.root"]
 
 config.Data.inputDataset = ''
@@ -17,8 +24,7 @@ config.Data.inputDataset = ''
 config.Data.inputDBS = 'global'
 config.Data.splitting = 'LumiBased'
 config.Data.unitsPerJob = 40
-#config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB())
-config.Data.outLFNDirBase = '/store/user/%s/%s' % (getUsernameFromSiteDB(), version)
+config.Data.outLFNDirBase = '/store/user/kplee/%s' % (args.version)
 config.Data.publication = False
 
 #config.Site.storageSite = 'T3_KR_KISTI'
@@ -41,46 +47,9 @@ if __name__ == '__main__':
     dst= os.path.join(os.path.dirname(os.path.abspath(__file__)), '..','..','..','..','JetMETCorrections/Type1MET/python/pfMETmultShiftCorrections_cfi.py')
     copyfile(src,dst)
 
-### -- SingleMuon -- ###
-
-    # # -- Run2016B -- #
-    # config.General.requestName = 'SingleMuon_Run2016B'
-    # config.Data.inputDataset = '/SingleMuon/Run2016B-03Feb2017_ver2-v2/MINIAOD'
-    # config.Data.lumiMask = GoldenJSON
-    # config.Data.runRange = '%d-%d' % (StartRun, EndRun)
-    # crabCommand('submit', config = config)
-
-    # # -- Run2016C -- #
-    # config.General.requestName = 'SingleMuon_Run2016C'
-    # config.Data.inputDataset = '/SingleMuon/Run2016C-03Feb2017-v1/MINIAOD'
-    # config.Data.lumiMask = GoldenJSON
-    # config.Data.runRange = '%d-%d' % (StartRun, EndRun)
-    # crabCommand('submit', config = config)
-
-    # # -- Run2016D -- #
-    # config.General.requestName = 'SingleMuon_Run2016D'
-    # config.Data.inputDataset = '/SingleMuon/Run2016D-03Feb2017-v1/MINIAOD'
-    # config.Data.lumiMask = GoldenJSON
-    # config.Data.runRange = '%d-%d' % (StartRun, EndRun)
-    # crabCommand('submit', config = config)
-
-    # # -- Run2016E -- #
-    # config.General.requestName = 'SingleMuon_Run2016E'
-    # config.Data.inputDataset = '/SingleMuon/Run2016E-03Feb2017-v1/MINIAOD'
-    # config.Data.lumiMask = GoldenJSON
-    # config.Data.runRange = '%d-%d' % (StartRun, EndRun)
-    # crabCommand('submit', config = config)
-
-    # # -- Run2016F -- #
-    # config.General.requestName = 'SingleMuon_Run2016F'
-    # config.Data.inputDataset = '/SingleMuon/Run2016F-03Feb2017-v1/MINIAOD'
-    # config.Data.lumiMask = GoldenJSON
-    # config.Data.runRange = '%d-%d' % (StartRun, EndRun)
-    # crabCommand('submit', config = config)
-
 ### -- DoubleEG -- ###
 
-    # -- Run2016B -- #
+    # # -- Run2016B -- #
     config.General.requestName = 'DoubleEG_Run2016B'
     config.Data.inputDataset = '/DoubleEG/Run2016B-03Feb2017_ver2-v2/MINIAOD'
     config.Data.lumiMask = GoldenJSON
@@ -121,32 +90,6 @@ if __name__ == '__main__':
     dst= os.path.join(os.path.dirname(os.path.abspath(__file__)), '..','..','..','..','JetMETCorrections/Type1MET/python/pfMETmultShiftCorrections_cfi.py')
     copyfile(src,dst)
 
-### -- SingleMuon -- ###
-
-    # # -- Run2016G -- #
-    # config.General.requestName = 'SingleMuon_Run2016G'
-    # config.Data.inputDataset = '/SingleMuon/Run2016G-03Feb2017-v1/MINIAOD'
-    # config.Data.lumiMask = GoldenJSON
-    # config.Data.runRange = '%d-%d' % (StartRun, EndRun)
-    # crabCommand('submit', config = config)
-
-    # # -- Run2016H, v2 -- #
-    # config.General.requestName = 'SingleMuon_Run2016Hver2'
-    # config.Data.inputDataset = '/SingleMuon/Run2016H-03Feb2017_ver2-v1/MINIAOD'
-    # config.Data.lumiMask = GoldenJSON
-    # config.Data.runRange = '%d-%d' % (StartRun, EndRun)
-    # config.JobType.psetName = '../withEGMcorrection/DATA_cfg_80X_PromptReco.py'
-    # crabCommand('submit', config = config)
-
-    # # -- Run2016H, v3 -- #
-    # config.General.requestName = 'SingleMuon_Run2016Hver3'
-    # config.Data.inputDataset = '/SingleMuon/Run2016H-03Feb2017_ver3-v1/MINIAOD'
-    # config.Data.lumiMask = GoldenJSON
-    # config.Data.runRange = '%d-%d' % (StartRun, EndRun)
-    # config.JobType.psetName = '../withEGMcorrection/DATA_cfg_80X_PromptReco.py'
-    # crabCommand('submit', config = config)
-
-### -- DoubleEG -- ###
 
     # -- Run2016G -- #
     config.General.requestName = 'DoubleEG_Run2016G'
@@ -160,7 +103,7 @@ if __name__ == '__main__':
     config.Data.inputDataset = '/DoubleEG/Run2016H-03Feb2017_ver2-v1/MINIAOD'
     config.Data.lumiMask = GoldenJSON
     config.Data.runRange = '%d-%d' % (StartRun, EndRun)
-    config.JobType.psetName = '../withEGMcorrection/DATA_cfg_80X_PromptReco.py'
+    config.JobType.psetName = '../withEGMcorrection/SinglePhoton/DATA_cfg_80X_PromptReco.py'
     crabCommand('submit', config = config)
 
     # -- Run2016H, v3 -- #
@@ -168,7 +111,7 @@ if __name__ == '__main__':
     config.Data.inputDataset = '/DoubleEG/Run2016H-03Feb2017_ver3-v1/MINIAOD'
     config.Data.lumiMask = GoldenJSON
     config.Data.runRange = '%d-%d' % (StartRun, EndRun)
-    config.JobType.psetName = '../withEGMcorrection/DATA_cfg_80X_PromptReco.py'
+    config.JobType.psetName = '../withEGMcorrection/SinglePhoton/DATA_cfg_80X_PromptReco.py'
     crabCommand('submit', config = config)
 
 

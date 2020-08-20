@@ -1,15 +1,22 @@
 import os
+import argparse
+
+parser = argparse.ArgumentParser(description='CRAB3 configuration to submit ntupler jobs. The version should be given by an argument (it will create a subdirectory under SE with version name)')
+parser.add_argument('--version', required=True, help="Production version (e.g. v2p8)")
+args = parser.parse_args()
+print "version: ", args.version
+
 from shutil import copyfile
 from CRABClient.UserUtilities import config
 config = config()
-
-version = '_v2p7_'
 
 config.General.requestName = ''
 config.General.workArea = 'DYntuple'
 
 config.JobType.pluginName = 'Analysis'
-config.JobType.psetName = '../withEGMcorrection/SinglePhoton/MC_cfg_Others.py'
+config.JobType.psetName = '../withEGMcorrection/ntupler_arg.py'
+# -- arguments for ntupler_arg.py. inputFile & nEvent are not set here (will automiatically be set by CRAB).
+config.JobType.pyCfgParams = ['globalTag=80X_mcRun2_asymptotic_2016_TrancheIV_v6', 'useSinglePhotonTrigger=1', 'isMC=1', 'isSignalMC=0']
 config.JobType.inputFiles = ["L1PrefiringMaps_new.root"]
 
 config.Data.inputDataset = ''
@@ -18,8 +25,7 @@ config.Data.inputDBS = 'global'
 config.Data.splitting = 'FileBased'
 #config.Data.unitsPerJob = 2
 config.Data.unitsPerJob = 1
-#config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB())
-config.Data.outLFNDirBase = '/store/user/kplee/%s' % (version)
+config.Data.outLFNDirBase = '/store/user/kplee/%s' % (args.version)
 config.Data.publication = False
 # config.JobType.maxJobRuntimeMin = 2700 # -- 36 hours -- #
 
