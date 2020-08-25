@@ -61,7 +61,7 @@ Twiki: https://twiki.cern.ch/twiki/bin/view/CMS/SNUCMSYooDYntuple
 	voms-proxy-init --voms cms --valid 168:00
 	
 	cd Phys/DYntupleMaker/ntuples/CRABSubmit
-	python crab3cfg_MC_DYMassBinned_Moriond17.py --version='2p8'
+	python crab3cfg_MC_DYMassBinned_Moriond17.py --version=v2p8
 
 
 
@@ -141,3 +141,33 @@ python <configuration name> --version=<version>
   * ```crab3cfg_Run2016_Egamma.py```: DoubleEG samples only
   * ```crab3cfg_Run2016_SinglePhoton.py```: SinglePhoton samples
 
+
+
+### Known issue
+
+In some MC samples, there are a few events with missing event contents
+
+* e.g. in DYLL_M10to50_v1 sample, 1:148608:48161668 event has no ```LHEEventProduct```
+* in QCDMuEnriched_Pt30to50 sample, 1:113508:1484079091 event has no ```GenEventInfoProduct```
+
+
+
+List of samples that contain such problematic events
+
+* crab_DYLL_M10to50_v1
+* crab_QCDMuEnriched_Pt1000toInf
+* crab_QCDMuEnriched_Pt170to300_backup
+* crab_QCDMuEnriched_Pt30to50
+* crab_QCDMuEnriched_Pt80to120
+* crab_ttbar_M700to1000
+* crab_WJetsToLNu_amcatnlo
+
+
+
+**Solution**: ignore such events by usnig option
+
+```
+SkipEvent = cms.untracked.vstring('ProductNotFound')
+```
+
+in ```ntupler_arg.py```
