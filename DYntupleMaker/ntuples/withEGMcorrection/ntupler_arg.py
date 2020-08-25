@@ -13,7 +13,7 @@ options.register('globalTag',
                   VarParsing.varType.string,         # string, int, or float
                   "Global tag used for the ntuple production")
 
-# -- GT for DATA (03Feb2017): 80X_dataRun2_2016SeptRepro_v7
+# -- GT for DATA (03Feb2017): 80X_dataRun2_2016SeptRepro_v7 (Run2016Hv2,v3: 80X_dataRun2_Prompt_v16)
 # -- GT for MC (Moriond17): 80X_mcRun2_asymptotic_2016_TrancheIV_v6
 
 options.register('inputFile',
@@ -67,7 +67,8 @@ process.load("FWCore.MessageLogger.MessageLogger_cfi")
 
 ## Options and Output Report
 process.options   = cms.untracked.PSet( 
-  wantSummary = cms.untracked.bool(True) 
+  wantSummary = cms.untracked.bool(True),
+  SkipEvent = cms.untracked.vstring('ProductNotFound') # -- a few events have no GenEventInfoProduct or LHEInfoProduct: ignore them
 )
 process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
