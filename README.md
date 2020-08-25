@@ -136,10 +136,10 @@ python <configuration name> --version=<version>
   * ```crab3cfg_MC_WJetsToLNu_Moriond17.py```: W+jets samples (aMC@NLO)
   * ```crab3cfg_MC_GJetsPtBinned_Sherpa_Moriond17.py```: gamma+jet samples
   * ```crab3cfg_MC_QCDPtBinned_Moriond17.py```: QCD mu-enriched and e-enriched samples
-* **Data** configurations
-  * ```crab3cfg_Run2016_All.py```: SingleMuon and DoubleEG samples
-  * ```crab3cfg_Run2016_Egamma.py```: DoubleEG samples only
-  * ```crab3cfg_Run2016_SinglePhoton.py```: SinglePhoton samples
+* **Data** configurations (two configurations for B-G and H samples respectively)
+  * ```crab3cfg_Run2016_All_(BtoG/H).py```: SingleMuon and DoubleEG samples
+  * ```crab3cfg_Run2016_Egamma_(BtoG/H).py```: DoubleEG samples only
+  * ```crab3cfg_Run2016_SinglePhoton_(BtoG/H).py```: SinglePhoton samples
 
 
 
