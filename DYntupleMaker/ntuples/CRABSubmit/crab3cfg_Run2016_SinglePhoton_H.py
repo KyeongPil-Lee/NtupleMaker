@@ -1,3 +1,8 @@
+# -- Separate configuration for the submission of RunH sample
+# ---- The global tag is different with B-F samples
+# ---- The change of config.JobType.pyCfgParams in the middle of configuration is not allowed: that's why the configuration is separated
+# ---- more info: https://twiki.cern.ch/twiki/bin/view/CMSPublic/CRAB3FAQ#Multiple_submission_fails_with_a
+
 import os
 import argparse
 
@@ -16,7 +21,7 @@ config.General.workArea = 'DYntuple'
 config.JobType.pluginName = 'Analysis'
 config.JobType.psetName = '../withEGMcorrection/ntupler_arg.py'
 # -- arguments for ntupler_arg.py. inputFile & nEvent are not set here (will automiatically be set by CRAB).
-config.JobType.pyCfgParams = ['globalTag=80X_dataRun2_2016SeptRepro_v7', 'useSinglePhotonTrigger=1', 'isMC=0', 'isSignalMC=0']
+config.JobType.pyCfgParams = ['globalTag=80X_dataRun2_Prompt_v16', 'useSinglePhotonTrigger=1', 'isMC=0', 'isSignalMC=0']
 config.JobType.inputFiles = ["L1PrefiringMaps_new.root"]
 
 config.Data.inputDataset = ''
@@ -42,69 +47,16 @@ if __name__ == '__main__':
     
     from CRABAPI.RawCommand import crabCommand
 
-    # -- MET phi correction for B to F -- #
-    src = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pfMETmultShiftCorrections_B2F_cfi.py')
-    dst= os.path.join(os.path.dirname(os.path.abspath(__file__)), '..','..','..','..','JetMETCorrections/Type1MET/python/pfMETmultShiftCorrections_cfi.py')
-    copyfile(src,dst)
-
-### -- SinglePhoton -- ###
-
-    # -- Run2016B -- #
-    config.General.requestName = 'SinglePhoton_Run2016B'
-    config.Data.inputDataset = '/SinglePhoton/Run2016B-03Feb2017_ver2-v2/MINIAOD'
-    config.Data.lumiMask = GoldenJSON
-    config.Data.runRange = '%d-%d' % (StartRun, EndRun)
-    crabCommand('submit', config = config)
-
-    # -- Run2016C -- #
-    config.General.requestName = 'SinglePhoton_Run2016C'
-    config.Data.inputDataset = '/SinglePhoton/Run2016C-03Feb2017-v1/MINIAOD'
-    config.Data.lumiMask = GoldenJSON
-    config.Data.runRange = '%d-%d' % (StartRun, EndRun)
-    crabCommand('submit', config = config)
-
-    # -- Run2016D -- #
-    config.General.requestName = 'SinglePhoton_Run2016D'
-    config.Data.inputDataset = '/SinglePhoton/Run2016D-03Feb2017-v1/MINIAOD'
-    config.Data.lumiMask = GoldenJSON
-    config.Data.runRange = '%d-%d' % (StartRun, EndRun)
-    crabCommand('submit', config = config)
-
-    # -- Run2016E -- #
-    config.General.requestName = 'SinglePhoton_Run2016E'
-    config.Data.inputDataset = '/SinglePhoton/Run2016E-03Feb2017-v1/MINIAOD'
-    config.Data.lumiMask = GoldenJSON
-    config.Data.runRange = '%d-%d' % (StartRun, EndRun)
-    crabCommand('submit', config = config)
-
-    # -- Run2016F -- #
-    config.General.requestName = 'SinglePhoton_Run2016F'
-    config.Data.inputDataset = '/SinglePhoton/Run2016F-03Feb2017-v1/MINIAOD'
-    config.Data.lumiMask = GoldenJSON
-    config.Data.runRange = '%d-%d' % (StartRun, EndRun)
-    crabCommand('submit', config = config)
-
-
     # -- MET phi correction for G to H -- #
     src = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pfMETmultShiftCorrections_GH_cfi.py')
     dst= os.path.join(os.path.dirname(os.path.abspath(__file__)), '..','..','..','..','JetMETCorrections/Type1MET/python/pfMETmultShiftCorrections_cfi.py')
     copyfile(src,dst)
-
-### -- SinglePhoton -- ###
-
-    # -- Run2016G -- #
-    config.General.requestName = 'SinglePhoton_Run2016G'
-    config.Data.inputDataset = '/SinglePhoton/Run2016G-03Feb2017-v1/MINIAOD'
-    config.Data.lumiMask = GoldenJSON
-    config.Data.runRange = '%d-%d' % (StartRun, EndRun)
-    crabCommand('submit', config = config)
 
     # -- Run2016H, v2 -- #
     config.General.requestName = 'SinglePhoton_Run2016Hver2'
     config.Data.inputDataset = '/SinglePhoton/Run2016H-03Feb2017_ver2-v1/MINIAOD'
     config.Data.lumiMask = GoldenJSON
     config.Data.runRange = '%d-%d' % (StartRun, EndRun)
-    config.JobType.psetName = '../withEGMcorrection/SinglePhoton/DATA_cfg_80X_PromptReco.py'
     crabCommand('submit', config = config)
 
     # -- Run2016H, v3 -- #
@@ -112,7 +64,6 @@ if __name__ == '__main__':
     config.Data.inputDataset = '/SinglePhoton/Run2016H-03Feb2017_ver3-v1/MINIAOD'
     config.Data.lumiMask = GoldenJSON
     config.Data.runRange = '%d-%d' % (StartRun, EndRun)
-    config.JobType.psetName = '../withEGMcorrection/SinglePhoton/DATA_cfg_80X_PromptReco.py'
     crabCommand('submit', config = config)
 
 

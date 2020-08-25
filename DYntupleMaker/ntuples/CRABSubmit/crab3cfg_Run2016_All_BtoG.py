@@ -161,23 +161,6 @@ if __name__ == '__main__':
     config.Data.runRange = '%d-%d' % (StartRun, EndRun)
     crabCommand('submit', config = config)
 
-    # -- Run2016H, v2 -- #
-    config.General.requestName = 'DoubleEG_Run2016Hver2'
-    config.Data.inputDataset = '/DoubleEG/Run2016H-03Feb2017_ver2-v1/MINIAOD'
-    config.Data.lumiMask = GoldenJSON
-    config.Data.runRange = '%d-%d' % (StartRun, EndRun)
-    config.JobType.psetName = '../withEGMcorrection/DATA_cfg_80X_PromptReco.py'
-    crabCommand('submit', config = config)
-
-    # -- Run2016H, v3 -- #
-    config.General.requestName = 'DoubleEG_Run2016Hver3'
-    config.Data.inputDataset = '/DoubleEG/Run2016H-03Feb2017_ver3-v1/MINIAOD'
-    config.Data.lumiMask = GoldenJSON
-    config.Data.runRange = '%d-%d' % (StartRun, EndRun)
-    config.JobType.psetName = '../withEGMcorrection/DATA_cfg_80X_PromptReco.py'
-    crabCommand('submit', config = config)
-
-
 
     # config.General.requestName = ''
     # config.Data.inputDataset = ''

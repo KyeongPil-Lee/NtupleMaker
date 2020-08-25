@@ -47,39 +47,39 @@ if __name__ == '__main__':
     dst= os.path.join(os.path.dirname(os.path.abspath(__file__)), '..','..','..','..','JetMETCorrections/Type1MET/python/pfMETmultShiftCorrections_cfi.py')
     copyfile(src,dst)
 
-### -- DoubleEG -- ###
+### -- SinglePhoton -- ###
 
-    # # -- Run2016B -- #
-    config.General.requestName = 'DoubleEG_Run2016B'
-    config.Data.inputDataset = '/DoubleEG/Run2016B-03Feb2017_ver2-v2/MINIAOD'
+    # -- Run2016B -- #
+    config.General.requestName = 'SinglePhoton_Run2016B'
+    config.Data.inputDataset = '/SinglePhoton/Run2016B-03Feb2017_ver2-v2/MINIAOD'
     config.Data.lumiMask = GoldenJSON
     config.Data.runRange = '%d-%d' % (StartRun, EndRun)
     crabCommand('submit', config = config)
 
     # -- Run2016C -- #
-    config.General.requestName = 'DoubleEG_Run2016C'
-    config.Data.inputDataset = '/DoubleEG/Run2016C-03Feb2017-v1/MINIAOD'
+    config.General.requestName = 'SinglePhoton_Run2016C'
+    config.Data.inputDataset = '/SinglePhoton/Run2016C-03Feb2017-v1/MINIAOD'
     config.Data.lumiMask = GoldenJSON
     config.Data.runRange = '%d-%d' % (StartRun, EndRun)
     crabCommand('submit', config = config)
 
     # -- Run2016D -- #
-    config.General.requestName = 'DoubleEG_Run2016D'
-    config.Data.inputDataset = '/DoubleEG/Run2016D-03Feb2017-v1/MINIAOD'
+    config.General.requestName = 'SinglePhoton_Run2016D'
+    config.Data.inputDataset = '/SinglePhoton/Run2016D-03Feb2017-v1/MINIAOD'
     config.Data.lumiMask = GoldenJSON
     config.Data.runRange = '%d-%d' % (StartRun, EndRun)
     crabCommand('submit', config = config)
 
     # -- Run2016E -- #
-    config.General.requestName = 'DoubleEG_Run2016E'
-    config.Data.inputDataset = '/DoubleEG/Run2016E-03Feb2017-v1/MINIAOD'
+    config.General.requestName = 'SinglePhoton_Run2016E'
+    config.Data.inputDataset = '/SinglePhoton/Run2016E-03Feb2017-v1/MINIAOD'
     config.Data.lumiMask = GoldenJSON
     config.Data.runRange = '%d-%d' % (StartRun, EndRun)
     crabCommand('submit', config = config)
 
     # -- Run2016F -- #
-    config.General.requestName = 'DoubleEG_Run2016F'
-    config.Data.inputDataset = '/DoubleEG/Run2016F-03Feb2017-v1/MINIAOD'
+    config.General.requestName = 'SinglePhoton_Run2016F'
+    config.Data.inputDataset = '/SinglePhoton/Run2016F-03Feb2017-v1/MINIAOD'
     config.Data.lumiMask = GoldenJSON
     config.Data.runRange = '%d-%d' % (StartRun, EndRun)
     crabCommand('submit', config = config)
@@ -90,30 +90,14 @@ if __name__ == '__main__':
     dst= os.path.join(os.path.dirname(os.path.abspath(__file__)), '..','..','..','..','JetMETCorrections/Type1MET/python/pfMETmultShiftCorrections_cfi.py')
     copyfile(src,dst)
 
+### -- SinglePhoton -- ###
 
     # -- Run2016G -- #
-    config.General.requestName = 'DoubleEG_Run2016G'
-    config.Data.inputDataset = '/DoubleEG/Run2016G-03Feb2017-v1/MINIAOD'
+    config.General.requestName = 'SinglePhoton_Run2016G'
+    config.Data.inputDataset = '/SinglePhoton/Run2016G-03Feb2017-v1/MINIAOD'
     config.Data.lumiMask = GoldenJSON
     config.Data.runRange = '%d-%d' % (StartRun, EndRun)
     crabCommand('submit', config = config)
-
-    # -- Run2016H, v2 -- #
-    config.General.requestName = 'DoubleEG_Run2016Hver2'
-    config.Data.inputDataset = '/DoubleEG/Run2016H-03Feb2017_ver2-v1/MINIAOD'
-    config.Data.lumiMask = GoldenJSON
-    config.Data.runRange = '%d-%d' % (StartRun, EndRun)
-    config.JobType.psetName = '../withEGMcorrection/SinglePhoton/DATA_cfg_80X_PromptReco.py'
-    crabCommand('submit', config = config)
-
-    # -- Run2016H, v3 -- #
-    config.General.requestName = 'DoubleEG_Run2016Hver3'
-    config.Data.inputDataset = '/DoubleEG/Run2016H-03Feb2017_ver3-v1/MINIAOD'
-    config.Data.lumiMask = GoldenJSON
-    config.Data.runRange = '%d-%d' % (StartRun, EndRun)
-    config.JobType.psetName = '../withEGMcorrection/SinglePhoton/DATA_cfg_80X_PromptReco.py'
-    crabCommand('submit', config = config)
-
 
 
     # config.General.requestName = ''
