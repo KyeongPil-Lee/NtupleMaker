@@ -12,6 +12,8 @@ Twiki: https://twiki.cern.ch/twiki/bin/view/CMS/SNUCMSYooDYntuple
 
 ### Initial setup & submit a ntupler job to CRAB
 
+*Note*: Before initializing the environment pay attention to the OS version on your computer system. If you use the Scientific Linux 6 or login to lxplus6.cern.ch (which will be retired by the end of November 2020), you should use the instructions as written. The current default OS on lxplus.cern.ch is Centos7, therefore you should activate `SCRAM_ARCH=slc7_amd64_gcc530`. Note that lxplus8.cern.ch has only one SCRAM_ARCH choice at the time of writing (cc8_amd64_gcc8), and the CMSSW version starts from 11_1_0.
+
 	export SCRAM_ARCH=slc6_amd64_gcc530
 	export VO_CMS_SW_DIR=/cvmfs/cms.cern.ch
 	source $VO_CMS_SW_DIR/cmsset_default.sh
